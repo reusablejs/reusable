@@ -37,7 +37,7 @@ export const useGlobalState = path => {
 
   const [state, setState] = useState(get(path, store.state));
   useEffect(() => {
-    store.subscribe(path, value => setState(value));
+    return store.subscribe(path, value => setState(value));
   }, []);
   return [state, store.notify(path)];
 };
