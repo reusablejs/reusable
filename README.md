@@ -1,5 +1,21 @@
+## What?!
+
+Reuse is a library for reusing state between React components.
+
+## Why?
+
+Reuse solves the problems that state management is meant for, without unnecessary boilerplate or magic.
+
+React hooks introduced new ways of thinking about state and side-effects.
+These new ways made old habits obsolete, and require a new type of state management tool that embraces the same concepts:
+
+- Separation of concern
+- Reusability
+- Simplicity
+
 ## Features
 
+- single-store
 - immutable
 - reactive
 - simple
@@ -51,7 +67,7 @@ const useCounterState = () => {
   const [counter, setCounter] = reuseState('counter');
 
   return {
-    counter,
+    value: counter,
     increment: () => setCounter(val => val + 1),
     decrement: () => setCounter(val => val - 1),
     reset: () => setCounter(1)
@@ -63,7 +79,7 @@ import {useCounterState} from '../states/counter.state';
 
 const Comp = () => {
   const counterState = useCounterState();
-  return ...
+  return ... // Just use it!
 }
 ```
 
@@ -75,7 +91,7 @@ import { withHistory, ReuseProvider, createStore } from "reuse";
 const initialState = {
   counter: 1
 };
-const store = withHistory(createStore)(initialState);  // Oooh, cool!
+const store = withHistory(createStore)(initialState);  // Oooh, cool
 
 const App = () => (
   <ReuseProvider store={store}>
@@ -86,7 +102,7 @@ import React from "react";
 import { useHistory } from "./reuse";
 
 export const TimeTravel = () => {
-  const { undo, redo, canUndo, canRedo } = useHistory(); // Even Cooler!!
+  const { undo, redo, canUndo, canRedo } = useHistory(); // Oh! Even Cooler!!
   return (
     <div>
       <button disabled={!canUndo()} onClick={undo}>
@@ -100,7 +116,7 @@ export const TimeTravel = () => {
 };
 ```
 
-## Using a reducer
+## Using a reducer (because why not)
 
 ```javascript
 // counter.state.js:
@@ -127,6 +143,7 @@ export const useCounterState = () => {
 ## Combining state, memoizing:
 
 ```javascript
+// No special tricks - just use hooks
 export const useCurrentUserBalance = () => {
   const [transactions] = reuseState("transactions");
   const [currentUser] = reuseState("currentUser");
