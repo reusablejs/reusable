@@ -83,6 +83,46 @@ const Comp = () => {
 }
 ```
 
+## Combining state, memoizing:
+
+```javascript
+// No special tricks - just use hooks
+export const useCurrentUserBalance = () => {
+  const [transactions] = reuseState("transactions");
+  const [currentUser] = reuseState("currentUser");
+
+  return useMemo(
+    () =>
+      transactions
+        .filter(({ userId }) => userId === currentUser.id)
+        .reduce((sum, { amount }) => amount + sum, 0),
+    [transactions, currentUser.id]
+  );
+};
+```
+
+## Reusable components / NPM libraries:
+
+```javascript
+import React, { useCallback } from "react";
+import { reuseState } from "./reuse";
+
+export const useInputState = (path = "_my_lib_input_path") => {
+  const [value, setValue] = reuseState(path);
+
+  return {
+    value,
+    setValue,
+    clear: () => setValue("")
+  };
+};
+
+export const Input = ({ value = "", setValue, placeholder = "" }) => {
+  const onChange = useCallback(e => setValue(e.target.value), []);
+  return <input value={value} onChange={onChange} placeholder={placeholder} />;
+};
+```
+
 ## Time Travelling, Undo/Redo
 
 ```javascript
@@ -139,24 +179,6 @@ export const useCounterState = () => {
     decrement: () => dispatch({ type: "DECREMENT" }),
     increment: () => dispatch({ type: "INCREMENT" })
   };
-};
-```
-
-## Combining state, memoizing:
-
-```javascript
-// No special tricks - just use hooks
-export const useCurrentUserBalance = () => {
-  const [transactions] = reuseState("transactions");
-  const [currentUser] = reuseState("currentUser");
-
-  return useMemo(
-    () =>
-      transactions
-        .filter(({ userId }) => userId === currentUser.id)
-        .reduce((sum, { amount }) => amount + sum, 0),
-    [transactions, currentUser.id]
-  );
 };
 ```
 
