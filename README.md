@@ -87,7 +87,9 @@ const Comp = () => {
 
 ```javascript
 // App.js:
-import { withHistory, ReuseProvider, createStore } from "reuse";
+import { ReuseProvider, createStore } from "reuse";
+import { withHistory } from "reuse-history";
+
 const initialState = {
   counter: 1
 };
@@ -99,7 +101,7 @@ const App = () => (
 
 // component:
 import React from "react";
-import { useHistory } from "./reuse";
+import { useHistory } from "reuse-history";
 
 export const TimeTravel = () => {
   const { undo, redo, canUndo, canRedo } = useHistory(); // Oh! Even Cooler!!
@@ -157,3 +159,15 @@ export const useCurrentUserBalance = () => {
   );
 };
 ```
+
+## Feedback:
+
+https://goo.gl/forms/Jza0XsM7F3shvWhD2
+
+## What's missing:
+
+- Release to NPM
+- Tests
+- Redux DevTools integrations
+- Docs
+- Examples
