@@ -103,8 +103,9 @@ export const useCurrentUserBalance = () => {
 
 ## Reusable components / NPM libraries:
 
+library
+
 ```javascript
-// lib:
 import React, { useCallback } from "react";
 import { reuseState } from "reuse";
 
@@ -134,14 +135,18 @@ const controller = [value, setValue] => (
     setValue,
     clear: () => setValue("")
 });
+```
 
+Consumer:
+
+```javascript
 // Using the lib with re-used state:
 import { Input, reuseInputState } from "my-form-lib";
 
 const Comp = () => {
   const inputState = reuseInputState("forms.user.0");
 
-  return <Input {...inputState} />
+  return <Input {...inputState} />;
 };
 
 // Using the lib with local state:
@@ -150,9 +155,8 @@ import { Input, useInputState } from "my-form-lib";
 const Comp = () => {
   const inputState = useInputState();
 
-  return <Input {...inputState} />
+  return <Input {...inputState} />;
 };
-
 ```
 
 ## Time Travelling, Undo/Redo
