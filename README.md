@@ -99,3 +99,44 @@ export const TimeTravel = () => {
   );
 };
 ```
+
+## Using a reducer
+
+```
+// counter.state.js:
+export const useCounterState = () => {
+  const [counter, dispatch] = reuseState("ui.counter", (state, action) => {
+    switch (action.type) {
+      case "DECREMENT":
+        return state - 1;
+      case "INCREMENT":
+        return state + 1;
+      default:
+        return state;
+    }
+  });
+
+  return {
+    counter,
+    decrement: () => dispatch({ type: "DECREMENT" }),
+    increment: () => dispatch({ type: "INCREMENT" })
+  };
+};
+```
+
+## Combining state, memoizing:
+
+```
+export const useCurrentUserBalance = () => {
+  const [transactions] = reuseState("transactions");
+  const [currentUser] = reuseState("currentUser");
+
+  return useMemo(
+    () =>
+      transactions
+        .filter(({ userId }) => userId === currentUser.id)
+        .reduce((sum, { amount }) => amount + sum, 0),
+    [transactions, currentUser.id]
+  );
+};
+```
