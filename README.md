@@ -13,7 +13,7 @@
 
 ## Basic Usage
 
-```
+```javascript
 // App.js:
 import { ReuseProvider, createStore } from "reuse";
 const initialState = {
@@ -43,7 +43,7 @@ const CompOne = () => {
 
 ## Custom Hooks
 
-```
+```javascript
 // counter.state.js:
 import { reuseState } from "reuse";
 
@@ -69,7 +69,7 @@ const Comp = () => {
 
 ## Time Travelling, Undo/Redo
 
-```
+```javascript
 // App.js:
 import { withHistory, ReuseProvider, createStore } from "reuse";
 const initialState = {
@@ -102,7 +102,7 @@ export const TimeTravel = () => {
 
 ## Using a reducer
 
-```
+```javascript
 // counter.state.js:
 export const useCounterState = () => {
   const [counter, dispatch] = reuseState("ui.counter", (state, action) => {
@@ -126,7 +126,7 @@ export const useCounterState = () => {
 
 ## Combining state, memoizing:
 
-```
+```javascript
 export const useCurrentUserBalance = () => {
   const [transactions] = reuseState("transactions");
   const [currentUser] = reuseState("currentUser");
