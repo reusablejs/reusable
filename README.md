@@ -104,23 +104,55 @@ export const useCurrentUserBalance = () => {
 ## Reusable components / NPM libraries:
 
 ```javascript
+// lib:
 import React, { useCallback } from "react";
 import { reuseState } from "reuse";
 
-export const useInputState = (path = "_my_lib_input_path") => {
-  const [value, setValue] = reuseState(path);
-
-  return {
-    value,
-    setValue,
-    clear: () => setValue("")
-  };
-};
-
+// ControlledComponent
 export const Input = ({ value = "", setValue, placeholder = "" }) => {
   const onChange = useCallback(e => setValue(e.target.value), []);
   return <input value={value} onChange={onChange} placeholder={placeholder} />;
 };
+
+// Reusable State Controller:
+export const reuseInputState = (path = "_my_lib_input_path") => {
+  const state = reuseState(path);
+
+  return controller(state);
+};
+
+// Local State Controller:
+export const useInputState = () => {
+  const state = useState('');
+
+  return controller(state);
+}
+
+const controller = [value, setValue] => (
+{
+    value,
+    setValue,
+    clear: () => setValue("")
+});
+
+// Using the lib with re-used state:
+import { Input, reuseInputState } from "my-form-lib";
+
+const Comp = () => {
+  const inputState = reuseInputState("forms.user.0");
+
+  return <Input {...inputState} />
+};
+
+// Using the lib with local state:
+import { Input, useInputState } from "my-form-lib";
+
+const Comp = () => {
+  const inputState = useInputState();
+
+  return <Input {...inputState} />
+};
+
 ```
 
 ## Time Travelling, Undo/Redo
