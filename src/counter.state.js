@@ -1,11 +1,20 @@
-import { useGlobalState } from "./useGlobalState";
+import { reuseState } from "./reuse";
 
 export const useCounterState = () => {
-  const [counter, setCounter] = useGlobalState("ui.counter");
+  const [counter, dispatch] = reuseState("ui.counter", (state, action) => {
+    switch (action.type) {
+      case "DECREMENT":
+        return state - 1;
+      case "INCREMENT":
+        return state + 1;
+      default:
+        return state;
+    }
+  });
 
   return {
     counter,
-    decrement: () => setCounter(counter - 1),
-    increment: () => setCounter(counter + 1)
+    decrement: () => dispatch({ type: "DECREMENT" }),
+    increment: () => dispatch({ type: "INCREMENT" })
   };
 };

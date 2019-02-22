@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { GlobalStateProvider } from "./useGlobalState";
+import { withTimeTravel, ReuseProvider, createStore } from "./reuse";
 import One from "./One";
 import Two from "./Two";
 import Three from "./Three";
@@ -10,16 +10,22 @@ const initialState = {
   ui: {
     counter: 1,
     random: 0
-  }
+  },
+  transactions: []
 };
+
+const store = createStore(initialState);
+const enhancedStore = withTimeTravel(store);
 
 function App() {
   return (
-    <GlobalStateProvider initialState={initialState}>
+    <ReuseProvider store={enhancedStore}>
+      <button onClick={enhancedStore.undo}>Undo</button>
+      <button onClick={enhancedStore.redo}>Redo</button>
       <One />
       <Two />
       <Three />
-    </GlobalStateProvider>
+    </ReuseProvider>
   );
 }
 

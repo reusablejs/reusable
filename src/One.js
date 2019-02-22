@@ -1,10 +1,15 @@
 import React from "react";
-import { useGlobalState } from "./useGlobalState";
-import { useTransactions, useBalance } from "./transactions.state";
+import { reuseState } from "./reuse";
+import {
+  useTransactions,
+  useBalance,
+  useCurTransaction
+} from "./transactions.state";
 
 const One = () => {
-  const [uiState, setUiState] = useGlobalState("ui");
+  const [uiState, setUiState] = reuseState("ui");
   const { transactions, addTransaction } = useTransactions();
+  const curTransaction = useCurTransaction();
   const balance = useBalance();
 
   const onClick = () =>
@@ -17,9 +22,10 @@ const One = () => {
       <button onClick={() => addTransaction(Math.round(Math.random() * 100))}>
         Add Transaction
       </button>
+      {curTransaction ? curTransaction.amount : 0}
       <h1>Balance {balance}</h1>
-      {transactions.map(({ amount }) => (
-        <div>{amount}</div>
+      {transactions.map(({ amount }, index) => (
+        <div key={index}>{amount}</div>
       ))}
     </div>
   );
