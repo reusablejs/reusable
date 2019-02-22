@@ -31,7 +31,7 @@ export const createStore = initialState => {
       });
     }
   };
-  window.store = store;
+
   return store;
 };
 
@@ -66,30 +66,68 @@ export const reuseState = (path, reducer = defaultReducer) => {
 };
 
 // time travel
-export const withTimeTravel = store => {
-  let history = [store.getState()];
-  let currentHistoryIndex = 0;
+export const withHistory = originalCreateStore => {
+  return initialState => {
+    const newInitialState = {
+      ...initialState,
+      __history: {
+        items: [initialState],
+        index: 0
+      }
+    };
+    const store = originalCreateStore(newInitialState);
 
-  const newStore = {
-    ...store,
-    update: (fullpath, value) => {
-      store.update(fullpath, value);
-      history = [
-        ...history.slice(0, currentHistoryIndex + 1),
-        store.getState()
-      ];
-      currentHistoryIndex++;
-    }
+    const newStore = {
+      ...store,
+      update: (fullpath, value) => {
+        store.update(fullpath, value);
+        store.update("__history", __history => {
+          // get items until current index
+          const itemsTillNow = __history.items.slice(0, __history.index + 1);
+          // save all state except time travel data
+          const newItem = { ...store.getState() };
+          delete newItem.__history;
+
+          // add to items and advance index
+          const newItems = [...itemsTillNow, newItem];
+          const newIndex = __history.index + 1;
+
+          return {
+            ...__history,
+            items: newItems,
+            index: newIndex
+          };
+        });
+      }
+    };
+
+    return newStore;
   };
-  const actions = {
-    canUndo: () => currentHistoryIndex > 0,
-    canRedo: () => currentHistoryIndex < history.length - 1,
-    undo: () => actions.setHistoryIndex(currentHistoryIndex - 1),
-    redo: () => actions.setHistoryIndex(currentHistoryIndex + 1),
-    setHistoryIndex: newIndex => {
-      currentHistoryIndex = Math.min(Math.max(0, newIndex), history.length - 1);
-      store.replace(history[currentHistoryIndex]);
-    }
+};
+
+export const useTimeTravel = () => {
+  const [timeTravel] = reuseState("__history");
+  const store = useContext(ReuseContext);
+
+  const gotoIndex = index => {
+    const newIndex = Math.min(Math.max(0, index), timeTravel.items.length - 1);
+    const newState = {
+      ...timeTravel.items[newIndex],
+      __history: {
+        ...timeTravel,
+        index: newIndex
+      }
+    };
+    store.replace(newState);
   };
-  return { ...newStore, ...actions };
+
+  return {
+    getItems: () => timeTravel.items,
+    getIndex: () => timeTravel.index,
+    canUndo: () => timeTravel.index > 0,
+    canRedo: () => timeTravel.index < timeTravel.items.length - 1,
+    undo: () => gotoIndex(timeTravel.index - 1),
+    redo: () => gotoIndex(timeTravel.index + 1),
+    gotoIndex
+  };
 };

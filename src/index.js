@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { withTimeTravel, ReuseProvider, createStore } from "./reuse";
-import One from "./One";
-import Two from "./Two";
-import Three from "./Three";
+import { withHistory, ReuseProvider, createStore } from "./reuse";
+import { One } from "./One";
+import { Two } from "./Two";
+import { Three } from "./Three";
+import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
 const initialState = {
@@ -14,14 +15,12 @@ const initialState = {
   transactions: []
 };
 
-const store = createStore(initialState);
-const enhancedStore = withTimeTravel(store);
+const store = withHistory(createStore)(initialState);
 
 function App() {
   return (
-    <ReuseProvider store={enhancedStore}>
-      <button onClick={enhancedStore.undo}>Undo</button>
-      <button onClick={enhancedStore.redo}>Redo</button>
+    <ReuseProvider store={store}>
+      <TimeTravel />
       <One />
       <Two />
       <Three />

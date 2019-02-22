@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useCounterState } from "./counter.state";
 
-const Two = () => {
+export const Two = () => {
   const { counter, increment } = useCounterState();
 
   return (
@@ -11,5 +11,3 @@ const Two = () => {
     </div>
   );
 };
-
-export default Two;

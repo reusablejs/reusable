@@ -6,7 +6,7 @@ import {
   useCurTransaction
 } from "./transactions.state";
 
-const One = () => {
+export const One = () => {
   const [uiState, setUiState] = reuseState("ui");
   const { transactions, addTransaction } = useTransactions();
   const curTransaction = useCurTransaction();
@@ -30,5 +30,3 @@ const One = () => {
     </div>
   );
 };
-
-export default One;
