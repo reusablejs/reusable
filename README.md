@@ -9,12 +9,13 @@ Reuse solves the problems that state management is meant for, without unnecessar
 React hooks introduced new ways of thinking about state and side-effects.
 These new ways made old habits obsolete, and require a new type of state management tool that embraces the same concepts:
 
-- Separation of concern
+- Separation of concerns
 - Reusability
 - Simplicity
 
-## Features
+While still providing the developers with structure and architecture with large-scale apps in mind.
 
+## Features
 - single-store
 - immutable
 - reactive
@@ -26,6 +27,28 @@ These new ways made old habits obsolete, and require a new type of state managem
 - SSR
 - Time travelling
 - extendable
+
+## What about Context API?
+The answer is pretty much the same for people asking about "Redux vs. Context API?"
+Using Context API directly gives a simple API to share state between components, but it doesn't provide other benefits that reuse provides, such as:
+
+- Time Travelling
+- Single Store
+- Compound Selectors
+- Structure
+- Easily reuse code that needs state management using custom hooks
+- Easily provide open source components that allow control of state
+
+## Is Reuse designed for large apps?
+Reuse is built with large-scale apps in mind.
+This is what affected most of the considerations when designing the solution:
+- The benefits of a single store and immutable data:
+  - Allow a maintainable architecture and prevent tangled cross-stores access
+  - Easier to reach deep UI states during development by overriding initial state 
+  - Easier to achieve undo/redo, state persistence
+- The ability to do code reuse using custom hooks to prevent code duplication
+- Supporting Redux DevTools for better debugging & QA
+- Support lazy-loaded modules
 
 ## Basic Usage
 
@@ -83,7 +106,7 @@ const Comp = () => {
 }
 ```
 
-## Combining state, memoizing:
+## Compound selectors, memoizing:
 
 ```javascript
 // No special tricks - just use hooks
@@ -225,6 +248,8 @@ https://goo.gl/forms/Jza0XsM7F3shvWhD2
 ## What's missing:
 
 - Release to NPM
+- Support lazy-loaded modules
+- Async actions example
 - Tests
 - Redux DevTools integrations
 - Docs
