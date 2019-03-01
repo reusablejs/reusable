@@ -4,6 +4,7 @@ import { withHistory, ReuseProvider, createStore } from "./reuse";
 import { One } from "./One";
 import { Two } from "./Two";
 import { Three } from "./Three";
+import { Async } from "./Async";
 import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
@@ -12,7 +13,9 @@ const initialState = {
     counter: 1,
     random: 0
   },
-  transactions: []
+  transactions: [],
+  todos: null,
+  todosRef: 0
 };
 
 const store = withHistory(createStore)(initialState);
@@ -24,6 +27,7 @@ function App() {
       <One />
       <Two />
       <Three />
+      <Async />
     </ReuseProvider>
   );
 }
