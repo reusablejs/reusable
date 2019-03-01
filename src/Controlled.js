@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { reuseState } from "./reuse";
 
 export const useInputState = (path = "_my_lib_input_path") => {
-  const [value, setValue] = reuseState(path);
+  const [value, setValue] = reuseState(path, "");
 
   return {
     value,

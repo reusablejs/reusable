@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { reuseState } from "./reuse";
 
 export const useTodos = () => {
-  const [todos, setTodos] = reuseState("todos");
+  const [todos, setTodos] = reuseState("todos", []);
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/todos")

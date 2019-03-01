@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { get, set } from "lodash/fp";
 
 // reuse
-export const createStore = initialState => {
+export const createStore = (initialState = {}) => {
   let listeners = [];
   let state = initialState;
   const store = {
@@ -49,10 +49,22 @@ const defaultReducer = (state, value) => {
     return value;
   }
 };
-export const reuseState = (path, reducer = defaultReducer) => {
+
+export const reuseState = (path, initialValue, reducer = defaultReducer) => {
   const store = useContext(ReuseContext);
 
-  const [state, setState] = useState(get(path, store.getState()));
+  const [state, setState] = useState(() => {
+    let result = get(path, store.getState());
+
+    if (result === undefined) {
+      if (initialValue === undefined) {
+        throw new Error("Must supply initial value to reuseState");
+      }
+      store.update(path, initialValue);
+      result = initialValue;
+    }
+    return result;
+  });
   useEffect(() => {
     return store.subscribe(path, value => setState(value));
   }, []);
@@ -67,16 +79,14 @@ export const reuseState = (path, reducer = defaultReducer) => {
 
 // time travel
 export const withHistory = originalCreateStore => {
-  return initialState => {
-    const newInitialState = {
+  return (initialState = {}) => {
+    const store = originalCreateStore({
       ...initialState,
       __history: {
-        items: [initialState],
+        items: [{}],
         index: 0
       }
-    };
-    const store = originalCreateStore(newInitialState);
-
+    });
     const newStore = {
       ...store,
       update: (fullpath, value) => {
@@ -106,7 +116,7 @@ export const withHistory = originalCreateStore => {
 };
 
 export const useTimeTravel = () => {
-  const [timeTravel] = reuseState("__history");
+  const [timeTravel] = reuseState();
   const store = useContext(ReuseContext);
 
   const gotoIndex = index => {

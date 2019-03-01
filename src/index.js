@@ -8,22 +8,13 @@ import { Async } from "./Async";
 import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
-const initialState = {
-  ui: {
-    counter: 1,
-    random: 0
-  },
-  transactions: [],
-  todos: null,
-  todosRef: 0
-};
-
-const store = withHistory(createStore)(initialState);
+// const store = withHistory(createStore)();
+const store = createStore();
 
 function App() {
   return (
     <ReuseProvider store={store}>
-      <TimeTravel />
+      {/* <TimeTravel /> */}
       <One />
       <Two />
       <Three />

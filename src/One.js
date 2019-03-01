@@ -7,7 +7,7 @@ import {
 } from "./transactions.state";
 
 export const One = () => {
-  const [uiState, setUiState] = reuseState("ui");
+  const [uiState, setUiState] = reuseState("ui", {});
   const { transactions, addTransaction } = useTransactions();
   const curTransaction = useCurTransaction();
   const balance = useBalance();
