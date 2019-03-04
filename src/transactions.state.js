@@ -12,14 +12,15 @@ export const useTransactions = () => {
 };
 
 export const useCurTransaction = () => {
-  const { counter = 0 } = useCounterState();
-  const [transactions = []] = reuseState("transactions", []);
+  const { counter } = useCounterState();
+  const { transactions } = useTransactions();
 
   return transactions[counter];
 };
 
 export const useBalance = () => {
-  const [transactions = []] = reuseState("transactions", []);
+  const { transactions } = useTransactions();
+
   return useMemo(
     () => transactions.reduce((sum, { amount }) => amount + sum, 0),
     [transactions]

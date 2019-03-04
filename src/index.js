@@ -1,23 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { withHistory, ReuseProvider, createStore } from "./reuse";
-import { One } from "./One";
-import { Two } from "./Two";
-import { Three } from "./Three";
+// import { withHistory, ReuseProvider, createStore } from "./reuse";
+import { ReuseProvider } from "./reuse";
+// import { One } from "./One";
+// import { Two } from "./Two";
+// import { Three } from "./Three";
 import { Async } from "./Async";
-import { TimeTravel } from "./TimeTravel";
+// import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
 // const store = withHistory(createStore)();
-const store = createStore();
+// const store = createStore();
 
 function App() {
   return (
-    <ReuseProvider store={store}>
+    <ReuseProvider>
       {/* <TimeTravel /> */}
-      <One />
+      {/* <One />
       <Two />
-      <Three />
+      <Three /> */}
       <Async />
     </ReuseProvider>
   );

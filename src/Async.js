@@ -4,11 +4,17 @@ import { useTodos } from "./todos.state";
 export const Async = () => {
   const todos = useTodos();
 
-  return todos === null ? (
+  useEffect(() => {
+    todos.fetch();
+
+    return todos.clear;
+  }, []);
+
+  return todos.value === null ? (
     "loading..."
   ) : (
     <ul>
-      {todos.map(todo => (
+      {todos.value.map(todo => (
         <li key={todo.id}>
           <input type="checkbox" checked={todo.completed} />
           {todo.title}

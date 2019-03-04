@@ -1,16 +1,15 @@
-import { useEffect } from "react";
-import { reuseState } from "./reuse";
+import { reuse } from "./reuse";
 
-export const useTodos = () => {
-  const [todos, setTodos] = reuseState("todos", []);
+export const useTodos = reuse(reuseState => {
+  const [todos, setTodos] = reuseState([]);
 
-  useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/todos")
-      .then(body => body.json())
-      .then(setTodos);
-
-    return () => setTodos(null);
-  }, []);
-
-  return todos;
-};
+  return {
+    value: todos,
+    fetch: () => {
+      fetch("https://jsonplaceholder.typicode.com/todos")
+        .then(body => body.json())
+        .then(data => setTodos(data));
+    },
+    clear: () => setTodos(null)
+  };
+});

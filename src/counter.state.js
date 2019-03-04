@@ -1,7 +1,7 @@
 import { reuseState } from "./reuse";
 
 export const useCounterState = () => {
-  const [counter, dispatch] = reuseState("ui.counter", 0, (state, action) => {
+  const [counter, dispatch] = reuseState("ui.counter", (state, action) => {
     switch (action.type) {
       case "DECREMENT":
         return state - 1;
