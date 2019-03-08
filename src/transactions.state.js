@@ -1,15 +1,15 @@
 import { useMemo } from "react";
-import { reuseState } from "./reuse";
+import { reuse } from "./reuse";
 import { useCounterState } from "./counter.state";
 
-export const useTransactions = () => {
-  const [transactions, setTransactions] = reuseState("transactions", []);
+export const useTransactions = reuse(reuseState => {
+  const [transactions, setTransactions] = reuseState([]);
 
   return {
     transactions,
     addTransaction: amount => setTransactions(prev => [...prev, { amount }])
   };
-};
+});
 
 export const useCurTransaction = () => {
   const { counter } = useCounterState();

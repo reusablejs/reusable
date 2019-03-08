@@ -1,5 +1,5 @@
 import React from "react";
-import { reuseState } from "./reuse";
+import { useCounterState } from "./counter.state";
 import {
   useTransactions,
   useBalance,
@@ -7,18 +7,15 @@ import {
 } from "./transactions.state";
 
 export const One = () => {
-  const [uiState, setUiState] = reuseState("ui", {});
+  const { counter, decrement } = useCounterState();
   const { transactions, addTransaction } = useTransactions();
   const curTransaction = useCurTransaction();
   const balance = useBalance();
 
-  const onClick = () =>
-    setUiState({ ...uiState, counter: uiState.counter - 1 });
-
   return (
     <div>
-      {uiState.counter}
-      <button onClick={onClick}>Decrement</button>
+      {counter}
+      <button onClick={decrement}>Decrement</button>
       <button onClick={() => addTransaction(Math.round(Math.random() * 100))}>
         Add Transaction
       </button>

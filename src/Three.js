@@ -1,17 +1,15 @@
 import React from "react";
-import { reuseState } from "./reuse";
-import { Input, useInputState } from "./Controlled";
+import { Input, useForm } from "./Controlled";
 
 export const Three = () => {
-  const [random, setRandom] = reuseState("ui.random", 0);
-  const inputState = useInputState("forms.user.0", "");
-  const onClick = () => setRandom(Math.round(Math.random() * 10));
+  const firstName = useForm(["user", "firstName"]);
+  const lastName = useForm(["user", "lastName"]);
+
   return (
     <div>
-      {random}
-      <button onClick={onClick}>Random</button>
-      {inputState.value}
-      <Input {...inputState} placeholder="Controlled" />
+      {firstName.value} - {lastName.value}
+      <Input {...firstName} placeholder="First Name" />
+      <Input {...lastName} placeholder="Last Name" />
     </div>
   );
 };

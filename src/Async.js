@@ -14,6 +14,7 @@ export const Async = () => {
     "loading..."
   ) : (
     <ul>
+      <button onClick={todos.fetch}>Fetch</button>
       {todos.value.map(todo => (
         <li key={todo.id}>
           <input type="checkbox" checked={todo.completed} />

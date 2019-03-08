@@ -6,6 +6,7 @@ export const useTodos = reuse(reuseState => {
   return {
     value: todos,
     fetch: () => {
+      setTodos(null);
       fetch("https://jsonplaceholder.typicode.com/todos")
         .then(body => body.json())
         .then(data => setTodos(data));

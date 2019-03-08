@@ -20,34 +20,38 @@ export const createStore = () => {
   let listeners = [];
   let state = new Map();
   let currentKey = null;
+  let currentPath = null;
   let currentHookIndex = 0;
   const store = {
-    // getState: () => state,
-    get: key => {
-      if (!state.has(key)) {
-        state.set(key, []);
-      }
-      return state.get(key);
-    },
     getCurrentHooks: () => {
-      return store.get(currentKey);
+      if (!state.has(currentKey)) {
+        state.set(currentKey, {});
+      }
+      const hooks = state.get(currentKey);
+
+      if (!get(currentPath, hooks)) {
+        state.set(currentKey, set(currentPath, [], hooks));
+      }
+      return get(currentPath, state.get(currentKey));
     },
-    setCurrentKey: key => {
+    setCurrentKey: (key, path = "__root") => {
       currentKey = key;
+      currentPath = path;
       currentHookIndex = 0;
     },
     useState: (initialValue, reducer = defaultReducer) => {
       // get current hook
       const hooks = store.getCurrentHooks();
       const curIndex = currentHookIndex;
+      const key = currentKey;
       // if it doesn't exist, create it according to initialValue
       if (hooks.length <= currentHookIndex) {
         // create tuple
         const value =
           typeof initialValue === "function" ? initialValue() : initialValue;
         const setValue = newValue => {
-          hooks[curIndex][0] = reducer(hooks[curIndex], newValue);
-          store.notify(currentKey);
+          hooks[curIndex][0] = reducer(hooks[curIndex][0], newValue);
+          store.notify(key);
         };
 
         // save it on the current index
@@ -103,21 +107,25 @@ export const ReuseProvider = ({ store = null, children }) => {
     </ReuseContext.Provider>
   );
 };
+const mockStore = {
+  useState,
+  subscribe: () => {},
+  setCurrentKey: () => {}
+};
 
-export const reuse = callback => {
-  return () => {
-    const store = useContext(ReuseContext);
-    let reuseState = useState;
+export const reuse = param => {
+  let callback =
+    typeof param === "function" ? param : reuseState => reuseState(param);
+
+  return path => {
+    const store = useContext(ReuseContext) || mockStore;
+    let reuseState = store.useState;
     const [counter, setCounter] = useState(0);
     const forceUpdate = () => setCounter(val => val + 1);
 
-    if (store) {
-      store.setCurrentKey(callback);
-      reuseState = store.useState;
-      useEffect(() => {
-        return store.subscribe(callback, forceUpdate);
-      }, []);
-    }
+    store.setCurrentKey(callback, path);
+    useEffect(() => store.subscribe(callback, forceUpdate), []);
+
     return callback(reuseState);
   };
 };

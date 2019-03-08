@@ -3,8 +3,8 @@ import ReactDOM from "react-dom";
 // import { withHistory, ReuseProvider, createStore } from "./reuse";
 import { ReuseProvider } from "./reuse";
 // import { One } from "./One";
-// import { Two } from "./Two";
-// import { Three } from "./Three";
+import { Two } from "./Two";
+import { Three } from "./Three";
 import { Async } from "./Async";
 // import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
@@ -16,9 +16,9 @@ function App() {
   return (
     <ReuseProvider>
       {/* <TimeTravel /> */}
-      {/* <One />
+      {/* <One /> */}
       <Two />
-      <Three /> */}
+      <Three />
       <Async />
     </ReuseProvider>
   );

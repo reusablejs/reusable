@@ -1,13 +1,25 @@
 import React, { useCallback } from "react";
-import { reuseState } from "./reuse";
+import { reuse } from "./reuse";
+import { set, get, update } from "lodash/fp";
 
-export const useInputState = (path = "_my_lib_input_path") => {
-  const [value, setValue] = reuseState(path, "");
+export const useForms = reuse(useState => {
+  const [value, setValue] = useState({});
 
   return {
     value,
-    setValue,
-    clear: () => setValue("")
+    set: (path, val) => setValue(set(path, val))
+  };
+});
+
+export const useForm = formPath => {
+  const forms = useForms();
+
+  const form = get(formPath, forms.value);
+
+  return {
+    value: form,
+    setValue: value => forms.set(formPath, value),
+    clear: () => forms.set(formPath, {})
   };
 };
 
