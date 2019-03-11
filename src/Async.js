@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { useTodos } from "./todos.state";
+import { useReuse } from "reuse-react";
+import { reuseTodos } from "./todos.state";
 
 export const Async = () => {
-  const todos = useTodos();
+  const todos = useReuse(reuseTodos);
 
   useEffect(() => {
     todos.fetch();

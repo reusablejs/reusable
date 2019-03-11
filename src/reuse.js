@@ -3,9 +3,9 @@ import React, {
   useRef,
   useState,
   useContext,
+  useMemo,
   useEffect
 } from "react";
-import { get, set } from "lodash/fp";
 
 const defaultReducer = (state, value) => {
   if (typeof value === "function") {
@@ -20,23 +20,16 @@ export const createStore = () => {
   let listeners = [];
   let state = new Map();
   let currentKey = null;
-  let currentPath = null;
   let currentHookIndex = 0;
   const store = {
     getCurrentHooks: () => {
       if (!state.has(currentKey)) {
-        state.set(currentKey, {});
+        state.set(currentKey, []);
       }
-      const hooks = state.get(currentKey);
-
-      if (!get(currentPath, hooks)) {
-        state.set(currentKey, set(currentPath, [], hooks));
-      }
-      return get(currentPath, state.get(currentKey));
+      return state.get(currentKey);
     },
-    setCurrentKey: (key, path = "__root") => {
+    setCurrentKey: (key) => {
       currentKey = key;
-      currentPath = path;
       currentHookIndex = 0;
     },
     useState: (initialValue, reducer = defaultReducer) => {
@@ -117,18 +110,35 @@ export const reuse = param => {
   let callback =
     typeof param === "function" ? param : reuseState => reuseState(param);
 
-  return path => {
+  return (subscribeCallback) => {
     const store = useContext(ReuseContext) || mockStore;
     let reuseState = store.useState;
-    const [counter, setCounter] = useState(0);
-    const forceUpdate = () => setCounter(val => val + 1);
+    store.setCurrentKey(callback);
+    const [value, setValue] = useState(() => callback(reuseState));
+    const update = () => setValue(callback(reuseState));
 
-    store.setCurrentKey(callback, path);
-    useEffect(() => store.subscribe(callback, forceUpdate), []);
+    useEffect(() => store.subscribe(callback, subscribeCallback || update), []);
 
-    return callback(reuseState);
+    return value;
   };
 };
+
+export const reuseMemo = (callback, reuseDeps) => {
+  return () => {
+    let onSubscribe;
+    const deps = reuseDeps.map(useSomething => useSomething(onSubscribe));
+    const [result, setResult] = useState(() => callback(deps));
+    onSubscribe = () => {
+      const deps = reuseDeps.map(useSomething => useSomething(onSubscribe));
+      const nextResult = callback(deps);
+      if (nextResult !== result) {
+        setResult(nextResult);
+      }
+
+    }
+    return useMemo(() => callback(deps), deps);
+  }
+}
 
 // export const reuseState = (path, initialValue, reducer = defaultReducer) => {
 //   const store = useContext(ReuseContext);

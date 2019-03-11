@@ -1,10 +1,24 @@
-import { reuse } from "./reuse";
+import { reuse, reuseState, reuseEffect, reuseMemo } from "./reuse";
 
-export const useTodos = reuse(reuseState => {
+const reusePersist = (key, [value, setValue]) => {
+  reuseEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [todos])
+  reuseEffect(() => {
+    const savedTodos = localStorage.getItem(key);
+    if (savedTodos) {
+      setValue(JSON.parse(savedTodos));
+    }
+  }, [])
+}
+
+export const useTodos = reuse(() => {
   const [todos, setTodos] = reuseState([]);
+  const completedItems = reuseMemo(() => todos.filter(todo => todo.completed), [todos]);
 
   return {
-    value: todos,
+    todos,
+    completedItems,
     fetch: () => {
       setTodos(null);
       fetch("https://jsonplaceholder.typicode.com/todos")
@@ -13,4 +27,35 @@ export const useTodos = reuse(reuseState => {
     },
     clear: () => setTodos(null)
   };
+});
+
+const FILTER = {
+  ALL: 'All',
+  COMPLETED: 'Completed',
+  TODO: 'Todo'
+};
+
+export const useFilter = reuse(() => {
+  const filter = reuseState(FILTER.ALL);
+
+  reusePersist('filter', filter);
+
+  return filter;
+});
+
+
+export const useTodo = reuseMemo((id, todos) => {
+  const [item] = todos.filter((todo) => todo.id === id);
+
+  return item;
+}, [
+  id => id,
+  () => useTodos().todos
+])
+
+export const useFilteredTodos = reuse(() => {
+  const {todos} = useTodos();
+  const [filter] = useFilter();
+
+  return reuseMemo(() => todos.filter(({title}) => title.includes(filter)), [todos, filter]);
 });

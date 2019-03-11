@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
-import { reuse } from "./reuse";
-import { set, get, update } from "lodash/fp";
+import { reuse, reuseState, reuseMemo } from "./reuse";
+import { set, get } from "lodash/fp";
 
-export const useForms = reuse(useState => {
-  const [value, setValue] = useState({});
+export const reuseForms = reuse(() => {
+  const [value, setValue] = reuseState({});
 
   return {
     value,
@@ -11,16 +11,16 @@ export const useForms = reuse(useState => {
   };
 });
 
-export const useForm = formPath => {
-  const forms = useForms();
+export const reuseForm = formPath => {
+  const forms = reuseForms();
 
   const form = get(formPath, forms.value);
 
-  return {
+  return reuseMemo(() => ({
     value: form,
     setValue: value => forms.set(formPath, value),
     clear: () => forms.set(formPath, {})
-  };
+  }), [form]);
 };
 
 export const Input = ({ value = "", setValue, placeholder = "" }) => {
