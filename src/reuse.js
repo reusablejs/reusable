@@ -1,19 +1,24 @@
 export const reuse = callback => {
-  units.set(callback, {hooks: []});
-
   return () => {
-    // save
+    if (!currentStore) {
+      throw new Error('Must provide a store first');
+    }
+    // Lazily define hooks for this unit
+    if (!currentStore.units.has(callback)) {
+      currentStore.units.set(callback, {hooks: []});
+    }
+    // save cursor
     const prevUnitKey = currentUnitKey;
     const prevHookIndex = currentHookIndex;
 
-    // reset
+    // reset cursor
     currentUnitKey = callback;
     currentHookIndex = 0;
 
     // call
     const result = callback();
 
-    // restore
+    // restore cursor
     currentUnitKey = prevUnitKey;
     currentHookIndex = prevHookIndex;
 
@@ -33,12 +38,22 @@ const defaultReducer = (state, value) => {
   }
 };
 
+let currentStore;
 let currentUnitKey = null;
 let currentHookIndex = 0;
-let units = new Map();
+let currentCallback = null;
+
+export const createStore = () => ({units: new Map()});
+export const setCurrentStore = store => currentStore = store;
+export const setCurrentCallback = callback => currentCallback = callback;
+;
 
 export const reuseState = (initialState) => {
   return reuseReducer(initialState, defaultReducer)
+}
+
+const notify = () => {
+  currentCallback && currentCallback();
 }
 
 export const reuseReducer = (initialState, reducer) => {
@@ -49,7 +64,11 @@ e.g. const reuseCount = reuse(() => {
 })')`);
   }
 
-  const {hooks} = units.get(currentUnitKey);
+  if (!currentStore) {
+    throw new Error('Must provide a store first');    
+  }
+
+  const {hooks} = currentStore.units.get(currentUnitKey);
 
   // If hook doesn't exist for this index, create it
   if (hooks.length <= currentHookIndex) {
@@ -59,7 +78,7 @@ e.g. const reuseCount = reuse(() => {
       const newState = reducer(prevState, action);
 
       hooks[curIndex][0] = newState;
-      // TBD: notify();
+      notify();
     }
     hooks[currentHookIndex] = [initialState, setState];
   }
