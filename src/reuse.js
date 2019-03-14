@@ -15,11 +15,16 @@ export const reuse = (unit) => {
     throw new Error('Must provide a store first');
   }
 
+  // TBD unit dependencies
+  // if (currentUnitKey) {
+  //   currentStore.getUnit(currentUnitKey).addDependency(unit);
+  // }
+
+  // TBD cache the value
   // if (!unit.cachedValue) {
     // save cursor
     const prevUnitKey = currentUnitKey;
     const prevHookIndex = currentHookIndex;
-    const prevCallback = currentCallback;
 
     // reset cursor
     currentUnitKey = unit;
@@ -50,7 +55,6 @@ const defaultReducer = (state, value) => {
 let currentStore;
 let currentUnitKey = null;
 let currentHookIndex = 0;
-let currentCallback = null;
 
 export const createStore = () => {
   const store = {
@@ -69,7 +73,7 @@ export const createStore = () => {
           forceUpdate: () => {
             unitContext.subscribers.forEach(sub => {
               const newValue = reuse(unitContext.unit);
-
+              // TBD - check if different than previous cachedValue
               sub(newValue);
             });
           }
@@ -86,6 +90,10 @@ export const createStore = () => {
 };
 
 export const setCurrentStore = store => currentStore = store;
+
+
+// TBD: reuseEffect
+// TBD: reuseMemo
 
 export const reuseState = (initialState) => {
   return reuseReducer(initialState, defaultReducer)
@@ -114,8 +122,6 @@ e.g. const reuseCount = reuse(() => {
 
       unitContext.hooks[curIndex][0] = newState;
       unitContext.forceUpdate();
-      // unit.invalidate = true;
-      // notify();
     }
     unitContext.hooks[currentHookIndex] = [initialState, setState];
   }
