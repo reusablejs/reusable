@@ -1,34 +1,43 @@
-export const reuse = callback => {
-  return () => {
-    if (!currentStore) {
-      throw new Error('Must provide a store first');
-    }
-    // Lazily define hooks for this unit
-    if (!currentStore.units.has(callback)) {
-      currentStore.units.set(callback, {hooks: []});
-    }
+import React, {
+  createContext,
+  useRef,
+  useState,
+  useContext,
+  useEffect
+} from "react";
+
+// TBD: export const useReuse = unit => {
+
+// }
+
+export const reuse = (unit) => {
+  if (!currentStore) {
+    throw new Error('Must provide a store first');
+  }
+
+  // if (!unit.cachedValue) {
     // save cursor
     const prevUnitKey = currentUnitKey;
     const prevHookIndex = currentHookIndex;
+    const prevCallback = currentCallback;
 
     // reset cursor
-    currentUnitKey = callback;
+    currentUnitKey = unit;
     currentHookIndex = 0;
 
     // call
-    const result = callback();
+    // unit.cachedValue = unit();
+    const result = unit();
 
     // restore cursor
     currentUnitKey = prevUnitKey;
     currentHookIndex = prevHookIndex;
 
-    // return
-    return result;
-  }
-}
-// TBD: export const useReuse = unit => {
+  // }
 
-// }
+  return result;
+  // return unit.cachedValue;
+}
 
 const defaultReducer = (state, value) => {
   if (typeof value === "function") {
@@ -43,17 +52,43 @@ let currentUnitKey = null;
 let currentHookIndex = 0;
 let currentCallback = null;
 
-export const createStore = () => ({units: new Map()});
+export const createStore = () => {
+  const store = {
+    unitContexts: new Map(),
+    getUnit: (unit) => {
+      // Lazily define hooks for this unit
+      if (!store.unitContexts.has(unit)) {
+        const unitContext = {
+          unit,
+          hooks: [],
+          subscribers: [],
+          subscribe: (callback) => {
+            unitContext.subscribers.push(callback);
+            return () => unitContext.subscribers = unitContext.subscribers.filter(sub => sub !== callback)
+          },
+          forceUpdate: () => {
+            unitContext.subscribers.forEach(sub => {
+              const newValue = reuse(unitContext.unit);
+
+              sub(newValue);
+            });
+          }
+        }
+        store.unitContexts.set(unit, unitContext);
+      }
+      return store.unitContexts.get(unit);
+    },
+    subscribe: (unit, callback) => {
+      return store.getUnit(unit).subscribe(callback);
+    }
+  };
+  return store;
+};
+
 export const setCurrentStore = store => currentStore = store;
-export const setCurrentCallback = callback => currentCallback = callback;
-;
 
 export const reuseState = (initialState) => {
   return reuseReducer(initialState, defaultReducer)
-}
-
-const notify = () => {
-  currentCallback && currentCallback();
 }
 
 export const reuseReducer = (initialState, reducer) => {
@@ -68,23 +103,61 @@ e.g. const reuseCount = reuse(() => {
     throw new Error('Must provide a store first');    
   }
 
-  const {hooks} = currentStore.units.get(currentUnitKey);
+  const unitContext = currentStore.getUnit(currentUnitKey);
 
   // If hook doesn't exist for this index, create it
-  if (hooks.length <= currentHookIndex) {
+  if (unitContext.hooks.length <= currentHookIndex) {
     const curIndex = currentHookIndex; // For closure
     const setState = (action) => {
-      const prevState = hooks[curIndex][0];
+      const prevState = unitContext.hooks[curIndex][0];
       const newState = reducer(prevState, action);
 
-      hooks[curIndex][0] = newState;
-      notify();
+      unitContext.hooks[curIndex][0] = newState;
+      unitContext.forceUpdate();
+      // unit.invalidate = true;
+      // notify();
     }
-    hooks[currentHookIndex] = [initialState, setState];
+    unitContext.hooks[currentHookIndex] = [initialState, setState];
   }
   // Get current hook
-  let hook = hooks[currentHookIndex];
+  let hook = unitContext.hooks[currentHookIndex];
   currentHookIndex++;
 
   return hook;
+}
+
+
+
+// react-reuse
+const ReuseContext = createContext();
+
+export const ReuseProvider = ({ store = null, children }) => {
+  const storeRef = useRef(store);
+
+  if (!storeRef.current) {
+    storeRef.current = createStore();
+  }
+
+  return (
+    <ReuseContext.Provider value={storeRef.current}>
+      {children}
+    </ReuseContext.Provider>
+  );
+};
+
+export const useReuse = (unit) => {
+  const store = useContext(ReuseContext);
+  setCurrentStore(store);
+  const [state, setState] = useState(() => reuse(unit));
+
+  useEffect(() => {
+    return store.subscribe(unit, () => {
+      const newState = reuse(unit);
+      if (newState !== state) {
+        setState(newState);
+      }
+    });
+  }, [state]);
+
+  return state;
 }

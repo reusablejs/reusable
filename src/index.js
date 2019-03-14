@@ -6,9 +6,9 @@ import ReactDOM from "react-dom";
 // import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
-import {reuse, reuseState, createStore, setCurrentStore, setCurrentCallback} from './reuse';
+import {reuse, reuseState, ReuseProvider, useReuse, setCurrentStore, createStore} from './reuse';
 
-const reuseCount = reuse(() => {
+const counter = () => {
   const [count, setCount] = reuseState(0);
   const [step, setStep] = reuseState(0);
 
@@ -18,38 +18,69 @@ const reuseCount = reuse(() => {
     setStep,
     setCount
   }
-});
+};
 
-const reuseUser = reuse(() => reuseState('Jack'));
+const user = () => reuseState('Jack');
 
-const reuseSelector = reuse(() => {
-  const {count} = reuseCount();
+const selector = () => {
+  const {count} = reuse(counter);
 
   return count % 10;
-});
+};
 
-const store = createStore();
-setCurrentStore(store);
-setCurrentCallback(() => {
-  const a1 = reuseCount();
-  console.log('count, step', a1.count, a1.step);
-  console.log('reuseSelector', reuseSelector());  
-});
-
-const a1 = reuseCount();
-console.log('count, step', a1.count, a1.step);
-console.log('reuseSelector', reuseSelector());
-
-console.log('setCount(2)');
-reuseCount().setCount(2);
-console.log('setStep(3)');
-reuseCount().setStep(3);
-
-// const store = withHistory(createStore)();
 // const store = createStore();
+// setCurrentStore(store);
+
+// store.subscribe(counter, ({count, step}) => {
+//   console.log('count', count);
+//   console.log('step', step);
+// });
+
+// const a = reuse(counter);
+
+// console.log('a.setCount(2)');
+// a.setCount(2);
+// console.log('a2.setStep(3)');
+// a.setStep(3);
+
+// const a2 = reuse(counter);
+// console.log('a2.count', a2.count);
+// console.log('a2.step', a2.step);
+
+function Comp() {
+  const {count, setCount, step, setStep} = useReuse(counter);
+
+  return (<div>
+    count: <input value={count} onChange={e => setCount(e.target.value)} /><br/>
+    step: <input value={step} onChange={e => setStep(e.target.value)} /><br/>
+  </div>)
+}
+
+function Comp2() {
+  const {count, step} = useReuse(counter);
+
+  return (<div>
+    count: {count}<br/>
+    step: {step}<br/>
+  </div>)
+}
+
+function Comp3() {
+  const countMod10 = useReuse(selector);
+
+  return (<div>
+    count modulo 10: {countMod10}<br/>
+  </div>)
+}
 
 function App() {
-  return (<div>bla</div>
+
+  return (
+    <ReuseProvider>
+      <Comp/>
+      <Comp2/>
+      <Comp3/>
+    </ReuseProvider>
   );
 }
 
