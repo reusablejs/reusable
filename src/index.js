@@ -6,7 +6,8 @@ import ReactDOM from "react-dom";
 // import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
-import {Reuse, reuse, reuseState, ReuseProvider, useReuse, withReuse, reuseMemo} from './reuse';
+import {reuse, reuseState, reuseMemo} from './reuse';
+import {Reuse, ReuseProvider, useReuse, withReuse} from './react-reuse';
 
 const counter = () => {
   const [count, setCount] = reuseState(0);
