@@ -221,3 +221,32 @@ export const withReuse = (unit, mapStateToProps) => (Comp) => {
 
   return React.forwardRef(forwardRef);
 }
+
+export class Reuse extends React.Component {
+  state = {
+    result: undefined
+  };
+  componentDidMount() {
+    const store = this.context;
+    setCurrentStore(store);
+    this.unsubscribe = store.subscribe(this.props.unit, () => {
+      this.updateState();
+    })
+    this.updateState();
+  }
+  updateState() {
+    this.setState({
+      result: reuse(this.props.unit)
+    })
+  }
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+  render() {
+    const {children} = this.props;
+    const {result} = this.state;
+
+    return result ? children(result) : null;
+  }
+}
+Reuse.contextType = ReuseContext;

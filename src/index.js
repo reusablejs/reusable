@@ -6,7 +6,7 @@ import ReactDOM from "react-dom";
 // import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
-import {reuse, reuseState, ReuseProvider, useReuse, withReuse} from './reuse';
+import {Reuse, reuse, reuseState, ReuseProvider, useReuse, withReuse} from './reuse';
 
 const counter = () => {
   const [count, setCount] = reuseState(0);
@@ -88,6 +88,17 @@ class Comp4 extends React.Component {
 
 const WrappedComp4 = withReuse(counter, ({count}) => ({count}))(Comp4);
 
+const Comp5 = () => (
+  <div>
+    render count: 
+    <Reuse unit={counter}>
+      {
+        ({count}) => <span>{count}</span>
+      }
+    </Reuse><br/>
+  </div>
+);
+
 function App() {
   return (
     <ReuseProvider>
@@ -95,6 +106,7 @@ function App() {
       <Comp2/>
       <Comp3/>
       <WrappedComp4/>
+      <Comp5/>
     </ReuseProvider>
   );
 }
