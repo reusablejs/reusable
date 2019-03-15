@@ -68,21 +68,12 @@ export const createStore = () => {
           },
           unsubscribe: (callback) => {
             unitContext.subscribers = unitContext.subscribers.filter(sub => sub !== callback);
-            // TBD - cleanup
-            // if (unitContext.subscribers.length === 0) {
-            //   unitContext.cleanup();
-            // }
           },
-          // cleanup: () => {
-            // TBD - cleanup
-            // unitContext.dependencies.keys().forEach((unit) => {
-            //   unitContext.dependencies.get(unit)();
-            // });
-          // },
           addDependency: (unit) => {
             const unitContextDep = store.getUnit(unit);
             if (!unitContext.dependencies.has(unit)) {
-              unitContext.dependencies.set(unit, unitContextDep.subscribe(unitContext.update));
+              const unsubscribe = unitContextDep.subscribe(unitContext.update);
+              unitContext.dependencies.set(unit, unsubscribe);
             }
           },
           update: () => {
@@ -178,11 +169,10 @@ export const useReuse = (unit) => {
   useEffect(() => {
     return store.subscribe(unit, () => {
       const newState = reuse(unit);
-      if (newState !== state) {
-        setState(newState);
-      }
+
+      setState(newState);
     });
-  }, [state]);
+  }, []);
 
   return state;
 }
