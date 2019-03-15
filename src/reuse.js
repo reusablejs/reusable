@@ -111,10 +111,7 @@ export const reuseState = (initialState) => {
 
 export const reuseReducer = (initialState, reducer) => {
   if (!currentUnitKey) {
-    throw new Error(`reuse hooks cannot be called outside of a reusable unit,
-e.g. const reuseCount = reuse(() => {
-  return reuseState(0);
-})')`);
+    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
   }
 
   if (!currentStore) {
@@ -142,7 +139,32 @@ e.g. const reuseCount = reuse(() => {
   return hook;
 }
 
+export const reuseMemo = (fn, deps) => {
+  if (!currentUnitKey) {
+    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
+  }
 
+  if (!currentStore) {
+    throw new Error('Must provide a store first');    
+  }
+
+  const unitContext = currentStore.getUnit(currentUnitKey);
+  // If hook doesn't exist for this index, create it
+  if (unitContext.hooks.length <= currentHookIndex) {
+    unitContext.hooks[currentHookIndex] = [undefined, undefined];
+  }
+  // Get current hook
+  let hook = unitContext.hooks[currentHookIndex];
+  currentHookIndex++;
+  let prevDeps = hook[1];
+
+  // If deps changed
+  if (!shallowCompare(prevDeps, deps)) {
+    hook[0] = fn();
+    hook[1] = deps;
+  }
+  return hook[0];
+}
 
 // react-reuse
 const ReuseContext = createContext();
@@ -178,9 +200,15 @@ export const useReuse = (unit) => {
 }
 
 const shallowCompare = (obj1, obj2) => {
+  if ((!obj1 && obj2) || (obj1 && !obj2)) {
+    return false;
+  }
+  if (!obj1 && !obj2) {
+    return true;
+  }
   const keys = [...Object.keys(obj1), ...Object.keys(obj2)];
 
-  for (let key of keys) {
+   for (let key of keys) {
     if (obj1[key] !== obj2[key]) {
       return false;
     }
@@ -259,3 +287,4 @@ export class Reuse extends React.Component {
   }
 }
 Reuse.contextType = ReuseContext;
+

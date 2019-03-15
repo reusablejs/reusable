@@ -6,7 +6,7 @@ import ReactDOM from "react-dom";
 // import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
-import {Reuse, reuse, reuseState, ReuseProvider, useReuse, withReuse} from './reuse';
+import {Reuse, reuse, reuseState, ReuseProvider, useReuse, withReuse, reuseMemo} from './reuse';
 
 const counter = () => {
   const [count, setCount] = reuseState(0);
@@ -19,13 +19,12 @@ const counter = () => {
     setCount
   }
 };
-
-const selectCount = () => reuse(counter).count;
+const useCounter = () => useReuse(counter);
 
 const modulo = () => {
-  const count = reuse(selectCount);
-  console.log('recalc modulo');
-  return count % 10;
+  const count = reuse(counter).count;
+  console.log('render modulo')
+  return reuseMemo(() => console.log('recalc modulo') || count % 10, [count]);
 };
 
 
