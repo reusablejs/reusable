@@ -167,3 +167,57 @@ export const useReuse = (unit) => {
 
   return state;
 }
+
+const shallowCompare = (obj1, obj2) => {
+  const keys = [...Object.keys(obj1), ...Object.keys(obj2)];
+
+  for (let key of keys) {
+    if (obj1[key] !== obj2[key]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// HOC
+export const withReuse = (unit, mapStateToProps) => (Comp) => {
+  class WrappedComponent extends React.Component {
+    state = {
+      mappedProps: {}
+    }
+    componentDidMount() {
+      const store = this.context;
+      setCurrentStore(store);
+      this.unsubscribe = store.subscribe(unit, () => {
+        this.updateStateToProps();
+      })
+      this.updateStateToProps();
+    }
+    updateStateToProps() {
+      const newState = reuse(unit);
+      const newProps = mapStateToProps(newState);
+      const oldProps = this.state.mappedProps;
+
+      if (!shallowCompare(oldProps, newProps)) {
+        this.setState({ mappedProps: newProps });
+      }
+    }
+    componentWillUnmount() {
+      this.unsubscribe();
+    }
+    render() { 
+      const {forwardedRef, ...ownProps} = this.props;
+      const {mappedProps} = this.state;
+
+      return <Comp ref={forwardedRef} {...ownProps} {...mappedProps}/>;
+    }
+  }
+  WrappedComponent.contextType = ReuseContext;
+  function forwardRef(props, ref) {
+    return <WrappedComponent {...props} forwardedRef={ref} />;
+  }
+  const name = Comp.displayName || Comp.name;
+  forwardRef.displayName = `withReuse(${name})`;
+
+  return React.forwardRef(forwardRef);
+}

@@ -6,7 +6,7 @@ import ReactDOM from "react-dom";
 // import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
-import {reuse, reuseState, ReuseProvider, useReuse, setCurrentStore, createStore} from './reuse';
+import {reuse, reuseState, ReuseProvider, useReuse, withReuse} from './reuse';
 
 const counter = () => {
   const [count, setCount] = reuseState(0);
@@ -20,13 +20,14 @@ const counter = () => {
   }
 };
 
-const user = () => reuseState('Jack');
+const useCounter = () => useReuse(counter);
 
 const selector = () => {
   const {count} = reuse(counter);
 
   return count % 10;
 };
+
 
 // const store = createStore();
 // setCurrentStore(store);
@@ -48,7 +49,7 @@ const selector = () => {
 // console.log('a2.step', a2.step);
 
 function Comp() {
-  const {count, setCount, step, setStep} = useReuse(counter);
+  const {count, setCount, step, setStep} = useCounter();
 
   return (<div>
     count: <input value={count} onChange={e => setCount(e.target.value)} /><br/>
@@ -57,7 +58,7 @@ function Comp() {
 }
 
 function Comp2() {
-  const {count, step} = useReuse(counter);
+  const {count, step} = useCounter();
 
   return (<div>
     count: {count}<br/>
@@ -73,13 +74,27 @@ function Comp3() {
   </div>)
 }
 
-function App() {
+class Comp4 extends React.Component {
+  render() {
+    const {count} = this.props;
+    console.log('render HOC');
+    return (
+      <div>
+        withCounter.count = {count}<br/>
+      </div>
+    );
+  }
+}
 
+const WrappedComp4 = withReuse(counter, ({count}) => ({count}))(Comp4);
+
+function App() {
   return (
     <ReuseProvider>
       <Comp/>
       <Comp2/>
       <Comp3/>
+      <WrappedComp4/>
     </ReuseProvider>
   );
 }
