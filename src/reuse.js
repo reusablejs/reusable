@@ -11,13 +11,13 @@ export const reuse = (unit) => {
     throw new Error('Must provide a store first');
   }
 
-  // TBD unit dependencies
   if (currentUnitKey) {
     currentStore.getUnit(currentUnitKey).addDependency(unit);
   }
 
-  // TBD cache the value
-  // if (!unit.cachedValue) {
+  const unitContext = currentStore.getUnit(unit);
+
+  if (!unitContext.cachedValue) {
     // save cursor
     const prevUnitKey = currentUnitKey;
     const prevHookIndex = currentHookIndex;
@@ -27,17 +27,15 @@ export const reuse = (unit) => {
     currentHookIndex = 0;
 
     // call
-    // unit.cachedValue = unit();
-    const result = unit();
+    unitContext.cachedValue = unit();
 
     // restore cursor
     currentUnitKey = prevUnitKey;
     currentHookIndex = prevHookIndex;
 
-  // }
+  }
 
-  return result;
-  // return unit.cachedValue;
+  return unitContext.cachedValue;
 }
 
 const defaultReducer = (state, value) => {
@@ -63,35 +61,31 @@ export const createStore = () => {
           hooks: [],
           subscribers: [],
           dependencies: new Map(),
+          cachedValue: undefined,
           subscribe: (callback) => {
             unitContext.subscribers.push(callback);
             return () => unitContext.unsubscribe(callback);
           },
           unsubscribe: (callback) => {
             unitContext.subscribers = unitContext.subscribers.filter(sub => sub !== callback);
-            // TBD - cleanup
-            // if (unitContext.subscribers.length === 0) {
-            //   unitContext.cleanup();
-            // }
           },
-          // cleanup: () => {
-            // TBD - cleanup
-            // unitContext.dependencies.keys().forEach((unit) => {
-            //   unitContext.dependencies.get(unit)();
-            // });
-          // },
           addDependency: (unit) => {
             const unitContextDep = store.getUnit(unit);
             if (!unitContext.dependencies.has(unit)) {
-              unitContext.dependencies.set(unit, unitContextDep.subscribe(unitContext.update));
+              const unsubscribe = unitContextDep.subscribe(unitContext.update);
+              unitContext.dependencies.set(unit, unsubscribe);
             }
           },
           update: () => {
-            unitContext.subscribers.forEach(sub => {
-              const newValue = reuse(unitContext.unit);
-              // TBD - check if different than previous cachedValue
-              sub(newValue);
-            });
+            const prevValue = unitContext.cachedValue;
+            unitContext.cachedValue = undefined;
+            const newValue = reuse(unitContext.unit);
+  
+            if (newValue !== prevValue) {
+              unitContext.subscribers.forEach(sub => {
+                sub(newValue);
+              });
+            }
           }
         }
         store.unitContexts.set(unit, unitContext);
@@ -175,11 +169,10 @@ export const useReuse = (unit) => {
   useEffect(() => {
     return store.subscribe(unit, () => {
       const newState = reuse(unit);
-      if (newState !== state) {
-        setState(newState);
-      }
+
+      setState(newState);
     });
-  }, [state]);
+  }, []);
 
   return state;
 }
