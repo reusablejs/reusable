@@ -6,19 +6,15 @@ import React, {
   useEffect
 } from "react";
 
-// TBD: export const useReuse = unit => {
-
-// }
-
 export const reuse = (unit) => {
   if (!currentStore) {
     throw new Error('Must provide a store first');
   }
 
   // TBD unit dependencies
-  // if (currentUnitKey) {
-  //   currentStore.getUnit(currentUnitKey).addDependency(unit);
-  // }
+  if (currentUnitKey) {
+    currentStore.getUnit(currentUnitKey).addDependency(unit);
+  }
 
   // TBD cache the value
   // if (!unit.cachedValue) {
@@ -66,11 +62,31 @@ export const createStore = () => {
           unit,
           hooks: [],
           subscribers: [],
+          dependencies: new Map(),
           subscribe: (callback) => {
             unitContext.subscribers.push(callback);
-            return () => unitContext.subscribers = unitContext.subscribers.filter(sub => sub !== callback)
+            return () => unitContext.unsubscribe(callback);
           },
-          forceUpdate: () => {
+          unsubscribe: (callback) => {
+            unitContext.subscribers = unitContext.subscribers.filter(sub => sub !== callback);
+            // TBD - cleanup
+            // if (unitContext.subscribers.length === 0) {
+            //   unitContext.cleanup();
+            // }
+          },
+          // cleanup: () => {
+            // TBD - cleanup
+            // unitContext.dependencies.keys().forEach((unit) => {
+            //   unitContext.dependencies.get(unit)();
+            // });
+          // },
+          addDependency: (unit) => {
+            const unitContextDep = store.getUnit(unit);
+            if (!unitContext.dependencies.has(unit)) {
+              unitContext.dependencies.set(unit, unitContextDep.subscribe(unitContext.update));
+            }
+          },
+          update: () => {
             unitContext.subscribers.forEach(sub => {
               const newValue = reuse(unitContext.unit);
               // TBD - check if different than previous cachedValue
@@ -121,7 +137,7 @@ e.g. const reuseCount = reuse(() => {
       const newState = reducer(prevState, action);
 
       unitContext.hooks[curIndex][0] = newState;
-      unitContext.forceUpdate();
+      unitContext.update();
     }
     unitContext.hooks[currentHookIndex] = [initialState, setState];
   }
