@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useRef,
-  useState,
-  useContext,
-  useEffect
-} from "react";
+import {shallowCompare} from './shallow-compare';
 
 export const reuse = (unit) => {
   if (!currentStore) {
@@ -111,10 +105,7 @@ export const reuseState = (initialState) => {
 
 export const reuseReducer = (initialState, reducer) => {
   if (!currentUnitKey) {
-    throw new Error(`reuse hooks cannot be called outside of a reusable unit,
-e.g. const reuseCount = reuse(() => {
-  return reuseState(0);
-})')`);
+    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
   }
 
   if (!currentStore) {
@@ -142,120 +133,30 @@ e.g. const reuseCount = reuse(() => {
   return hook;
 }
 
-
-
-// react-reuse
-const ReuseContext = createContext();
-
-export const ReuseProvider = ({ store = null, children }) => {
-  const storeRef = useRef(store);
-
-  if (!storeRef.current) {
-    storeRef.current = createStore();
+export const reuseMemo = (fn, deps) => {
+  if (!currentUnitKey) {
+    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
   }
 
-  return (
-    <ReuseContext.Provider value={storeRef.current}>
-      {children}
-    </ReuseContext.Provider>
-  );
-};
+  if (!currentStore) {
+    throw new Error('Must provide a store first');    
+  }
 
-export const useReuse = (unit) => {
-  const store = useContext(ReuseContext);
-  setCurrentStore(store);
-  const [state, setState] = useState(() => reuse(unit));
+  const unitContext = currentStore.getUnit(currentUnitKey);
+  // If hook doesn't exist for this index, create it
+  if (unitContext.hooks.length <= currentHookIndex) {
+    unitContext.hooks[currentHookIndex] = [undefined, undefined];
+  }
+  // Get current hook
+  let hook = unitContext.hooks[currentHookIndex];
+  currentHookIndex++;
+  let prevDeps = hook[1];
 
-  useEffect(() => {
-    return store.subscribe(unit, () => {
-      const newState = reuse(unit);
-
-      setState(newState);
-    });
-  }, []);
-
-  return state;
+  // If deps changed
+  if (!shallowCompare(prevDeps, deps)) {
+    hook[0] = fn();
+    hook[1] = deps;
+  }
+  return hook[0];
 }
 
-const shallowCompare = (obj1, obj2) => {
-  const keys = [...Object.keys(obj1), ...Object.keys(obj2)];
-
-  for (let key of keys) {
-    if (obj1[key] !== obj2[key]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// HOC
-export const withReuse = (mapStateToProps, units) => (Comp) => {
-  class WrappedComponent extends React.Component {
-    state = {
-      mappedProps: {}
-    }
-    componentDidMount() {
-      const store = this.context;
-      setCurrentStore(store);
-      this.unsubscribes = units.map(unit => store.subscribe(unit, () => {
-        this.updateStateToProps();
-      }));
-      this.updateStateToProps();
-    }
-    componentWillUnmount() {
-      this.unsubscribes.forEach(unsubscribe => unsubscribe());
-    }
-    updateStateToProps() {
-      const newStates = units.map(unit => reuse(unit));
-      const newProps = mapStateToProps(newStates);
-      const oldProps = this.state.mappedProps;
-
-      if (!shallowCompare(oldProps, newProps)) {
-        this.setState({ mappedProps: newProps });
-      }
-    }
-    render() { 
-      const {forwardedRef, ...ownProps} = this.props;
-      const {mappedProps} = this.state;
-
-      return <Comp ref={forwardedRef} {...ownProps} {...mappedProps}/>;
-    }
-  }
-  WrappedComponent.contextType = ReuseContext;
-  function forwardRef(props, ref) {
-    return <WrappedComponent {...props} forwardedRef={ref} />;
-  }
-  const name = Comp.displayName || Comp.name;
-  forwardRef.displayName = `withReuse(${name})`;
-
-  return React.forwardRef(forwardRef);
-}
-
-export class Reuse extends React.Component {
-  state = {
-    result: undefined
-  };
-  componentDidMount() {
-    const store = this.context;
-    setCurrentStore(store);
-    this.unsubscribe = store.subscribe(this.props.unit, () => {
-      this.updateState();
-    })
-    this.updateState();
-  }
-  updateState() {
-    this.setState({
-      result: reuse(this.props.unit)
-    })
-  }
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-  render() {
-    const {children} = this.props;
-    const {result} = this.state;
-
-    return result ? children(result) : null;
-  }
-}
-Reuse.contextType = ReuseContext;
