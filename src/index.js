@@ -20,11 +20,11 @@ const counter = () => {
   }
 };
 
-const useCounter = () => useReuse(counter);
+const selectCount = () => reuse(counter).count;
 
-const selector = () => {
-  const {count} = reuse(counter);
-
+const modulo = () => {
+  const count = reuse(selectCount);
+  console.log('recalc modulo');
   return count % 10;
 };
 
@@ -67,7 +67,8 @@ function Comp2() {
 }
 
 function Comp3() {
-  const countMod10 = useReuse(selector);
+  const countMod10 = useReuse(modulo);
+  console.log('Comp3');
 
   return (<div>
     count modulo 10: {countMod10}<br/>
