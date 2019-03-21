@@ -112,18 +112,13 @@ const Comp5 = () => (
 );
 
 function App() {
-  const [show, setShow] = useState(true);
-
   return (
     <ReuseProvider>
-      <button onClick={() => setShow(v => !v)}>Toggle</button>
-      {show ? <div>
-        <Comp/>
-        <Comp2/>
-        <Comp3/>
-        <WrappedComp4/>
-        <Comp5/>
-      </div> : null}
+      <Comp/>
+      <Comp2/>
+      <Comp3/>
+      <WrappedComp4/>
+      <Comp5/>
     </ReuseProvider>
   );
 }

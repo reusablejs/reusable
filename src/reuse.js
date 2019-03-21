@@ -76,24 +76,6 @@ export const createStore = () => {
           },
           unsubscribe: (callback) => {
             unitContext.subscribers = unitContext.subscribers.filter(sub => sub !== callback);
-            if (unitContext.subscribers.length === 0) {
-              unitContext.cleanup();
-            }
-          },
-          cleanup: () => {
-            // unsubscribe from dependencies
-            unitContext.dependencies.forEach(unsubscribe => unsubscribe());
-
-            // run cleanup effects
-            unitContext.hooks.forEach(hook => {
-              if (hook.cleanup) {
-                if (typeof hook.cleanup === 'function') {
-                  hook.cleanup();
-                } else {
-                  console.error(`Cleanup function ${hook.cleanup} is not a function`)
-                }
-              }
-            });
           },
           addDependency: (unit) => {
             const unitContextDep = store.getUnit(unit);
