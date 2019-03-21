@@ -98,11 +98,16 @@ class Comp4 extends React.Component {
   }
 }
 
-const WrappedComp4 = withReuse(counter, ({count}) => ({count}))(Comp4);
+const WrappedComp4 = withReuse(
+  ([counter]) => ({
+    count: counter.count
+  }),
+  [counter]
+)(Comp4);
 
 const Comp5 = () => (
   <div>
-    render count: 
+    render count:
     <Reuse unit={counter}>
       {
         ({count}) => <span>{count}</span>
