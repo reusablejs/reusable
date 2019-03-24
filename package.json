@@ -6,6 +6,7 @@
   "main": "src/index.js",
   "dependencies": {
     "immer": "1.10.3",
+    "invariant": "^2.2.4",
     "lodash": "4.17.11",
     "react": "next",
     "react-dom": "next",

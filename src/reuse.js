@@ -1,9 +1,8 @@
 import {shallowCompare} from './shallow-compare';
+import invariant from 'invariant';
 
 export const reuse = (unit) => {
-  if (!currentStore) {
-    throw new Error('Must provide a store first');
-  }
+  invariant(currentStore, 'Must provide a store first');
 
   if (currentUnitKey) {
     currentStore.getUnit(currentUnitKey).addDependency(unit);
@@ -26,14 +25,14 @@ export const reuse = (unit) => {
     // run effects:
     unitContext.effects.forEach(effect => {
       if (effect.cleanup) {
-        if (typeof effect.cleanup === 'function') {
-          effect.cleanup();
-        } else {
-          console.error(`Cleanup function ${effect.cleanup} is not a function`)
-        }
+        invariant(typeof effect.cleanup === 'function', `Cleanup function ${effect.cleanup} is not a function`);
+
+        effect.cleanup();
       };
+
       effect.cleanup = effect.effectFn();
-    })
+    });
+
     unitContext.effects = [];
 
     // restore cursor
@@ -43,7 +42,7 @@ export const reuse = (unit) => {
   }
 
   return unitContext.cachedValue;
-}
+};
 
 const defaultReducer = (state, value) => {
   if (typeof value === "function") {
@@ -88,7 +87,7 @@ export const createStore = () => {
             const prevValue = unitContext.cachedValue;
             unitContext.cachedValue = undefined;
             const newValue = reuse(unitContext.unit);
-  
+
             if (newValue !== prevValue) {
               unitContext.subscribers.forEach(sub => {
                 sub(newValue);
@@ -114,13 +113,8 @@ export const reuseState = (initialState) => {
 }
 
 export const reuseReducer = (initialState, reducer) => {
-  if (!currentUnitKey) {
-    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
-  }
-
-  if (!currentStore) {
-    throw new Error('Must provide a store first');    
-  }
+  invariant(currentUnitKey, `reuseMemo hook cannot be called outside of a reuse statement`);
+  invariant(currentStore, `Must provide a store first`);
 
   const unitContext = currentStore.getUnit(currentUnitKey);
 
@@ -133,7 +127,7 @@ export const reuseReducer = (initialState, reducer) => {
 
       unitContext.hooks[curIndex].state = newState;
       unitContext.update();
-    }
+    };
     unitContext.hooks[currentHookIndex] = {state: initialState, setState, type: 'state'};
   }
   // Get current hook
@@ -144,13 +138,8 @@ export const reuseReducer = (initialState, reducer) => {
 }
 
 export const reuseMemo = (fn, deps) => {
-  if (!currentUnitKey) {
-    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
-  }
-
-  if (!currentStore) {
-    throw new Error('Must provide a store first');    
-  }
+  invariant(currentUnitKey, `reuseMemo hook cannot be called outside of a reuse statement`);
+  invariant(currentStore, `Must provide a store first`);
 
   const unitContext = currentStore.getUnit(currentUnitKey);
   // If hook doesn't exist for this index, create it
@@ -168,16 +157,11 @@ export const reuseMemo = (fn, deps) => {
     hook.deps = deps;
   }
   return hook.value;
-}
+};
 
 export const reuseEffect = (effectFn, deps) => {
-  if (!currentUnitKey) {
-    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
-  }
-
-  if (!currentStore) {
-    throw new Error('Must provide a store first');    
-  }
+  invariant(currentUnitKey, `reuseMemo hook cannot be called outside of a reuse statement`);
+  invariant(currentStore, `Must provide a store first`);
 
   const unitContext = currentStore.getUnit(currentUnitKey);
   // If hook doesn't exist for this index, create it
