@@ -3,20 +3,31 @@
   "version": "1.0.0",
   "description": "",
   "keywords": [],
-  "main": "src/index.js",
+  "main": "dist/reuse.js",
+  "source": "src/index.js",
+  "module": "dist/reuse.mjs",
+  "unpkg": "dist/reuse.umd.js",
   "dependencies": {
     "immer": "1.10.3",
-    "lodash": "4.17.11",
-    "react": "next",
-    "react-dom": "next",
-    "react-scripts": "2.0.3"
+    "lodash": "4.17.11"
   },
-  "devDependencies": {},
+  "peerDependencies": {
+    "react": ">= 16.8",
+    "react-dom": ">= 16.8"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-react": "^7.0.0",
+    "microbundle": "^0.11.0",
+    "parcel": "^1.12.3",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5"
+  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "example": "parcel ./example/index.html --out-dir exampleDist",
+    "build": "microbundle --jsx React.createElement",
+    "dev": "microbundle watch --jsx React.createElement"
   },
   "browserslist": [
     ">0.2%",

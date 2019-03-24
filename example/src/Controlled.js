@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { reuse, reuseState, reuseMemo } from "./reuse";
+import { reuse, reuseState, reuseMemo } from "../../dist/reuse";
 import { set, get } from "lodash/fp";
 
 export const reuseForms = reuse(() => {

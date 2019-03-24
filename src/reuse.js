@@ -23,19 +23,6 @@ export const reuse = (unit) => {
     // call
     unitContext.cachedValue = unit();
 
-    // run effects:
-    unitContext.effects.forEach(effect => {
-      if (effect.cleanup) {
-        if (typeof effect.cleanup === 'function') {
-          effect.cleanup();
-        } else {
-          console.error(`Cleanup function ${effect.cleanup} is not a function`)
-        }
-      };
-      effect.cleanup = effect.effectFn();
-    })
-    unitContext.effects = [];
-
     // restore cursor
     currentUnitKey = prevUnitKey;
     currentHookIndex = prevHookIndex;
@@ -66,7 +53,6 @@ export const createStore = () => {
         const unitContext = {
           unit,
           hooks: [],
-          effects: [],
           subscribers: [],
           dependencies: new Map(),
           cachedValue: undefined,
@@ -88,7 +74,7 @@ export const createStore = () => {
             const prevValue = unitContext.cachedValue;
             unitContext.cachedValue = undefined;
             const newValue = reuse(unitContext.unit);
-  
+
             if (newValue !== prevValue) {
               unitContext.subscribers.forEach(sub => {
                 sub(newValue);
@@ -109,6 +95,10 @@ export const createStore = () => {
 
 export const setCurrentStore = store => currentStore = store;
 
+
+// TBD: reuseEffect
+// TBD: reuseMemo
+
 export const reuseState = (initialState) => {
   return reuseReducer(initialState, defaultReducer)
 }
@@ -119,7 +109,7 @@ export const reuseReducer = (initialState, reducer) => {
   }
 
   if (!currentStore) {
-    throw new Error('Must provide a store first');    
+    throw new Error('Must provide a store first');
   }
 
   const unitContext = currentStore.getUnit(currentUnitKey);
@@ -128,19 +118,19 @@ export const reuseReducer = (initialState, reducer) => {
   if (unitContext.hooks.length <= currentHookIndex) {
     const curIndex = currentHookIndex; // For closure
     const setState = (action) => {
-      const prevState = unitContext.hooks[curIndex].state;
+      const prevState = unitContext.hooks[curIndex][0];
       const newState = reducer(prevState, action);
 
-      unitContext.hooks[curIndex].state = newState;
+      unitContext.hooks[curIndex][0] = newState;
       unitContext.update();
     }
-    unitContext.hooks[currentHookIndex] = {state: initialState, setState, type: 'state'};
+    unitContext.hooks[currentHookIndex] = [initialState, setState];
   }
   // Get current hook
   let hook = unitContext.hooks[currentHookIndex];
   currentHookIndex++;
 
-  return [hook.state, hook.setState];
+  return hook;
 }
 
 export const reuseMemo = (fn, deps) => {
@@ -149,56 +139,24 @@ export const reuseMemo = (fn, deps) => {
   }
 
   if (!currentStore) {
-    throw new Error('Must provide a store first');    
+    throw new Error('Must provide a store first');
   }
 
   const unitContext = currentStore.getUnit(currentUnitKey);
   // If hook doesn't exist for this index, create it
   if (unitContext.hooks.length <= currentHookIndex) {
-    unitContext.hooks[currentHookIndex] = { value: undefined, deps: undefined, type: 'memo' };
+    unitContext.hooks[currentHookIndex] = [undefined, undefined];
   }
   // Get current hook
   let hook = unitContext.hooks[currentHookIndex];
   currentHookIndex++;
-  let prevDeps = hook.deps;
-
-  // If deps changed - or no deps
-  if (!shallowCompare(prevDeps, deps) || !deps) {
-    hook.value = fn();
-    hook.deps = deps;
-  }
-  return hook.value;
-}
-
-export const reuseEffect = (effectFn, deps) => {
-  if (!currentUnitKey) {
-    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
-  }
-
-  if (!currentStore) {
-    throw new Error('Must provide a store first');    
-  }
-
-  const unitContext = currentStore.getUnit(currentUnitKey);
-  // If hook doesn't exist for this index, create it
-  if (unitContext.hooks.length <= currentHookIndex) {
-    unitContext.hooks[currentHookIndex] = {
-      deps: undefined,
-      effectFn,
-      cleanup: undefined,
-      type: 'effect'
-    };
-  }
-  // Get current hook
-  let hook = unitContext.hooks[currentHookIndex];
-  currentHookIndex++;
-  let prevDeps = hook.deps;
+  let prevDeps = hook[1];
 
   // If deps changed
-  if (!shallowCompare(prevDeps, deps) || !deps) {
-    unitContext.effects.push(hook);
-    hook.deps = deps;
-    hook.effectFn = effectFn;
+  if (!shallowCompare(prevDeps, deps)) {
+    hook[0] = fn();
+    hook[1] = deps;
   }
-  return;
+  return hook[0];
 }
+

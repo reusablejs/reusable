@@ -42,30 +42,30 @@ export const useReuse = (unit) => {
 }
 
 // HOC
-export const withReuse = (mapStateToProps, units) => (Comp) => {
+export const withReuse = (unit, mapStateToProps) => (Comp) => {
   class WrappedComponent extends React.Component {
     state = {
       mappedProps: {}
-    };
+    }
     componentDidMount() {
       const store = this.context;
       setCurrentStore(store);
-      this.unsubscribes = units.map(unit => store.subscribe(unit, () => {
+      this.unsubscribe = store.subscribe(unit, () => {
         this.updateStateToProps();
-      }));
+      })
       this.updateStateToProps();
     }
-    componentWillUnmount() {
-      this.unsubscribes.forEach(unsubscribe => unsubscribe());
-    }
     updateStateToProps() {
-      const newStates = units.map(unit => reuse(unit));
-      const newProps = mapStateToProps(newStates);
+      const newState = reuse(unit);
+      const newProps = mapStateToProps(newState);
       const oldProps = this.state.mappedProps;
 
       if (!shallowCompare(oldProps, newProps)) {
         this.setState({ mappedProps: newProps });
       }
+    }
+    componentWillUnmount() {
+      this.unsubscribe();
     }
     render() {
       const {forwardedRef, ...ownProps} = this.props;
@@ -112,3 +112,4 @@ export class Reuse extends React.Component {
   }
 }
 Reuse.contextType = ReuseContext;
+

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useReuse } from "reuse-react";
+import { useReuse } from "../../dist/reuse";
 import { reuseTodos } from "./todos.state";
 
 export const Async = () => {

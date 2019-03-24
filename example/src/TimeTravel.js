@@ -1,5 +1,5 @@
 import React from "react";
-import { useTimeTravel } from "./reuse";
+import { useTimeTravel } from "../../dist/reuse";
 
 export const TimeTravel = () => {
   const { undo, redo, canUndo, canRedo, currentHistoryIndex } = useTimeTravel();
