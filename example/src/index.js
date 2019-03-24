@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import ReactDOM from "react-dom";
 // import { withHistory, ReuseProvider, createStore } from "./reuse";
 // import { ReuseProvider } from "./reuse";
@@ -6,11 +6,16 @@ import ReactDOM from "react-dom";
 // import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
-import {reuse, reuseState, reuseMemo, Reuse, ReuseProvider, useReuse, withReuse} from '../../dist/reuse';
+import {reuse, reuseState, reuseMemo, reuseEffect, Reuse, ReuseProvider, useReuse, withReuse} from '../../dist/reuse';
 
 const counter = () => {
   const [count, setCount] = reuseState(0);
   const [step, setStep] = reuseState(0);
+
+  reuseEffect(() => {
+    console.log('effect with deps');
+    return () => console.log('cleanup effect with deps');
+  }, [step]);
 
   return {
     count,
@@ -23,6 +28,12 @@ const useCounter = () => useReuse(counter);
 
 const modulo = () => {
   const count = reuse(counter).count;
+
+  reuseEffect(() => {
+    console.log('effect with no deps');
+    return () => console.log('cleanup effect with no deps');
+  });
+
   console.log('render modulo')
   return reuseMemo(() => console.log('recalc modulo') || count % 10, [count]);
 };
@@ -86,7 +97,12 @@ class Comp4 extends React.Component {
   }
 }
 
-const WrappedComp4 = withReuse(counter, ({count}) => ({count}))(Comp4);
+const WrappedComp4 = withReuse(
+  ([counter]) => ({
+    count: counter.count
+  }),
+  [counter]
+)(Comp4);
 
 const Comp5 = () => (
   <div>

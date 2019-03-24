@@ -1,9 +1,9 @@
 import React, {
-    createContext,
-    useRef,
-    useState,
-    useContext,
-    useEffect
+  createContext,
+  useRef,
+  useState,
+  useContext,
+  useEffect
 } from "react";
 import {shallowCompare} from './shallow-compare';
 import {reuse, createStore, setCurrentStore} from './reuse';
@@ -42,30 +42,30 @@ export const useReuse = (unit) => {
 }
 
 // HOC
-export const withReuse = (unit, mapStateToProps) => (Comp) => {
+export const withReuse = (mapStateToProps, units) => (Comp) => {
   class WrappedComponent extends React.Component {
     state = {
       mappedProps: {}
-    }
+    };
     componentDidMount() {
       const store = this.context;
       setCurrentStore(store);
-      this.unsubscribe = store.subscribe(unit, () => {
+      this.unsubscribes = units.map(unit => store.subscribe(unit, () => {
         this.updateStateToProps();
-      })
+      }));
       this.updateStateToProps();
     }
+    componentWillUnmount() {
+      this.unsubscribes.forEach(unsubscribe => unsubscribe());
+    }
     updateStateToProps() {
-      const newState = reuse(unit);
-      const newProps = mapStateToProps(newState);
+      const newStates = units.map(unit => reuse(unit));
+      const newProps = mapStateToProps(newStates);
       const oldProps = this.state.mappedProps;
 
       if (!shallowCompare(oldProps, newProps)) {
         this.setState({ mappedProps: newProps });
       }
-    }
-    componentWillUnmount() {
-      this.unsubscribe();
     }
     render() {
       const {forwardedRef, ...ownProps} = this.props;
@@ -112,4 +112,3 @@ export class Reuse extends React.Component {
   }
 }
 Reuse.contextType = ReuseContext;
-
