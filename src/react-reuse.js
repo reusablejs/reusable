@@ -1,9 +1,9 @@
 import React, {
-    createContext,
-    useRef,
-    useState,
-    useContext,
-    useEffect
+  createContext,
+  useRef,
+  useState,
+  useContext,
+  useEffect
 } from "react";
 import {shallowCompare} from './shallow-compare';
 import {reuse, createStore, setCurrentStore} from './reuse';

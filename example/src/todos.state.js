@@ -1,4 +1,4 @@
-import { reuse, reuseState, reuseEffect, reuseMemo } from "./reuse";
+import { reuse, reuseState, reuseEffect, reuseMemo } from "../../dist/reuse";
 
 const reusePersist = (key, [value, setValue]) => {
   reuseEffect(() => {

@@ -88,7 +88,7 @@ export const createStore = () => {
             const prevValue = unitContext.cachedValue;
             unitContext.cachedValue = undefined;
             const newValue = reuse(unitContext.unit);
-  
+
             if (newValue !== prevValue) {
               unitContext.subscribers.forEach(sub => {
                 sub(newValue);
@@ -119,7 +119,7 @@ export const reuseReducer = (initialState, reducer) => {
   }
 
   if (!currentStore) {
-    throw new Error('Must provide a store first');    
+    throw new Error('Must provide a store first');
   }
 
   const unitContext = currentStore.getUnit(currentUnitKey);
@@ -149,7 +149,7 @@ export const reuseMemo = (fn, deps) => {
   }
 
   if (!currentStore) {
-    throw new Error('Must provide a store first');    
+    throw new Error('Must provide a store first');
   }
 
   const unitContext = currentStore.getUnit(currentUnitKey);
@@ -176,7 +176,7 @@ export const reuseEffect = (effectFn, deps) => {
   }
 
   if (!currentStore) {
-    throw new Error('Must provide a store first');    
+    throw new Error('Must provide a store first');
   }
 
   const unitContext = currentStore.getUnit(currentUnitKey);
