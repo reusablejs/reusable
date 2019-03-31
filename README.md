@@ -160,7 +160,6 @@ https://goo.gl/forms/Jza0XsM7F3shvWhD2
 - Tests
 - DevTools integrations
 - Docs
-- Fallback to local state
 - More Examples
 - Time Travelling
 - TypeScript Support
