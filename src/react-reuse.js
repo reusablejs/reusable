@@ -3,7 +3,8 @@ import React, {
   useRef,
   useState,
   useContext,
-  useEffect
+  useEffect,
+  useDebugValue
 } from "react";
 import {shallowCompare} from './shallow-compare';
 import {reuse, createStore, setCurrentStore} from './reuse';
@@ -26,6 +27,8 @@ export const ReuseProvider = ({ store = null, children }) => {
 };
 
 export const useReuse = (unit) => {
+  useDebugValue(`useReuse(${unit.name})`);
+
   const store = useContext(ReuseContext);
   setCurrentStore(store);
   const [state, setState] = useState(() => reuse(unit));
