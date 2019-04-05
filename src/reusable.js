@@ -57,6 +57,8 @@ let currentStore;
 let currentUnitKey = null;
 let currentHookIndex = 0;
 
+const equality = (prev, next) => prev === next;
+
 export const createStore = () => {
   const store = {
     unitContexts: new Map(),
@@ -70,6 +72,7 @@ export const createStore = () => {
           subscribers: [],
           dependencies: new Map(),
           cachedValue: undefined,
+          areEqual: unit.areEqual || equality,
           subscribe: (callback) => {
             unitContext.subscribers.push(callback);
             return () => unitContext.unsubscribe(callback);
@@ -89,7 +92,7 @@ export const createStore = () => {
             unitContext.cachedValue = undefined;
             const newValue = reuse(unitContext.unit);
 
-            if (newValue !== prevValue) {
+            if (!unitContext.areEqual(prevValue, newValue)) { // TBD - change to shallowCompare
               unitContext.subscribers.forEach(sub => {
                 sub(newValue);
               });
@@ -206,3 +209,13 @@ export const reuseEffect = (effectFn, deps) => {
   }
   return;
 }
+
+export const reuseRef = (initialValue) => {
+  // TBD
+}
+
+export const Memo = (unit, areEqual = shallowCompare) => {
+  unit.areEqual = areEqual;
+
+  return unit;
+};
