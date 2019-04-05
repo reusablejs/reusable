@@ -2,21 +2,21 @@
 <rss version="2.0">
     <channel>
         <title>Test Site Blog</title>
-        <link>https://reusable.github.io/reusableblog</link>
+        <link>https://reusable.github.io/reusable/blog</link>
         <description>The best place to stay up-to-date with the latest Test Site news and events.</description>
         <lastBuildDate>Fri, 05 Apr 2019 06:00:00 GMT</lastBuildDate>
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
         <generator>Feed for Node.js</generator>
         <image>
             <title>Test Site Blog</title>
-            <url>https://reusable.github.io/reusableimg/docusaurus.svg</url>
-            <link>https://reusable.github.io/reusableblog</link>
+            <url>https://reusable.github.io/reusable/img/docusaurus.svg</url>
+            <link>https://reusable.github.io/reusable/blog</link>
         </image>
         <copyright>Copyright © 2019 ReusablesJS</copyright>
         <item>
             <title><![CDATA[Docs Website First Attempt]]></title>
-            <link>https://reusable.github.io/reusableblog/2019/04/05/docs-website.html</link>
-            <guid>https://reusable.github.io/reusableblog/2019/04/05/docs-website.html</guid>
+            <link>https://reusable.github.io/reusable/blog/2019/04/05/docs-website.html</link>
+            <guid>https://reusable.github.io/reusable/blog/2019/04/05/docs-website.html</guid>
             <pubDate>Fri, 05 Apr 2019 06:00:00 GMT</pubDate>
             <description><![CDATA[<p>Docs website is up</p>
 ]]></description>
