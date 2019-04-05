@@ -3,9 +3,9 @@
   "version": "1.0.0-alpha.2",
   "description": "",
   "keywords": [],
-  "main": "dist/reuse.js",
+  "main": "dist/reusable.js",
   "source": "src/index.js",
-  "unpkg": "dist/reuse.umd.js",
+  "unpkg": "dist/reusable.umd.js",
   "dependencies": {},
   "peerDependencies": {
     "react": ">= 16.8",

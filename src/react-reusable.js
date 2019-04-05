@@ -7,7 +7,7 @@ import React, {
   useDebugValue
 } from "react";
 import {shallowCompare} from './shallow-compare';
-import {reuse, createStore, setCurrentStore} from './reuse';
+import {reuse, createStore, setCurrentStore} from './reusable';
 
 // react-reuse
 const ReuseContext = createContext();
