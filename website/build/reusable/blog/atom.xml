@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://reusable.github.io/blog</id>
+    <title>Test Site Blog</title>
+    <updated>2019-04-05T06:00:00Z</updated>
+    <generator>Feed for Node.js</generator>
+    <link rel="alternate" href="https://reusable.github.io/blog"/>
+    <subtitle>The best place to stay up-to-date with the latest Test Site news and events.</subtitle>
+    <logo>https://reusable.github.io/img/docusaurus.svg</logo>
+    <rights>Copyright © 2019 ReusablesJS</rights>
+    <entry>
+        <title type="html"><![CDATA[Docs Website First Attempt]]></title>
+        <id>https://reusable.github.io/blog/2019/04/05/docs-website.html</id>
+        <link href="https://reusable.github.io/blog/2019/04/05/docs-website.html">
+        </link>
+        <updated>2019-04-05T06:00:00Z</updated>
+        <summary type="html"><![CDATA[<p>Docs website is up</p>
+]]></summary>
+        <author>
+            <name>Adam Klein</name>
+        </author>
+    </entry>
+</feed>

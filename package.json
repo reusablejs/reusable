@@ -29,11 +29,5 @@
     "build:dev": "microbundle watch --external all --jsx React.createElement",
     "dev": "concurrently \"npm run build:dev\" \"npm run example\"",
     "test": "jest"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  }
 }

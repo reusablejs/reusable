@@ -1,0 +1,6 @@
+{
+  "docs": {
+    "Getting Started": ["basic-usage"],
+    "API": ["reusable-api", "react-reusable-api"]
+  }
+}
