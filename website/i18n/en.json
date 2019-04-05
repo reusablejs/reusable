@@ -16,6 +16,10 @@
       "reusable-api": {
         "title": "Reusable API",
         "sidebar_label": "Reusable API"
+      },
+      "units": {
+        "title": "Creating and using data units",
+        "sidebar_label": "Creating and using data units"
       }
     },
     "links": {

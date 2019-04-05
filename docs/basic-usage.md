@@ -18,7 +18,7 @@ yarn add reusable
 // reusables/counter.js
 import { reuseState } from "reusable";
 
-export const counter = () => reuseState(0);
+export const timer = () => reuseState(0);
 ```
 
 ## React Provider
@@ -38,10 +38,10 @@ const App = () => (
 ```javascript
 // Header.js:
 import { useReuse } from "reusable/react";
-import { counter } from "./reusables/counter";
+import { timer } from "./reusables/counter";
 
 const Header = () => {
-  const [counter, setCounter] = useReuse(counter);
+  const [counter, setCounter] = useReuse(timer);
 
   return ... // Use it like regular hooks
 }
@@ -51,10 +51,10 @@ const Header = () => {
 ```javascript
 // Footer.js:
 import { useReuse } from "reusable/react";
-import { counter } from "./reusables/counter";
+import { timer } from "./reusables/timer";
 
 const Footer = () => {
-  const [counter, setCounter] = useReuse(counter); // Yup, same counter
+  const [counter, setCounter] = useReuse(timer); // Yup, same counter
 
   return ...
 }
