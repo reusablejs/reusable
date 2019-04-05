@@ -170,6 +170,10 @@ export const reuseMemo = (fn, deps) => {
   return hook.value;
 }
 
+export const reuseCallback = (fn, deps) => {
+  return reuseMemo(() => fn, deps);
+}
+
 export const reuseEffect = (effectFn, deps) => {
   if (!currentUnitKey) {
     throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
