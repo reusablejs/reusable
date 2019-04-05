@@ -7,4 +7,5 @@
 <url> <loc>https://reusable.github.io/reusable/docs/basic-usage</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://reusable.github.io/reusable/docs/basic-usage" /> </url>
 <url> <loc>https://reusable.github.io/reusable/docs/react-reusable-api</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://reusable.github.io/reusable/docs/react-reusable-api" /> </url>
 <url> <loc>https://reusable.github.io/reusable/docs/reusable-api</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://reusable.github.io/reusable/docs/reusable-api" /> </url>
+<url> <loc>https://reusable.github.io/reusable/docs/units</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://reusable.github.io/reusable/docs/units" /> </url>
 </urlset>
