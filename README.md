@@ -163,3 +163,4 @@ https://goo.gl/forms/Jza0XsM7F3shvWhD2
 - More Examples
 - Time Travelling
 - TypeScript Support
+- Better error messages
