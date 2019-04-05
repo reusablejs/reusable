@@ -1,6 +1,7 @@
 
 ### macOS template
 # General
+.token
 .DS_Store
 .AppleDouble
 .LSOverride
