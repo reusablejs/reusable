@@ -1,12 +1,8 @@
-import React, {useState} from "react";
+import React from "react";
 import ReactDOM from "react-dom";
-// import { withHistory, ReuseProvider, createStore } from "./reuse";
-// import { ReuseProvider } from "./reuse";
-// import { Async } from "./Async";
-// import { TimeTravel } from "./TimeTravel";
 import "./styles.css";
 
-import {reuse, reuseState, reuseMemo, reuseEffect, Reuse, ReuseProvider, useReuse, withReuse} from '../../dist/reuse';
+import {reuse, reuseState, reuseMemo, reuseEffect, Reuse, ReuseProvider, useReuse, withReuse} from '../../dist/reusable';
 
 const counter = () => {
   const [count, setCount] = reuseState(0);
