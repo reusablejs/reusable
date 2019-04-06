@@ -1,15 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {ReuseProvider} from "reusable";
-import {Header} from './Header';
-import {Footer} from './Footer';
+import { ReuseProvider } from "../reusable";
+import { Header } from './Header';
+import { Todos } from './Todos';
+import { Footer } from './Footer';
+
+import './style.css';
 
 function App() {
   return (
     <ReuseProvider>
-      <Header/>
-      Counter in header and footer are reused
-      <Footer/>
+      <section className="todoapp">
+        <Header />
+        <Todos />
+        <Footer />
+      </section>
     </ReuseProvider>
   );
 }

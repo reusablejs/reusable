@@ -1,13 +1,29 @@
-import React from "react";
-import {useReuse} from "reusable";
-import {counterUnit} from './units/counter.unit';
+import React, { useState, useCallback } from "react";
+import { useReuse } from "../reusable";
+import { todosUnit } from './units/todos.unit';
 
 export function Header() {
-  const {counter} = useReuse(counterUnit);
+  const { addTodo } = useReuse(todosUnit);
+  const [value, setValue] = useState('');
+  const onChange = useCallback(e => setValue(e.target.value), []);
+  const onKeyDown = useCallback((key) => {
+    if (key.keyCode === 13) {
+      addTodo(value);
+      setValue('');
+    }
+  }, [value]);
 
   return (
-    <div>
-        {counter}
-    </div>
+    <header className="header">
+      <h1>todos</h1>
+      <input
+        value={value}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        className="new-todo"
+        placeholder="What needs to be done?"
+        autoFocus />
+    </header>
   );
 }
+
