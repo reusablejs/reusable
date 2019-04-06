@@ -210,10 +210,6 @@ export const reuseEffect = (effectFn, deps) => {
   return;
 }
 
-export const reuseRef = (initialValue) => {
-  // TBD
-}
-
 export const Memo = (unit, areEqual = shallowCompare) => {
   unit.areEqual = areEqual;
 
