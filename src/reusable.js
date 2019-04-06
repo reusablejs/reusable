@@ -1,4 +1,4 @@
-import {shallowCompare} from './shallow-compare';
+import { shallowCompare } from './shallow-compare';
 
 export const reuse = (unit) => {
   if (!currentStore) {
@@ -110,10 +110,10 @@ export const createStore = () => {
 export const setCurrentStore = store => currentStore = store;
 
 export const reuseState = (initialState) => {
-  return reuseReducer(initialState, defaultReducer)
+  return reuseReducer(defaultReducer, initialState)
 }
 
-export const reuseReducer = (initialState, reducer) => {
+export const reuseReducer = (reducer, initialState) => {
   if (!currentUnitKey) {
     throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
   }
@@ -134,7 +134,9 @@ export const reuseReducer = (initialState, reducer) => {
       unitContext.hooks[curIndex].state = newState;
       unitContext.update();
     }
-    unitContext.hooks[currentHookIndex] = {state: initialState, setState, type: 'state'};
+    const state = (typeof initialState === 'function') ? initialState() : initialState;
+
+    unitContext.hooks[currentHookIndex] = { state, setState, type: 'state' };
   }
   // Get current hook
   let hook = unitContext.hooks[currentHookIndex];
