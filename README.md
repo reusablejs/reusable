@@ -37,117 +37,28 @@ While still providing the developers with structure and architecture with large-
 - encapsulation (for shared libraries / lazy loading)
 - gradually adoptable
 
-# Usage Guide
-
-## Basic Usage
-```javascript
-// reusables/counter.js
-import { reuseState } from "reusable";
-
-export const counter = () => reuseState(0);
-```
-
-## React Integration
-```javascript
-// App.js:
-import { ReuseProvider } from "reusable/react";
-
-const App = () => (
-  <ReuseProvider>
-    ...
-  </ReuseProvider>
-);
-
-// component #1:
-import { useReusable } from "reusable/react";
-import { counter } from "./reusables/counter";
-
-const CompOne = () => {
-  const [counter, setCounter] = useReusable(counter);
-
-  return ...
-}
-
-// component #2:
-import { useReusable } from "reusable/react";
-import { counter } from "./reusables/counter";
-
-const CompTwo = () => {
-  const [counter, setCounter] = useReusable(counter); // Yup, same counter
-
-  return ...
-}
-```
-## Compound State
-
-```javascript
-// reusables/counterState.js:
-import { reuseState } from "reusable";
-
-export const counterState = () => {
-  const [counter, setCounter] = reuseState(0);
-  const [step, setStep] = reuseState(0);
-
-  return {
-    counter,
-    step,
-    setStep,
-    increment: () => setCounter(val => val + step),
-    decrement: () => setCounter(val => val - step)
-  }
-}
-
-// component:
-import { useReusable } from "reusable/react";
-import { counterState } from './reusables/counterState';
-
-const Comp = () => {
-  const counterState = useReusable(counterState);
-
-  return ... // Just use it!
-}
-```
-
-## Using a Reducer
-// TBD
-
-## Compound selectors, memoizing:
-// TBD
-
-## Reusable components / NPM libraries:
-// TBD
-
-## Time Travelling, Undo/Redo
-// TBD
-
-## Using without a SPA (vanilla)
-// TBD
+# Documentation
+(https://reusablejs.github.io/reusable)[https://reusablejs.github.io/reusable]
 
 # Commonly asked questions
 
 ## What about Context API?
 
-The answer is pretty much the same for people asking about "Redux vs. Context API?"
-Using Context API directly gives a simple API to share state between components, but it doesn't provide other benefits that reuse provides, such as:
-
+Using Context API directly, introduces a few challenges. Deciding where in the component tree to put a certain Context is tricky, and also might change while building your app. It forces you to couple the data tree with the component tree.
+Reusable tries to solve these issues by decoupling the reusable state from the component tree, and by providing other benefits, such as:
 - Time Travelling
 - Single Store
 - Compound Selectors
 - Structure
-- Easily reuse code that needs state management using custom hooks
-- Easily provide open source components that allow control of state
 
 ## Is Reusable designed for large apps?
 
-Reuse is built with large-scale apps in mind.
+Reusable is built with large-scale apps in mind.
 This is what affected most of the considerations when designing the solution:
 
-- The benefits of a single store and immutable data:
-  - Allow a maintainable architecture and prevent tangled cross-stores access
-  - Easier to reach deep UI states during development by overriding initial state
-  - Easier to achieve undo/redo, state persistence
+- The benefits of a single store and immutable data
 - The ability to do code reuse using custom hooks to prevent code duplication
-- Supporting Redux DevTools for better debugging & QA
+- Supporting DevTools for better debugging & QA
 - Support lazy-loaded modules
 
 # Feedback:
@@ -156,10 +67,13 @@ https://goo.gl/forms/Jza0XsM7F3shvWhD2
 
 # What's missing:
 
-- Support lazy-loaded modules
 - Tests
-- DevTools integrations
+- DevTools
 - Docs
 - More Examples
+  - lazy-loaded modules example
+  - API requests
+  - Keyed states
+  - 3rd party
 - Time Travelling
 - TypeScript Support
