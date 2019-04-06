@@ -7,7 +7,7 @@ export function Footer() {
 
   return (
     <div>
-        <input value={counter} onChange={e => setCounter(e.target.value)}/>
+        <input autoFocus value={counter} onChange={e => setCounter(e.target.value)}/>
     </div>
   );
 }
