@@ -1,4 +1,4 @@
-import {shallowCompare} from './shallow-compare';
+import { shallowCompare } from './shallow-compare';
 
 export const reuse = (unit) => {
   if (!currentStore) {
@@ -72,6 +72,8 @@ export const createStore = () => {
           cachedValue: undefined,
           subscribe: (callback) => {
             unitContext.subscribers.push(callback);
+            // asynchronously invoke subscription for the first time
+            setTimeout(() => callback(unitContext.cachedValue));
             return () => unitContext.unsubscribe(callback);
           },
           unsubscribe: (callback) => {
@@ -134,7 +136,7 @@ export const reuseReducer = (initialState, reducer) => {
       unitContext.hooks[curIndex].state = newState;
       unitContext.update();
     }
-    unitContext.hooks[currentHookIndex] = {state: initialState, setState, type: 'state'};
+    unitContext.hooks[currentHookIndex] = { state: initialState, setState, type: 'state' };
   }
   // Get current hook
   let hook = unitContext.hooks[currentHookIndex];
