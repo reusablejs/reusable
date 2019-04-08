@@ -124,7 +124,6 @@ export const createStore = () => {
       return store.getUnit(unit).subscribe(callback);
     }
   };
-  window.store = store;
   return store;
 };
 
