@@ -209,7 +209,7 @@ export const reuseEffect = (effectFn, deps) => {
 
 export const reuseRef = (initialVal) => {
   if (!currentUnitKey) {
-    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
+    throw new Error(`reuseRef hook cannot be called outside of a reuse statement`);
   }
 
   if (!currentStore) {
