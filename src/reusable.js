@@ -212,13 +212,6 @@ export const reuseEffect = (effectFn, deps) => {
   return;
 }
 
-
-export const Memo = (unit, areEqual = shallowCompare) => {
-  unit.areEqual = areEqual;
-
-  return unit;
-};
-
 export const reuseRef = (initialVal) => {
   if (!currentUnitKey) {
     throw new Error(`reuseRef hook cannot be called outside of a reuse statement`);
@@ -244,3 +237,8 @@ export const reuseRef = (initialVal) => {
   return hook.ref;
 } // reuseRef
 
+export const Memo = (unit, areEqual = shallowCompare) => {
+  unit.areEqual = areEqual;
+
+  return unit;
+};
