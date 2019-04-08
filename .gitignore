@@ -1,6 +1,7 @@
 
 ### macOS template
 # General
+.token
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -151,3 +152,5 @@ exampleDist/
 .rts2_cache_es/
 .rts2_cache_umd/
 .cache/
+
+website/build
