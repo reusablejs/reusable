@@ -57,6 +57,8 @@ let currentStore;
 let currentUnitKey = null;
 let currentHookIndex = 0;
 
+const equality = (prev, next) => prev === next;
+
 export const createStore = () => {
   const store = {
     unitContexts: new Map(),
@@ -70,6 +72,7 @@ export const createStore = () => {
           subscribers: [],
           dependencies: new Map(),
           cachedValue: undefined,
+          areEqual: unit.areEqual || equality,
           subscribe: (callback) => {
             unitContext.subscribers.push(callback);
             // asynchronously invoke subscription for the first time
@@ -91,7 +94,7 @@ export const createStore = () => {
             unitContext.cachedValue = undefined;
             const newValue = reuse(unitContext.unit);
 
-            if (newValue !== prevValue) {
+            if (!unitContext.areEqual(prevValue, newValue)) { // TBD - change to shallowCompare
               unitContext.subscribers.forEach(sub => {
                 sub(newValue);
               });
@@ -112,10 +115,10 @@ export const createStore = () => {
 export const setCurrentStore = store => currentStore = store;
 
 export const reuseState = (initialState) => {
-  return reuseReducer(initialState, defaultReducer)
+  return reuseReducer(defaultReducer, initialState)
 }
 
-export const reuseReducer = (initialState, reducer) => {
+export const reuseReducer = (reducer, initialState) => {
   if (!currentUnitKey) {
     throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
   }
@@ -136,7 +139,9 @@ export const reuseReducer = (initialState, reducer) => {
       unitContext.hooks[curIndex].state = newState;
       unitContext.update();
     }
-    unitContext.hooks[currentHookIndex] = { state: initialState, setState, type: 'state' };
+    const state = (typeof initialState === 'function') ? initialState() : initialState;
+
+    unitContext.hooks[currentHookIndex] = { state, setState, type: 'state' };
   }
   // Get current hook
   let hook = unitContext.hooks[currentHookIndex];
@@ -208,3 +213,34 @@ export const reuseEffect = (effectFn, deps) => {
   }
   return;
 }
+
+export const reuseRef = (initialVal) => {
+  if (!currentUnitKey) {
+    throw new Error(`reuseRef hook cannot be called outside of a reuse statement`);
+  }
+
+  if (!currentStore) {
+    throw new Error('Must provide a store first');
+  }
+
+  const unitContext = currentStore.getUnit(currentUnitKey);
+  // If hook doesn't exist for this index, create it
+  if (unitContext.hooks.length <= currentHookIndex) {
+    console.log('create ref');
+    unitContext.hooks[currentHookIndex] = {
+      ref: {current: initialVal},
+      type: 'ref'
+    };
+  }
+  // Get current hook
+  let hook = unitContext.hooks[currentHookIndex];
+  currentHookIndex++;
+
+  return hook.ref;
+} // reuseRef
+
+export const Memo = (unit, areEqual = shallowCompare) => {
+  unit.areEqual = areEqual;
+
+  return unit;
+};

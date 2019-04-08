@@ -1,13 +1,13 @@
 import React from "react";
 import {useReuse} from 'reusable';
-import {counter} from './reusables/counter';
+import {counterUnit} from './units/counter.unit';
 
 export function Footer() {
-  const [counterVal, setCounter] = useReuse(counter);
+  const [counter, setCounter] = useReuse(counterUnit);
 
   return (
     <div>
-        <input value={counterVal} onChange={e => setCounter(e.target.value)}/>
+        <input autoFocus value={counter} onChange={e => setCounter(e.target.value)}/>
     </div>
   );
 }

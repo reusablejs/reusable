@@ -1,13 +1,13 @@
 import React from "react";
 import {useReuse} from 'reusable';
-import {counter} from './reusables/counter';
+import {counterUnit} from './units/counter.unit';
 
 export function Header() {
-  const [counterVal] = useReuse(counter);
+  const [counter] = useReuse(counterUnit);
 
   return (
     <div>
-        {counterVal}
+        {counter}
     </div>
   );
 }
