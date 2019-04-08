@@ -75,6 +75,8 @@ export const createStore = () => {
           areEqual: unit.areEqual || equality,
           subscribe: (callback) => {
             unitContext.subscribers.push(callback);
+            // asynchronously invoke subscription for the first time
+            setTimeout(() => callback(unitContext.cachedValue));
             return () => unitContext.unsubscribe(callback);
           },
           unsubscribe: (callback) => {
