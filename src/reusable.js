@@ -206,3 +206,29 @@ export const reuseEffect = (effectFn, deps) => {
   }
   return;
 }
+
+export const reuseRef = (initialVal) => {
+  if (!currentUnitKey) {
+    throw new Error(`reuseRef hook cannot be called outside of a reuse statement`);
+  }
+
+  if (!currentStore) {
+    throw new Error('Must provide a store first');
+  }
+
+  const unitContext = currentStore.getUnit(currentUnitKey);
+  // If hook doesn't exist for this index, create it
+  if (unitContext.hooks.length <= currentHookIndex) {
+    console.log('create ref');
+    unitContext.hooks[currentHookIndex] = {
+      ref: {current: initialVal},
+      type: 'ref'
+    };
+  }
+  // Get current hook
+  let hook = unitContext.hooks[currentHookIndex];
+  currentHookIndex++;
+
+  return hook.ref;
+} // reuseRef
+
