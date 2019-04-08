@@ -1,4 +1,4 @@
-import { reuseMemo, Memo, reuse } from "../../reusable";
+import { reuseMemo, Memo, reuse } from "../../../../dist/reusable";
 import { values, every } from 'lodash/fp';
 import { todosUnit } from "./todos.unit";
 import { filterUnit } from "./filter.units";

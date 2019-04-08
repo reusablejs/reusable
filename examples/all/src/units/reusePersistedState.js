@@ -1,4 +1,4 @@
-import { reuseState, reuseEffect } from "../../reusable";
+import { reuseState, reuseEffect } from "../../../../dist/reusable";
 
 // custom hook:
 export const reusePersistedState = (key, initialValue) => {
