@@ -1,11 +1,20 @@
 ---
 id: units
-title: Creating and using data units
-sidebar_label: Creating and using data units
+title: Usage Guide
+sidebar_label: Usage Guide
 ---
 
+## Data Units
+An easy way to think of **Reusable**, is to make an analogy to **React, but for data**.  
+A *unit* describes a self contained piece of *data*, just like a *component* is a self contained piece of *UI*.  
+
+Units of data are:
+- Reactive - meaning you can subscribe to updates in their value
+- Composable - meaning one unit can use other units
+- Singletons - meaning if you share them - they will always have the same state
+
 ## Hooks
-Reusable API is based on React hooks API, and follows the same Rules of Hooks.
+Reusable API is based heavily on React hooks API, and follows the same Rules of Hooks.
 All of Reusable's hooks are equal in their API to React hooks.
 
 There are 2 main differences:
@@ -15,19 +24,19 @@ There are 2 main differences:
 If you haven't heard of React hooks, you should first learn the motivation behind them, how to use them, and the rules of hooks before diving into Reusable:  
 (https://reactjs.org/docs/hooks-intro.html)[https://reactjs.org/docs/hooks-intro.html]
 
-## What's a data unit?
-A *data unit* is just a function that returns data:
+## How do you define a data unit?
+A *data unit* is just a function that returns data (much like a component is a function that returns a React Element):
 
 ```javascript
-const timer = () => {
+const answerToEverything = () => {
   return 42;
 }
 ```
 
-This is a static unit with a constant state. Doesn't really make any sense.
+This is a static unit with a constant value. Doesn't really make any sense.
 
 ## reuseState
-Usually, you will reuse state inside of a data unit:
+Usually, you will maintain some state inside of a data unit:
 
 ```javascript
 import {reuseState} from "reusable";
@@ -49,6 +58,7 @@ export const timer = () => {
 
   return {
     counter,
+    setCounter,
     isRunning,
     start: () => setIsRunning(false),
     stop: () => setIsRunning(true)
@@ -61,7 +71,7 @@ You can return whatever you want from the data unit. That will be the unit's **v
 ## reuseReducer
 You can use a reducer, same as with React hooks, to manage complex objects and use actions to indicate a user intent:
 ```javascript
-import {reuseState} from "reusable";
+import {reuseReducer} from "reusable";
 
 const timerReducer = (state, action) => {
   switch(action.type) {
@@ -89,7 +99,7 @@ export const timer = () => {
 Reusable allows to define side-effects that are scoped to the entire store, and not to a specific component's lifecycle.
 
 ```javascript
-import {reuseState} from "reusable";
+import {reuseState, reuseEffect} from "reusable";
 
 export const timer = () => {
   const [counter, setCounter] = reuseState(0);
@@ -105,6 +115,7 @@ export const timer = () => {
 
   return {
     counter,
+    setCounter,
     isRunning,
     start: () => setIsRunning(false),
     stop: () => setIsRunning(true)
@@ -133,10 +144,7 @@ export const timer = () => {
   );
 
   return {
-    counter,
-    isRunning,
-    start: () => setIsRunning(false),
-    stop: () => setIsRunning(true)
+    ...
   }
 }
 ```
@@ -164,25 +172,23 @@ You can create memoized values and callbacks using `reuseMemo` and `reuseCallbac
 These are memoized in the scope of the entire store, and not per component element:
 
 ```javascript
+import {reuseState, reuseCallback, reuseMemo} from "reusable";
+
 export const timer = () => {
   const [counter, setCounter] = reuseState(0);
   const [isRunning, setIsRunning] = reuseState(false);
-
-  reuseInterval(
-    () => setCounter(prev => prev + 1),
-    isRunning ? 1000 : null
-  );
 
   const start = reuseCallback(() => setIsRunning(false));
   const stop = reuseCallback(() => setIsRunning(true));
 
   const hours = Math.floor(counter / 3600);
   const minutes = Math.floor(counter / 60 % 60);
-  const ellapsed = reuseMemo(() => `${hours}:${minutes}`, [hours, minutes]);
+  const elapsed = reuseMemo(() => `${hours}:${minutes}`, [hours, minutes]);
 
   return {
     counter,
-    ellapsed,
+    setCounter,
+    elapsed,
     isRunning,
     start,
     stop
@@ -195,12 +201,14 @@ Sometimes, you want to reuse data from different reusable units.
 Usually this is done to create a reusable memoized view of the data (agreggated/computed/filtered/etc.).
 You might know this from other frameworks as selectors and computed values.
 
-For example, let's extract the ellapsed time to a separate data unit:
+For example, let's extract the elapsed time to a separate data unit:
 ```javascript
+import {reuse} from "reusable";
+
 export const timer = () => {
   // ...
 }
-export const ellapsed = () => {
+export const elapsed = () => {
   const {counter} = reuse(timer);
 
   const hours = Math.floor(counter / 3600);
@@ -210,7 +218,7 @@ export const ellapsed = () => {
 }
 ```
 
-Whe could also reuse multiple stores:
+You could also reuse multiple stores:
 
 ```javascript
 export const currentUserTodos = () => {
@@ -243,12 +251,54 @@ export const filteredProperties = () => {
 }
 ```
 
-> It's very important to understand how this is different than just calling the `timer` function, like we did with `reuseInterval`;
-When you just call a function, you are not reusing the data unit. Which means that as far as Reusable is concerned, the current running data unit hasn't changed.  
+> It's important to understand how this is different than just calling the `timer` function, like we did with `reuseInterval`.  
+When you just call a function, you are not **reusing** the data unit. Which means that as far as Reusable is concerned, the current running data unit hasn't changed.  
 > You can compare this to using React's `createElement`. If you render `<Comp {...props}/>` - it's not like calling `Comp(props)`.  
 The first tells React to create an element, and that element will have its own local hooks (state, effects, etc.) when it's time for it to render.  
 The latter is just invoking a function, and as far as React is concerned, the currently rendered component hasn't changed.
 
 
 ## reuseRef
-// TBD
+Just like useRef, reuseRef helps units keep a constant reference between invocations of the unit.
+
+For example, converting Dan Abramov's declarative setInterval to Reusable:
+```
+import { reuseState, reuseEffect, reuseRef } from 'Reusable';
+
+function reuseInterval(callback, delay) {
+  const savedCallback = reuseRef();
+
+  // Remember the latest callback.
+  reuseEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  reuseEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
+
+```
+
+
+## Reusing custom hooks between React and Reusable
+
+Notice that you can convert your React custom hooks to Reusable custom hooks, by following a simple pattern:
+```
+const ToggleHook = ({useState, useCallback}) => (initialVal) => {
+  const [value, setValue] = useState(initialVal);
+  const toggle = useCallback(() => setValue(prev => !prev), []);
+
+  return [value, toggle];
+}
+
+const useToggle = ToggleHook({useState, useCallback});
+const reuseToggle = ToggleHook({useState: reuseState, useCallback: reuseCallback});
+```

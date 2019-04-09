@@ -15,7 +15,7 @@ yarn add reusable
 
 ## Create a data unit
 ```javascript
-// reusables/counter.js
+// units/counter.js
 import { reuseState } from "reusable";
 
 export const timer = () => reuseState(0);
@@ -38,7 +38,7 @@ const App = () => (
 ```javascript
 // Header.js:
 import { useReuse } from "reusable/react";
-import { timer } from "./reusables/counter";
+import { timer } from "./units/counter";
 
 const Header = () => {
   const [counter, setCounter] = useReuse(timer);
@@ -51,7 +51,7 @@ const Header = () => {
 ```javascript
 // Footer.js:
 import { useReuse } from "reusable/react";
-import { timer } from "./reusables/timer";
+import { timer } from "./units/timer";
 
 const Footer = () => {
   const [counter, setCounter] = useReuse(timer); // Yup, same counter
