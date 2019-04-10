@@ -49,6 +49,48 @@ const counter = () => {
 "
 `;
 
+exports[`macro should work with { reuseEffect }: should work with { reuseEffect } 1`] = `
+"
+import { reuseEffect } from \\"../src/reuseable.macro\\";
+
+const counter = () => {
+  reuseEffect(() => {
+  
+  }, []);
+}
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { reuseEffect as _reuseEffect } from \\"reusable\\";
+
+const counter = () => {
+  _reuseEffect(() => {}, [], \\"counter Effect (0)\\");
+};
+
+"
+`;
+
+exports[`macro should work with { reuseMemo }: should work with { reuseMemo } 1`] = `
+"
+import { reuseMemo } from \\"../src/reuseable.macro\\";
+
+const counter = () => {
+  reuseMemo(() => {
+  
+  }, []);
+}
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { reuseMemo as _reuseMemo } from \\"reusable\\";
+
+const counter = () => {
+  _reuseMemo(() => {}, [], \\"counter\\");
+};
+
+"
+`;
+
 exports[`macro should work with { reuseReducer } with initial state: should work with { reuseReducer } with initial state 1`] = `
 "
 import { reuseReducer } from \\"../src/reuseable.macro\\";

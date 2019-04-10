@@ -111,6 +111,8 @@ pluginTester({
     "should work with { reuseCallback } without dependencies": reuseCallbackNoDependenciesCode,
     "should work with { reuseReducer } with initial state": reuseReducerWithInitialState,
     "should work with { reuseReducer } without initial state": reuseReducerCode,
+    "should work with { reuseMemo }": reuseMemoCode,
+    "should work with { reuseEffect }": reuseEffectCode,
     'should work with custom import name': {
       code: InvalidDefaultImportCode,
       error: true,

@@ -8,7 +8,7 @@
   "unpkg": "dist/reusable.umd.js",
   "dependencies": {
     "@babel/helper-module-imports": "^7.0.0",
-    "babel-plugin-reusable": "^1.0.0-alpha.2"
+    "babel-plugin-reusable": "^1.0.0-alpha.3"
   },
   "peerDependencies": {
     "react": ">= 16.8",
