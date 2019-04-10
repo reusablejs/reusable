@@ -1,6 +1,12 @@
-import { createMacro, MacroError } from 'babel-plugin-macros';
-import babelPlugin from 'babel-plugin-reusable';
-import { addDefault, addNamed } from '@babel/helper-module-imports';
+const babelPluginMacros = require('babel-plugin-macros');
+const createMacro = babelPluginMacros.createMacro;
+const MacroError = babelPluginMacros.MacroError;
+
+const babelPlugin = require('babel-plugin-reusable').default;
+
+const babelHelperModuleImports = require('@babel/helper-module-imports');
+const addDefault = babelHelperModuleImports.addDefault;
+const addNamed = babelHelperModuleImports.addNamed;
 
 const allowedImports = ['reuse', 'reuseEffect', 'reuseState', 'reuseMemo', 'reuseCallback', 'reuseReducer', 'reuseRef'];
 
@@ -41,4 +47,4 @@ function reuseableMacro({ references, state, babel: { types: t }, config = {} })
   program.traverse(babelPlugin({ types: t }).visitor, stateWithOpts);
 }
 
-export default createMacro(reuseableMacro);
+module.exports = createMacro(reuseableMacro);
