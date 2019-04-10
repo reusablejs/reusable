@@ -1,6 +1,6 @@
 {
   "name": "reusable",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "",
   "keywords": [],
   "main": "dist/reusable.js",
@@ -37,5 +37,10 @@
     "docs:publish": "cd website && npm run build && npm run publish-gh-pages",
     "docs:dev": "cd website && npm start",
     "test": "jest"
-  }
+  },
+  "files": [
+    "dist/*",
+    "src/reuseable.macro.js",
+    "macro.js"
+  ]
 }
