@@ -70,6 +70,25 @@ const counter = () => {
 "
 `;
 
+exports[`macro should work with { reuseMemo } with variable: should work with { reuseMemo } with variable 1`] = `
+"
+import { reuseMemo } from \\"../src/reuseable.macro\\";
+
+const counter = () => {
+  const count = reuseMemo(() => null)
+}
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { reuseMemo as _reuseMemo } from \\"reusable\\";
+
+const counter = () => {
+  const count = _reuseMemo(() => null, undefined, \\"count\\");
+};
+
+"
+`;
+
 exports[`macro should work with { reuseMemo }: should work with { reuseMemo } 1`] = `
 "
 import { reuseMemo } from \\"../src/reuseable.macro\\";
@@ -155,6 +174,21 @@ import { reuseRef as _reuseRef } from \\"reusable\\";
 const counter = () => {
   const count = _reuseRef(0, \\"count\\");
 };
+
+"
+`;
+
+exports[`macro should work with { reuseState } shorthand: should work with { reuseState } shorthand 1`] = `
+"
+import { reuseState } from \\"../src/reuseable.macro\\";
+
+const counter = () => reuseState(0)
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { reuseState as _reuseState } from \\"reusable\\";
+
+const counter = () => _reuseState(0, \\"counter\\");
 
 "
 `;

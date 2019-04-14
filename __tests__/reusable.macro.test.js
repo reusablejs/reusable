@@ -12,6 +12,12 @@ const reuseStateCode = `
   }
 `;
 
+const shorthandSyntaxCode = `
+  import { reuseState } from "../src/reuseable.macro";
+  
+  const counter = () => reuseState(0)
+`;
+
 const reuseRefCode = `
   import { reuseRef } from "../src/reuseable.macro";
   
@@ -67,6 +73,14 @@ const reuseMemoCode = `
   }
 `;
 
+const reuseMemoWithVariableCode = `
+  import { reuseMemo } from "../src/reuseable.macro";
+  
+  const counter = () => {
+    const count = reuseMemo(() => null)
+  }
+`;
+
 const reuseEffectCode = `
   import { reuseEffect } from "../src/reuseable.macro";
   
@@ -106,12 +120,14 @@ pluginTester({
   tests: {
     "no usage": noUsageCode,
     "should work with { reuseState }": reuseStateCode,
+    "should work with { reuseState } shorthand": shorthandSyntaxCode,
     "should work with { reuseRef }": reuseRefCode,
     "should work with { reuseCallback } with dependencies": reuseCallbackWithDependenciesCode,
     "should work with { reuseCallback } without dependencies": reuseCallbackNoDependenciesCode,
     "should work with { reuseReducer } with initial state": reuseReducerWithInitialState,
     "should work with { reuseReducer } without initial state": reuseReducerCode,
     "should work with { reuseMemo }": reuseMemoCode,
+    "should work with { reuseMemo } with variable": reuseMemoWithVariableCode,
     "should work with { reuseEffect }": reuseEffectCode,
     'should work with custom import name': {
       code: InvalidDefaultImportCode,
