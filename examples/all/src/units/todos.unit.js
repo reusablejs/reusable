@@ -1,4 +1,4 @@
-import { Memo, reuseEffect, reuseState } from "../../../../dist/reusable";
+import { Memo, reuseEffect, reuseState } from "reusable";
 import { set, update, omit, mapValues, keyBy, omitBy, take } from 'lodash/fp';
 import uuid from 'uuid';
 

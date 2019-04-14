@@ -1,5 +1,5 @@
 import React from "react";
-import { useReuse } from "../../../dist/reusable";
+import { useReuse } from "reusable";
 import { filterUnit, FILTERS } from "./units/filter.units";
 import { todosUnit } from "./units/todos.unit";
 import { todosLeftUnit } from "./units/todosSelectors.units";
