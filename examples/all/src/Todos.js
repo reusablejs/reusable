@@ -1,6 +1,6 @@
 import React from "react";
 import { todosUnit } from './units/todos.unit';
-import { useReuse } from "../../../dist/reusable";
+import { useReuse } from "reusable";
 import { Todo } from './Todo';
 import { isAllSelectedUnit, filteredTodosUnit } from "./units/todosSelectors.units";
 

@@ -9,11 +9,7 @@ import {
   DEFAULT_REUSE_STATE_DEBUG_NAME,
 } from './constants';
 
-export const reuse = (unit, debugName) => {
-  if (!unit.debugName && debugName) {
-    unit.debugName = debugName;
-  }
-
+export const reuse = (unit) => {
   if (!currentStore) {
     throw new Error('Must provide a store first');
   }

@@ -13,5 +13,9 @@
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "parcel": "^1.12.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "reusable": "latest"
+  }
 }
