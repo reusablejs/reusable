@@ -64,7 +64,7 @@ const counter = () => {
 import { reuseEffect as _reuseEffect } from \\"reusable\\";
 
 const counter = () => {
-  _reuseEffect(() => {}, [], \\"counter Effect (0)\\");
+  _reuseEffect(() => {}, [], \\"counter reuseEffect (0)\\");
 };
 
 "
@@ -104,7 +104,7 @@ const counter = () => {
 import { reuseMemo as _reuseMemo } from \\"reusable\\";
 
 const counter = () => {
-  _reuseMemo(() => {}, [], \\"counter\\");
+  _reuseMemo(() => {}, [], \\"counter reuseMemo (0)\\");
 };
 
 "
