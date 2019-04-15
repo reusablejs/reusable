@@ -24,7 +24,7 @@ export const reuse = (unit) => {
     unitContext.cachedValue = unit();
 
     // run effects:
-    unitContext.effects.forEach(effect => {
+    unitContext.effects.forEach(({ effect, prevDeps, deps, currentHookIndex }) => {
       if (effect.cleanup) {
         if (typeof effect.cleanup === 'function') {
           effect.cleanup();
@@ -33,6 +33,18 @@ export const reuse = (unit) => {
         }
       };
       effect.cleanup = effect.effectFn();
+      notifySpies({
+        type: 'RUN_EFFECT',
+        payload: {
+          unitContext,
+          effectFn: effect.effectFn,
+          prevDeps,
+          deps,
+          // debugName: unitContext.hooks[curIndex].debugName,
+          currentHookIndex
+        }
+      });
+
     })
     unitContext.effects = [];
 
@@ -102,6 +114,7 @@ export const createStore = () => {
           }
         }
         store.unitContexts.set(unit, unitContext);
+        notifySpies({ type: 'INIT_UNIT', payload: { unitContext } });
       }
       return store.unitContexts.get(unit);
     },
@@ -134,9 +147,20 @@ export const reuseReducer = (reducer, initialState) => {
     const curIndex = currentHookIndex; // For closure
     const setState = (action) => {
       const prevState = unitContext.hooks[curIndex].state;
-      const newState = reducer(prevState, action);
+      const nextState = reducer(prevState, action);
 
-      unitContext.hooks[curIndex].state = newState;
+      unitContext.hooks[curIndex].state = nextState;
+      notifySpies({
+        type: reducer === defaultReducer ? 'SET_STATE' : 'SET_STATE_REDUCER',
+        payload: {
+          unitContext,
+          curIndex,
+          prevState,
+          nextState,
+          // debugName: unitContext.hooks[curIndex].debugName,
+          action
+        }
+      });
       unitContext.update();
     }
     const state = (typeof initialState === 'function') ? initialState() : initialState;
@@ -171,8 +195,22 @@ export const reuseMemo = (fn, deps) => {
 
   // If deps changed - or no deps
   if (!shallowCompare(prevDeps, deps) || !deps) {
+    const prevValue = hook.value;
     hook.value = fn();
     hook.deps = deps;
+    notifySpies({
+      type: 'CALCULATE_MEMO',
+      payload: {
+        unitContext,
+        nextValue: hook.value,
+        prevValue,
+        prevDeps,
+        deps,
+        // debugName: unitContext.hooks[curIndex].debugName,
+        currentHookIndex: currentHookIndex - 1
+      }
+    });
+
   }
   return hook.value;
 }
@@ -202,12 +240,17 @@ export const reuseEffect = (effectFn, deps) => {
   }
   // Get current hook
   let hook = unitContext.hooks[currentHookIndex];
-  currentHookIndex++;
   let prevDeps = hook.deps;
+  currentHookIndex++;
 
   // If deps changed
   if (!shallowCompare(prevDeps, deps) || !deps) {
-    unitContext.effects.push(hook);
+    unitContext.effects.push({
+      effect: hook,
+      prevDeps,
+      deps,
+      currentHookIndex: currentHookIndex - 1
+    });
     hook.deps = deps;
     hook.effectFn = effectFn;
   }
@@ -228,7 +271,7 @@ export const reuseRef = (initialVal) => {
   if (unitContext.hooks.length <= currentHookIndex) {
     console.log('create ref');
     unitContext.hooks[currentHookIndex] = {
-      ref: {current: initialVal},
+      ref: { current: initialVal },
       type: 'ref'
     };
   }
@@ -244,3 +287,9 @@ export const Memo = (unit, areEqual = shallowCompare) => {
 
   return unit;
 };
+
+const spies = [];
+export const spy = fn => spies.push(fn);
+const notifySpies = action => {
+  spies.forEach(spy => spy(action));
+}
