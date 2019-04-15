@@ -240,8 +240,8 @@ export const reuseEffect = (effectFn, deps) => {
   }
   // Get current hook
   let hook = unitContext.hooks[currentHookIndex];
-  let prevDeps = hook.deps;
   currentHookIndex++;
+  let prevDeps = hook.deps;
 
   // If deps changed
   if (!shallowCompare(prevDeps, deps) || !deps) {
