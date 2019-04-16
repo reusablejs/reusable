@@ -3,15 +3,19 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "A website for testing",
+    "tagline": "A library for reusing state and business logic between components",
     "docs": {
       "basic-usage": {
         "title": "Getting Started with Reusable in React",
         "sidebar_label": "Basic Usage with React"
       },
       "full-demo": {
-        "title": "Quick overview",
-        "sidebar_label": "Quick overview"
+        "title": "Full Demo",
+        "sidebar_label": "Full Demo"
+      },
+      "intro": {
+        "title": "Introduction",
+        "sidebar_label": "Introduction"
       },
       "react-reusable-api": {
         "title": "React Reusable API",
@@ -33,6 +37,7 @@
       "Blog": "Blog"
     },
     "categories": {
+      "Introduction": "Introduction",
       "Getting Started": "Getting Started",
       "API": "API"
     }

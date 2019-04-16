@@ -1,14 +1,19 @@
+---
+id: intro
+title: Introduction
+sidebar_label: Introduction
+---
+
 ## What?
 
 Reusable is a library for reusing state and business logic.
 
 ## Should I use this now?
 
-This is a very early stage alpha
-If you want to start experimenting with it and share feedback - yes
-If you need it for a production app - no
+This is a very early stage alpha. You can start experimenting with it and share feedback.  
+It works. but don't use it for production, yet.
 
-## Why?
+## Why do we need Reusable?
 
 Reusable solves the problems that state management is meant for, with a simple and clean API, inspired and based on React hooks API.
 
@@ -36,9 +41,6 @@ While still providing the developers with structure and architecture with large-
 - encapsulation (for shared libraries / lazy loading)
 - gradually adoptable
 
-# Documentation
-(https://reusablejs.github.io/reusable)[https://reusablejs.github.io/reusable]
-
 # Commonly asked questions
 
 ## What about Context API?
@@ -60,6 +62,7 @@ This is what affected most of the considerations when designing the solution:
 - Supporting DevTools for better debugging & QA
 - Support lazy-loaded modules
 
+
 # Feedback:
 
 https://goo.gl/forms/Jza0XsM7F3shvWhD2
@@ -68,12 +71,13 @@ https://goo.gl/forms/Jza0XsM7F3shvWhD2
 
 - Tests
 - DevTools
-- Docs
+- More Docs
 - More Examples
   - lazy-loaded modules example
   - API requests
   - Keyed states
   - 3rd party
+  - Redux integration
 - Time Travelling
 - TypeScript Support
 - Better error messages
