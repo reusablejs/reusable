@@ -1,4 +1,4 @@
-import { Memo, reuseEffect, reuseState } from "../../reusable";
+import { Memo, reuseEffect, reuseState } from "reusable";
 import { set, update, omit, mapValues, keyBy, omitBy, take } from 'lodash/fp';
 import uuid from 'uuid';
 
@@ -37,4 +37,4 @@ export const todosUnit = Memo(() => {
   };
   // We only need to notify changes if todos changed.
   // Alternatively, we could wrap each action with reuseCallback and skip the second param to Memo
-}, (prev, next) => prev.todos === next.todos);
+}, (prev, next) => prev.todos === next.todos, 'todosUnit');
