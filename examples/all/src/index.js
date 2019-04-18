@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { ReuseProvider } from "../reusable";
+import { ReuseProvider } from "reusable";
 import { Header } from './Header';
 import { Todos } from './Todos';
 import { Footer } from './Footer';

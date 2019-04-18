@@ -1,5 +1,5 @@
 import React from "react";
-import { useReuse } from "../reusable";
+import { useReuse } from "reusable";
 import { todosUnit } from "./units/todos.unit";
 
 export function Todo({ todo }) {

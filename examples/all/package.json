@@ -1,5 +1,5 @@
 {
-  "name": "basic",
+  "name": "TodoMVC",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "reusable": "latest",
+    "uuid": "^3.3.2"
   }
 }

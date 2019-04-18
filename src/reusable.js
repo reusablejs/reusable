@@ -1,4 +1,13 @@
 import { shallowCompare } from './shallow-compare';
+import {
+  DEFAULT_MEMO_DEBUG_NAME,
+  DEFAULT_REUSE_CALLBACK_DEBUG_NAME,
+  DEFAULT_REUSE_EFFECT_DEBUG_NAME,
+  DEFAULT_REUSE_MEMO_DEBUG_NAME,
+  DEFAULT_REUSE_REDUCER_DEBUG_NAME,
+  DEFAULT_REUSE_REF_DEBUG_NAME,
+  DEFAULT_REUSE_STATE_DEBUG_NAME,
+} from './constants';
 
 export const reuse = (unit) => {
   if (!currentStore) {
@@ -24,7 +33,7 @@ export const reuse = (unit) => {
     unitContext.cachedValue = unit();
 
     // run effects:
-    unitContext.effects.forEach(effect => {
+    unitContext.effects.forEach(({ effect, prevDeps, deps, currentHookIndex }) => {
       if (effect.cleanup) {
         if (typeof effect.cleanup === 'function') {
           effect.cleanup();
@@ -33,6 +42,18 @@ export const reuse = (unit) => {
         }
       };
       effect.cleanup = effect.effectFn();
+      notifySpies({
+        type: 'RUN_EFFECT',
+        payload: {
+          unitContext,
+          effectFn: effect.effectFn,
+          prevDeps,
+          deps,
+          // debugName: unitContext.hooks[curIndex].debugName,
+          currentHookIndex
+        }
+      });
+
     })
     unitContext.effects = [];
 
@@ -67,6 +88,7 @@ export const createStore = () => {
       if (!store.unitContexts.has(unit)) {
         const unitContext = {
           unit,
+          debugName: unit.debugName || unit.name,
           hooks: [],
           effects: [],
           subscribers: [],
@@ -100,8 +122,10 @@ export const createStore = () => {
               });
             }
           }
-        }
+        };
+
         store.unitContexts.set(unit, unitContext);
+        notifySpies({ type: 'INIT_UNIT', payload: { unitContext } });
       }
       return store.unitContexts.get(unit);
     },
@@ -114,11 +138,11 @@ export const createStore = () => {
 
 export const setCurrentStore = store => currentStore = store;
 
-export const reuseState = (initialState) => {
-  return reuseReducer(defaultReducer, initialState)
-}
+export const reuseState = (initialState, debugName = DEFAULT_REUSE_STATE_DEBUG_NAME) => {
+  return reuseReducer(defaultReducer, initialState, debugName)
+};
 
-export const reuseReducer = (reducer, initialState) => {
+export const reuseReducer = (reducer, initialState, debugName = DEFAULT_REUSE_REDUCER_DEBUG_NAME) => {
   if (!currentUnitKey) {
     throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
   }
@@ -134,23 +158,34 @@ export const reuseReducer = (reducer, initialState) => {
     const curIndex = currentHookIndex; // For closure
     const setState = (action) => {
       const prevState = unitContext.hooks[curIndex].state;
-      const newState = reducer(prevState, action);
+      const nextState = reducer(prevState, action);
 
-      unitContext.hooks[curIndex].state = newState;
+      unitContext.hooks[curIndex].state = nextState;
+      notifySpies({
+        type: reducer === defaultReducer ? 'SET_STATE' : 'SET_STATE_REDUCER',
+        payload: {
+          unitContext,
+          curIndex,
+          prevState,
+          nextState,
+          // debugName: unitContext.hooks[curIndex].debugName,
+          action
+        }
+      });
       unitContext.update();
     }
     const state = (typeof initialState === 'function') ? initialState() : initialState;
 
-    unitContext.hooks[currentHookIndex] = { state, setState, type: 'state' };
+    unitContext.hooks[currentHookIndex] = { state, setState, type: 'state', debugName };
   }
   // Get current hook
   let hook = unitContext.hooks[currentHookIndex];
   currentHookIndex++;
 
   return [hook.state, hook.setState];
-}
+};
 
-export const reuseMemo = (fn, deps) => {
+export const reuseMemo = (fn, deps, debugName = DEFAULT_REUSE_MEMO_DEBUG_NAME) => {
   if (!currentUnitKey) {
     throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
   }
@@ -162,7 +197,7 @@ export const reuseMemo = (fn, deps) => {
   const unitContext = currentStore.getUnit(currentUnitKey);
   // If hook doesn't exist for this index, create it
   if (unitContext.hooks.length <= currentHookIndex) {
-    unitContext.hooks[currentHookIndex] = { value: undefined, deps: undefined, type: 'memo' };
+    unitContext.hooks[currentHookIndex] = { value: undefined, deps: undefined, type: 'memo', debugName };
   }
   // Get current hook
   let hook = unitContext.hooks[currentHookIndex];
@@ -171,17 +206,31 @@ export const reuseMemo = (fn, deps) => {
 
   // If deps changed - or no deps
   if (!shallowCompare(prevDeps, deps) || !deps) {
+    const prevValue = hook.value;
     hook.value = fn();
     hook.deps = deps;
+    notifySpies({
+      type: 'CALCULATE_MEMO',
+      payload: {
+        unitContext,
+        nextValue: hook.value,
+        prevValue,
+        prevDeps,
+        deps,
+        // debugName: unitContext.hooks[curIndex].debugName,
+        currentHookIndex: currentHookIndex - 1
+      }
+    });
+
   }
   return hook.value;
-}
+};
 
-export const reuseCallback = (fn, deps) => {
-  return reuseMemo(() => fn, deps);
-}
+export const reuseCallback = (fn, deps, debugName = DEFAULT_REUSE_CALLBACK_DEBUG_NAME) => {
+  return reuseMemo(() => fn, deps, debugName);
+};
 
-export const reuseEffect = (effectFn, deps) => {
+export const reuseEffect = (effectFn, deps, debugName = DEFAULT_REUSE_EFFECT_DEBUG_NAME) => {
   if (!currentUnitKey) {
     throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
   }
@@ -197,7 +246,8 @@ export const reuseEffect = (effectFn, deps) => {
       deps: undefined,
       effectFn,
       cleanup: undefined,
-      type: 'effect'
+      type: 'effect',
+      debugName
     };
   }
   // Get current hook
@@ -207,14 +257,18 @@ export const reuseEffect = (effectFn, deps) => {
 
   // If deps changed
   if (!shallowCompare(prevDeps, deps) || !deps) {
-    unitContext.effects.push(hook);
+    unitContext.effects.push({
+      effect: hook,
+      prevDeps,
+      deps,
+      currentHookIndex: currentHookIndex - 1
+    });
     hook.deps = deps;
     hook.effectFn = effectFn;
   }
-  return;
-}
+};
 
-export const reuseRef = (initialVal) => {
+export const reuseRef = (initialVal, debugName = DEFAULT_REUSE_REF_DEBUG_NAME) => {
   if (!currentUnitKey) {
     throw new Error(`reuseRef hook cannot be called outside of a reuse statement`);
   }
@@ -228,8 +282,9 @@ export const reuseRef = (initialVal) => {
   if (unitContext.hooks.length <= currentHookIndex) {
     console.log('create ref');
     unitContext.hooks[currentHookIndex] = {
-      ref: {current: initialVal},
-      type: 'ref'
+      ref: { current: initialVal },
+      type: 'ref',
+      debugName
     };
   }
   // Get current hook
@@ -237,10 +292,20 @@ export const reuseRef = (initialVal) => {
   currentHookIndex++;
 
   return hook.ref;
-} // reuseRef
+};
 
-export const Memo = (unit, areEqual = shallowCompare) => {
+export const Memo = (unit, areEqual = shallowCompare, debugName) => {
   unit.areEqual = areEqual;
+
+  if (!unit.debugName) {
+    unit.debugName = debugName ? `${DEFAULT_MEMO_DEBUG_NAME}(${debugName})` : DEFAULT_MEMO_DEBUG_NAME;
+  }
 
   return unit;
 };
+
+const spies = [];
+export const spy = fn => spies.push(fn);
+const notifySpies = action => {
+  spies.forEach(spy => spy(action));
+}
