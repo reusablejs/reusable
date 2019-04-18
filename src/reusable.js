@@ -47,9 +47,10 @@ export const reuse = (unit) => {
         payload: {
           unitContext,
           effectFn: effect.effectFn,
+          cleanup: effect.cleanup,
           prevDeps,
           deps,
-          // debugName: unitContext.hooks[curIndex].debugName,
+          debugName: effect.debugName,
           currentHookIndex
         }
       });
@@ -168,7 +169,7 @@ export const reuseReducer = (reducer, initialState, debugName = DEFAULT_REUSE_RE
           curIndex,
           prevState,
           nextState,
-          // debugName: unitContext.hooks[curIndex].debugName,
+          debugName: unitContext.hooks[curIndex].debugName,
           action
         }
       });
@@ -217,7 +218,7 @@ export const reuseMemo = (fn, deps, debugName = DEFAULT_REUSE_MEMO_DEBUG_NAME) =
         prevValue,
         prevDeps,
         deps,
-        // debugName: unitContext.hooks[curIndex].debugName,
+        debugName: hook.debugName,
         currentHookIndex: currentHookIndex - 1
       }
     });

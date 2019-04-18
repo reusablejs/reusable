@@ -1,5 +1,5 @@
 {
-  "name": "TodoMVC",
+  "name": "sandbox",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,13 +11,6 @@
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
-    "babel-plugin-reusable": "latest",
     "parcel": "^1.12.3"
-  },
-  "dependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "reusable": "latest",
-    "uuid": "^3.3.2"
   }
 }
