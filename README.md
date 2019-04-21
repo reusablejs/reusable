@@ -38,7 +38,7 @@ While still providing the developers with structure and architecture with large-
 - gradually adoptable
 
 # Documentation
-(https://reusablejs.github.io/reusable)[https://reusablejs.github.io/reusable]
+https://reusablejs.github.io/reusable
 
 # Commonly asked questions
 
