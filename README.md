@@ -10,10 +10,10 @@ If you need it for a production app - no
 
 ## Why?
 
-Reusable solves the problems that state management is meant for, with a simple and clean API, inspired and based on React hooks API.
+Reusable provides a way for app-level state management, with a simple and clean API, inspired and based on React hooks API.
 
-React hooks introduced new ways of thinking about state and side-effects.
-These new ways made old habits obsolete, and require a new type of state management tool that embraces the same concepts:
+React hooks introduced new ways of thinking about state and side-effects inside components.
+Reusable is applying the same principals to app-level state-management by adopting the same API and the same concepts:
 
 - Separation of concerns
 - Reusability
@@ -23,7 +23,6 @@ These new ways made old habits obsolete, and require a new type of state managem
 While still providing the developers with structure and architecture with large-scale apps in mind.
 
 ## Features
-
 - managing shareable state
 - handling side effects
 - memoization
@@ -44,7 +43,7 @@ https://reusablejs.github.io/reusable
 
 ## What about Context API?
 
-Using Context API directly, introduces a few challenges. Deciding where in the component tree to put a certain Context is tricky, and also might change while building your app. It forces you to couple the data tree with the component tree.
+Using Context API directly, introduces a few challenges. Deciding where in the component tree to put a certain Context is tricky, and also might change while building your app. It forces you to couple the data tree with the component tree, and creates artifically deeply nested component trees.
 Reusable tries to solve these issues by decoupling the reusable state from the component tree, and by providing other benefits, such as:
 - Time Travelling
 - Single Store
@@ -54,7 +53,7 @@ Reusable tries to solve these issues by decoupling the reusable state from the c
 ## Is Reusable designed for large apps?
 
 Reusable is built with large-scale apps in mind.
-This is what affected most of the considerations when designing the solution:
+This affected many of the considerations when designing the solution:
 
 - The benefits of a single store and immutable data
 - The ability to do code reuse using custom hooks to prevent code duplication
