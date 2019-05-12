@@ -10,17 +10,13 @@ import {shallowCompare} from './shallow-compare';
 import {reuse, createStore, setCurrentStore} from './reusable';
 
 // react-reuse
-const ReuseContext = createContext();
+export const ReuseContext = createContext();
 
 export const ReuseProvider = ({ store = null, children }) => {
-  const storeRef = useRef(store);
-
-  if (!storeRef.current) {
-    storeRef.current = createStore();
-  }
+  const activeStore = store || createStore();
 
   return (
-    <ReuseContext.Provider value={storeRef.current}>
+    <ReuseContext.Provider value={activeStore}>
       {children}
     </ReuseContext.Provider>
   );
@@ -30,19 +26,47 @@ export const useReuse = (unit) => {
   useDebugValue(`useReuse(${unit.name})`);
 
   const store = useContext(ReuseContext);
-  setCurrentStore(store);
-  const [state, setState] = useState(() => reuse(unit));
+  const unitContext = store.getUnit(unit);
+  const hookData = unit();
+  unitContext.update(hookData);
+  // clear previous subscription
+  // store.unsubscribe(unit);
+
+  const [state, setState] = useState(unitContext.cachedValue || hookData);
 
   useEffect(() => {
-    return store.subscribe(unit, () => {
-      const newState = reuse(unit);
-
-      setState(newState);
+    return store.subscribe(unit, (newData) => {
+      console.log({ newData })
+      setState(newData);
     });
   }, []);
 
+  // // const newState = unitContext.cachedValue = unit();
+  // // setState(newState);
+  //
+  // store.subscribe(unit, () => {
+  //   console.log(unit);
+  //
+  //   if (state !== unit) {
+  //     console.log('change now');
+  //     setState(unit);
+  //   }
+  //
+  // });
+
+  // useEffect(() => {
+  //   return store.subscribe(unit, () => {
+  //     // console.log('subscribe')
+  //     // const unitContext = store.getUnit(unit);
+  //     //
+  //
+  //   });
+  // }, []);
+
+  // return state;
+
   return state;
-}
+};
 
 // HOC
 export const withReuse = (mapStateToProps, units) => (Comp) => {

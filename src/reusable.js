@@ -1,3 +1,4 @@
+import isEqual from 'lodash/isEqual';
 import { shallowCompare } from './shallow-compare';
 import {
   DEFAULT_MEMO_DEBUG_NAME,
@@ -9,16 +10,18 @@ import {
   DEFAULT_REUSE_STATE_DEBUG_NAME,
 } from './constants';
 
-export const reuse = (unit) => {
-  if (!currentStore) {
+window._ = require('lodash');
+
+export const reuse = (unit, store) => {
+  if (!store) {
     throw new Error('Must provide a store first');
   }
 
   if (currentUnitKey) {
-    currentStore.getUnit(currentUnitKey).addDependency(unit);
+    store.getUnit(currentUnitKey).addDependency(unit);
   }
 
-  const unitContext = currentStore.getUnit(unit);
+  const unitContext = store.getUnit(unit);
 
   if (!unitContext.cachedValue) {
     // save cursor
@@ -40,7 +43,8 @@ export const reuse = (unit) => {
         } else {
           console.error(`Cleanup function ${effect.cleanup} is not a function`)
         }
-      };
+      }
+
       effect.cleanup = effect.effectFn();
       notifySpies({
         type: 'RUN_EFFECT',
@@ -55,17 +59,17 @@ export const reuse = (unit) => {
         }
       });
 
-    })
+    });
+
     unitContext.effects = [];
 
     // restore cursor
     currentUnitKey = prevUnitKey;
     currentHookIndex = prevHookIndex;
-
   }
 
   return unitContext.cachedValue;
-}
+};
 
 const defaultReducer = (state, value) => {
   if (typeof value === "function") {
@@ -75,7 +79,6 @@ const defaultReducer = (state, value) => {
   }
 };
 
-let currentStore;
 let currentUnitKey = null;
 let currentHookIndex = 0;
 
@@ -99,25 +102,31 @@ export const createStore = () => {
           subscribe: (callback) => {
             unitContext.subscribers.push(callback);
             // asynchronously invoke subscription for the first time
-            setTimeout(() => callback(unitContext.cachedValue));
+            // setTimeout(() => callback(unitContext.cachedValue));
             return () => unitContext.unsubscribe(callback);
           },
           unsubscribe: (callback) => {
             unitContext.subscribers = unitContext.subscribers.filter(sub => sub !== callback);
           },
           addDependency: (unit) => {
-            const unitContextDep = store.getUnit(unit);
-            if (!unitContext.dependencies.has(unit)) {
-              const unsubscribe = unitContextDep.subscribe(unitContext.update);
-              unitContext.dependencies.set(unit, unsubscribe);
-            }
+            // const unitContextDep = store.getUnit(unit);
+            // if (!unitContext.dependencies.has(unit)) {
+            //   const unsubscribe = unitContextDep.subscribe(unitContext.update);
+            //   unitContext.dependencies.set(unit, unsubscribe);
+            // }
           },
-          update: () => {
+          update: (newValue) => {
             const prevValue = unitContext.cachedValue;
-            unitContext.cachedValue = undefined;
-            const newValue = reuse(unitContext.unit);
 
-            if (!unitContext.areEqual(prevValue, newValue)) { // TBD - change to shallowCompare
+            if (!prevValue) {
+              unitContext.cachedValue = newValue;
+              return;
+            }
+
+            console.log({ newValue: newValue[0], prevValue: prevValue[0], areEqual: isEqual(prevValue[0], newValue[0]) })
+
+            if (!isEqual(prevValue[0], newValue[0])) { // TBD - change to shallowCompare
+              unitContext.cachedValue = newValue;
               unitContext.subscribers.forEach(sub => {
                 sub(newValue);
               });
@@ -126,7 +135,7 @@ export const createStore = () => {
         };
 
         store.unitContexts.set(unit, unitContext);
-        notifySpies({ type: 'INIT_UNIT', payload: { unitContext } });
+        // notifySpies({ type: 'INIT_UNIT', payload: { unitContext } });
       }
       return store.unitContexts.get(unit);
     },
@@ -137,22 +146,18 @@ export const createStore = () => {
   return store;
 };
 
-export const setCurrentStore = store => currentStore = store;
+export const setCurrentStore = () => {}
 
 export const reuseState = (initialState, debugName = DEFAULT_REUSE_STATE_DEBUG_NAME) => {
   return reuseReducer(defaultReducer, initialState, debugName)
 };
 
 export const reuseReducer = (reducer, initialState, debugName = DEFAULT_REUSE_REDUCER_DEBUG_NAME) => {
-  if (!currentUnitKey) {
-    throw new Error(`reuseMemo hook cannot be called outside of a reuse statement`);
-  }
-
-  if (!currentStore) {
+  if (!store) {
     throw new Error('Must provide a store first');
   }
 
-  const unitContext = currentStore.getUnit(currentUnitKey);
+  const unitContext = store.getUnit(currentUnitKey);
 
   // If hook doesn't exist for this index, create it
   if (unitContext.hooks.length <= currentHookIndex) {
@@ -162,6 +167,7 @@ export const reuseReducer = (reducer, initialState, debugName = DEFAULT_REUSE_RE
       const nextState = reducer(prevState, action);
 
       unitContext.hooks[curIndex].state = nextState;
+
       notifySpies({
         type: reducer === defaultReducer ? 'SET_STATE' : 'SET_STATE_REDUCER',
         payload: {
@@ -173,7 +179,8 @@ export const reuseReducer = (reducer, initialState, debugName = DEFAULT_REUSE_RE
           action
         }
       });
-      unitContext.update();
+
+      // unitContext.update();
     }
     const state = (typeof initialState === 'function') ? initialState() : initialState;
 
