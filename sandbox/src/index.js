@@ -1,21 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { ReuseProvider, useReuse, spy, reuseState, reuseEffect, reuseMemo, Memo } from "../../dist/reusable";
+import { ReusableProvider, reusable } from "../../dist/reusable";
 
-spy(e => console.log(e.payload.debugName || e.payload.unitContext.debugName));
+const useCounter = reusable(() => {
+  return useState(0);
+});
 
-const counterUnit = Memo(() => {
-  const [counter, setCounter] = reuseState(0);
-  const [step, setStep] = reuseState(0);
-  const generalEffect = reuseEffect(() => console.log('effect'))
+const useStep = reusable(() => {
+  return useState(0);
+});
 
-  const nextStep = reuseMemo(() => counter + step, [counter, step]);
-
-  return { counter, setCounter, step, setStep };
-}, undefined, 'Moshe');
-
-function App() {
-  const { counter, setCounter, step, setStep } = useReuse(counterUnit);
+function Header() {
+  const [counter, setCounter] = useCounter();
+  const [step, setStep] = useStep();
 
   return (
     <div>
@@ -31,5 +28,26 @@ function App() {
   );
 }
 
+function Footer() {
+  const [counter] = useCounter();
+  const [step] = useStep();
+
+  return (
+    <div>
+      <div>Counter: {counter}
+      </div>
+      <div>Step: {step}
+      </div>
+    </div>
+  );
+}
+
+const App = () => (
+  <div>
+    <Header></Header>
+    <Footer></Footer>
+  </div>
+);
+
 const rootElement = document.getElementById("root");
-ReactDOM.render(<ReuseProvider><App /></ReuseProvider>, rootElement);
+ReactDOM.render(<ReusableProvider><App /></ReusableProvider>, rootElement);
