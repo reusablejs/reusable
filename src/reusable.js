@@ -64,4 +64,5 @@ class Store {
     return unitsArray;
   }
 }
-export const store = new Store();
+export const createStore = () => new Store();
+export const defaultStore = createStore();
