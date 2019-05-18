@@ -1,10 +1,10 @@
 import React, { useState, useRef, useContext, useEffect } from "react";
-import {defaultStore} from './reusable';
+import {getStore} from './reusable';
 
 export const ReusableContext = React.createContext();
-export const ReusableProvider = ({ children, store }) => {
+export const ReusableProvider = ({ children }) => {
   return (
-    <ReusableContext.Provider value={store || defaultStore}>
+    <ReusableContext.Provider value={getStore()}>
       <React.Fragment>
         <Units/>
         {children}
@@ -56,8 +56,8 @@ export const useReuse = (fn) => {
   return localCopy;
 }
 
-export const reusable = (fn, {store} = {}) => {
-  (store || defaultStore).getUnit(fn);
+export const reusable = (fn) => {
+  getStore().getUnit(fn);
 
   return () => useReuse(fn);
 }

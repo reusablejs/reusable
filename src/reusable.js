@@ -65,4 +65,6 @@ class Store {
   }
 }
 export const createStore = () => new Store();
-export const defaultStore = createStore();
+let defaultStore = new Store();
+export const getStore = () => defaultStore;
+export const replaceStore = (mockedStore) => defaultStore = mockedStore;
