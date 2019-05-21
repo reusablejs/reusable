@@ -29,14 +29,14 @@ function Header() {
 }
 
 function Footer() {
-  const [counter] = useCounter();
-  const [step] = useStep();
+  const counter = useCounter(([val]) => val, (a, b) => Math.abs(a - b) < 2);
+  const step = useStep(([val]) => Math.floor(val / 4));
 
   return (
     <div>
-      <div>Counter: {counter}
+      <div>Counter evens: {counter}
       </div>
-      <div>Step: {step}
+      <div>Step / 4: {step}
       </div>
     </div>
   );

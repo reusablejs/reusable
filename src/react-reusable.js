@@ -1,4 +1,5 @@
-import React, { useState, useRef, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import {shallowEqual} from './shallow-equal';
 import {getStore} from './reusable';
 
 export const ReusableContext = React.createContext();
@@ -43,15 +44,19 @@ const Units = () => {
     </React.Fragment>
   )
 }
-export const useReuse = (fn) => {
+const identity = val => val;
+export const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
   const unit = useStore().getUnit(fn);
-  const [localCopy, setLocalCopy] = useState(() => unit.getValue());
+  const [localCopy, setLocalCopy] = useState(() => selector(unit.getValue()));
   
   useEffect(() => {
     return unit.subscribe((newValue) => {
-      setLocalCopy(newValue);
+      const selectedNewValue = selector(newValue);
+      if (!areEqual(selectedNewValue, localCopy)) {
+        setLocalCopy(selectedNewValue);
+      }
     });
-  }, [unit]);
+  }, [unit, selector, areEqual]);
 
   return localCopy;
 }
@@ -59,5 +64,5 @@ export const useReuse = (fn) => {
 export const reusable = (fn) => {
   getStore().getUnit(fn);
 
-  return () => useReuse(fn);
+  return (selector, areEqual) => useReuse(fn, selector, areEqual);
 }
