@@ -19,18 +19,14 @@ class Unit {
     this.subscribers = [...this.subscribers, callback];
     return () => {
       this.subscribers = this.subscribers.filter(sub => sub !== callback)
-      if (this.subscribers.length === 0) {
-        this.destroy();
+      if (this.subscribers.length === 0 && this.onDestroy) {
+        this.onDestroy();
       }
     }
   }
 
   notify() {
     this.subscribers.forEach(sub => sub(this.cachedValue));
-  }
-
-  destroy() {
-    this.onDestroy();
   }
 }
 
@@ -41,15 +37,18 @@ class Store {
     this.subscribers = [...this.subscribers, callback];
     return () => this.subscribers = this.subscribers.filter(item => item !== callback);
   }
-  getUnit(fn) {
-    if (!this.units.has(fn)) {
-      const unit = new Unit(fn, () => {
-        this.units.delete(fn);
-        this.notifyUnitsChanged();
-      });
-      this.units.set(fn, unit);
-      this.notifyUnitsChanged();
+  createUnit(fn, {isDestroyable = true} = {}) {
+    if (this.units.has(fn)) {
+      throw new Error('Unit already exist', fn);
     }
+    const unit = new Unit(fn, isDestroyable && (() => {
+      this.units.delete(fn);
+      this.notifyUnitsChanged();
+    }));
+    this.units.set(fn, unit);
+    this.notifyUnitsChanged();
+  }
+  getUnit(fn) {
     return this.units.get(fn);
   }
   notifyUnitsChanged() {
