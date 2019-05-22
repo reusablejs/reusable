@@ -40,13 +40,10 @@ class Footer extends React.Component {
             <a href={this.docUrl('basic-usage.html', this.props.language)}>
               Getting Started
             </a>
-            <a href={this.docUrl('reusable-api.html', this.props.language)}>
-              API
-            </a>
           </div>
           <div>
             <h5>Community</h5>
-            <a href="https://discordapp.com/">Project Chat</a>
+            <a href="https://reusableslack.herokuapp.com/">Slack Community</a>
             <a href={this.pageUrl('users.html', this.props.language)}>
               User Showcase
             </a>
