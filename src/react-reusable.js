@@ -15,15 +15,11 @@ export const ReusableProvider = ({ children }) => {
 };
 
 const Unit = ({ unit }) => {
-  const value = unit.run();
+  unit.run();
 
   useEffect(() => unit.notify(), [unit.cachedValue]);
 
-  return (
-    <pre style={{display: 'none'}}>
-      { JSON.stringify(value, null, 4) }
-    </pre>
-  );
+  return null;
 }
 
 export const useStore = () => useContext(ReusableContext);
@@ -61,8 +57,8 @@ export const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
   return localCopy;
 }
 
-export const reusable = (fn) => {
-  getStore().getUnit(fn);
+export const reusable = (fn, options) => {
+  getStore().createUnit(fn, options);
 
   return (selector, areEqual) => useReuse(fn, selector, areEqual);
 }
