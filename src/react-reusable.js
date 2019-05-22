@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import {shallowEqual} from './shallow-equal';
 import {getStore} from './reusable';
 
-export const ReusableContext = React.createContext();
+const ReusableContext = React.createContext();
 export const ReusableProvider = ({ children }) => {
   return (
     <ReusableContext.Provider value={getStore()}>
@@ -22,7 +22,7 @@ const Unit = ({ unit }) => {
   return null;
 }
 
-export const useStore = () => useContext(ReusableContext);
+const useStore = () => useContext(ReusableContext);
 
 const Units = () => {
   const store = useStore();
@@ -41,7 +41,7 @@ const Units = () => {
   )
 }
 const identity = val => val;
-export const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
+const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
   const unit = useStore().getUnit(fn);
   const [localCopy, setLocalCopy] = useState(() => selector(unit.getValue()));
   
@@ -57,8 +57,23 @@ export const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
   return localCopy;
 }
 
-export const reusable = (fn, options) => {
-  getStore().createUnit(fn, options);
+export const reusable = (fn) => {
+  getStore().createUnit(fn);
 
   return (selector, areEqual) => useReuse(fn, selector, areEqual);
 }
+
+// TBD:
+// export const reusableReducer = (reducer, initialValue, init, options) => {
+//   const fn = () => useReducer(reducer, initialValue, init);
+
+//   getStore().createUnit(fn, options);
+//   return (selector, areEqual) => useReuse(fn, selector, areEqual);
+// };
+
+// export const reusableState = (init, options) => {
+//   const fn = () => useState(init);
+
+//   getStore().createUnit(fn, options);
+//   return (selector, areEqual) => useReuse(fn, selector, areEqual);
+// };
