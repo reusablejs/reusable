@@ -1,6 +1,16 @@
 {
   "docs": {
-    "Getting Started": ["basic-usage", "units"],
-    "API": ["reusable-api", "react-reusable-api"]
+    "Introduction": [
+      "intro"
+    ],
+    "Getting Started": [
+      "basic-usage",
+      "full-demo",
+      "units"
+    ],
+    "API": [
+      "reusable-api",
+      "react-reusable-api"
+    ]
   }
 }

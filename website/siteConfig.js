@@ -20,8 +20,8 @@ const users = [
 ];
 
 const siteConfig = {
-  title: 'Test Site', // Title for your website.
-  tagline: 'A website for testing',
+  title: 'ReusableJS', // Title for your website.
+  tagline: 'A library for reusing state and business logic between components',
   url: 'https://reusable.github.io', // Your website URL
   baseUrl: '/reusable/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
@@ -37,23 +37,23 @@ const siteConfig = {
 
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
-    {doc: 'basic-usage', label: 'Docs'},
-    {doc: 'reusable-api', label: 'API'},
-    {page: 'help', label: 'Help'},
-    {blog: true, label: 'Blog'},
+    { doc: 'basic-usage', label: 'Docs' },
+    { doc: 'reusable-api', label: 'API' },
+    { page: 'help', label: 'Help' },
+    { blog: true, label: 'Blog' },
   ],
 
   // If you have users set above, you add it here:
   users,
 
   /* path to images for header/footer */
-  headerIcon: 'img/docusaurus.svg',
-  footerIcon: 'img/docusaurus.svg',
+  // headerIcon: 'img/docusaurus.svg',
+  // footerIcon: 'img/docusaurus.svg',
   favicon: 'img/favicon.png',
 
   /* Colors for website */
   colors: {
-    primaryColor: '#2E8555',
+    primaryColor: '#385170',
     secondaryColor: '#205C3B',
   },
 
