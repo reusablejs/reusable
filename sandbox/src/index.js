@@ -10,6 +10,13 @@ const useStep = reusable(() => {
   return useState(0);
 });
 
+const useMultiply = reusable(() => {
+  const [counter] = useCounter();
+  const [step] = useStep();
+
+  return counter * step;
+})
+
 function Header() {
   const [counter, setCounter] = useCounter();
   const [step, setStep] = useStep();
@@ -42,12 +49,22 @@ function Footer() {
   );
 }
 
-const App = () => (
-  <div>
-    <Header></Header>
-    <Footer></Footer>
-  </div>
-);
+const Multiply = () => {
+  return <span>{useMultiply()}</span>;
+}
+
+const App = () => {
+  const [showMultiply, setShowMultiply] = useState(true);
+
+  return (
+    <div>
+      <Header/>
+      {showMultiply ? <Multiply/> : null }
+      <button onClick={() => setShowMultiply(prev => !prev)}>toggle</button>
+      <Footer/>
+    </div>
+  );
+}
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<ReusableProvider><App /></ReusableProvider>, rootElement);

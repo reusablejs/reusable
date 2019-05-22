@@ -1,9 +1,8 @@
 class Unit {
   subscribers = [];
   cachedValue = null;
-  constructor(fn, onDestroy) {
+  constructor(fn) {
     this.fn = fn;
-    this.onDestroy = onDestroy;
   }
 
   getValue() {
@@ -19,9 +18,6 @@ class Unit {
     this.subscribers = [...this.subscribers, callback];
     return () => {
       this.subscribers = this.subscribers.filter(sub => sub !== callback)
-      if (this.subscribers.length === 0 && this.onDestroy) {
-        this.onDestroy();
-      }
     }
   }
 
@@ -37,14 +33,11 @@ class Store {
     this.subscribers = [...this.subscribers, callback];
     return () => this.subscribers = this.subscribers.filter(item => item !== callback);
   }
-  createUnit(fn, {isDestroyable = true} = {}) {
+  createUnit(fn) {
     if (this.units.has(fn)) {
       throw new Error('Unit already exist', fn);
     }
-    const unit = new Unit(fn, isDestroyable && (() => {
-      this.units.delete(fn);
-      this.notifyUnitsChanged();
-    }));
+    const unit = new Unit(fn);
     this.units.set(fn, unit);
     this.notifyUnitsChanged();
   }
@@ -57,8 +50,8 @@ class Store {
   getUnitsArray() {
     const unitsArray = [];
 
-    this.units.forEach((key) => {
-      unitsArray.push(key);
+    this.units.forEach((unit) => {
+      unitsArray.push(unit);
     })
     return unitsArray;
   }
