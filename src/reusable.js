@@ -42,6 +42,9 @@ class Store {
     this.notifyUnitsChanged();
   }
   getUnit(fn) {
+    if (!this.units.has(fn)) {
+      throw new Error('Unit doesn\'t exist', fn);
+    }
     return this.units.get(fn);
   }
   notifyUnitsChanged() {
