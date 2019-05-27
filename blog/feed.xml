@@ -4,7 +4,7 @@
         <title>ReusableJS Blog</title>
         <link>https://reusable.github.io/reusable/blog</link>
         <description>The best place to stay up-to-date with the latest ReusableJS news and events.</description>
-        <lastBuildDate>Fri, 05 Apr 2019 06:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Thu, 01 Jan 1970 00:00:00 GMT</lastBuildDate>
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
         <generator>Feed for Node.js</generator>
         <image>
@@ -13,6 +13,14 @@
             <link>https://reusable.github.io/reusable/blog</link>
         </image>
         <copyright>Copyright © 2019 ReusablesJS</copyright>
+        <item>
+            <title><![CDATA[Complete Rewrite to Use React Hooks]]></title>
+            <link>https://reusable.github.io/reusable/blog/2019/22/05/refactor-to-regular-hooks.html</link>
+            <guid>https://reusable.github.io/reusable/blog/2019/22/05/refactor-to-regular-hooks.html</guid>
+            <pubDate>Thu, 01 Jan 1970 00:00:00 GMT</pubDate>
+            <description><![CDATA[<p>We've managed to find a way to use regular React hooks, which can leverage hooks libraries, project's custom hooks, ESLint rules and devtools.</p>
+]]></description>
+        </item>
         <item>
             <title><![CDATA[Docs Website First Attempt]]></title>
             <link>https://reusable.github.io/reusable/blog/2019/04/05/docs-website.html</link>

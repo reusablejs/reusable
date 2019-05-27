@@ -2,12 +2,24 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://reusable.github.io/reusable/blog</id>
     <title>ReusableJS Blog</title>
-    <updated>2019-04-05T06:00:00Z</updated>
+    <updated>1970-01-01T00:00:00Z</updated>
     <generator>Feed for Node.js</generator>
     <link rel="alternate" href="https://reusable.github.io/reusable/blog"/>
     <subtitle>The best place to stay up-to-date with the latest ReusableJS news and events.</subtitle>
     <logo>https://reusable.github.io/reusable/undefined</logo>
     <rights>Copyright © 2019 ReusablesJS</rights>
+    <entry>
+        <title type="html"><![CDATA[Complete Rewrite to Use React Hooks]]></title>
+        <id>https://reusable.github.io/reusable/blog/2019/22/05/refactor-to-regular-hooks.html</id>
+        <link href="https://reusable.github.io/reusable/blog/2019/22/05/refactor-to-regular-hooks.html">
+        </link>
+        <updated>1970-01-01T00:00:00Z</updated>
+        <summary type="html"><![CDATA[<p>We've managed to find a way to use regular React hooks, which can leverage hooks libraries, project's custom hooks, ESLint rules and devtools.</p>
+]]></summary>
+        <author>
+            <name>Adam Klein</name>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Docs Website First Attempt]]></title>
         <id>https://reusable.github.io/reusable/blog/2019/04/05/docs-website.html</id>
