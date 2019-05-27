@@ -22,7 +22,13 @@ const Unit = ({ unit }) => {
   return null;
 }
 
-const useStore = () => useContext(ReusableContext);
+const useStore = () => {
+  const store = useContext(ReusableContext);
+  if (store === undefined) {
+    throw new Error('Are you trying to use Reusable without a ReusableProvider?');
+  }
+  return store;
+}
 
 const Units = () => {
   const store = useStore();
