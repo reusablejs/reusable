@@ -1,16 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {ReuseProvider} from 'reusable';
+import {ReusableProvider} from 'reusable';
 import {Header} from './Header';
 import {Footer} from './Footer';
 
 function App() {
   return (
-    <ReuseProvider>
+    <ReusableProvider>
       <Header/>
       Counter in header and footer are reused
       <Footer/>
-    </ReuseProvider>
+    </ReusableProvider>
   );
 }
 

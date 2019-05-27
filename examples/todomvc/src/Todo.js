@@ -1,9 +1,8 @@
 import React from "react";
-import { useReuse } from "reusable";
-import { todosUnit } from "./units/todos.unit";
+import { useTodos } from "./units/todos.unit";
 
 export function Todo({ todo }) {
-  const { toggleTodo, removeTodo } = useReuse(todosUnit);
+  const { toggleTodo, removeTodo } = useTodos();
 
   return (
     <li className={todo.completed ? 'completed' : ''}>

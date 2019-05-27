@@ -1,8 +1,8 @@
-import { reuseState, reuseEffect } from "reusable";
+import { useState, useEffect } from "react";
 
 // custom hook:
-export const reusePersistedState = (key, initialValue) => {
-  const [value, setValue] = reuseState(() => {
+export const usePersistedState = (key, initialValue) => {
+  const [value, setValue] = useState(() => {
     let persistedState = initialValue;
     try {
       persistedState = JSON.parse(localStorage.getItem(key));
@@ -12,7 +12,7 @@ export const reusePersistedState = (key, initialValue) => {
     return persistedState;
   });
 
-  reuseEffect(() => {
+  useEffect(() => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {

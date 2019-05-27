@@ -1,13 +1,12 @@
 import React from "react";
-import { todosUnit } from './units/todos.unit';
-import { useReuse } from "reusable";
+import { useTodos } from './units/todos.unit';
 import { Todo } from './Todo';
-import { isAllSelectedUnit, filteredTodosUnit } from "./units/todosSelectors.units";
+import { useIsAllSelected, useFilteredTodos } from "./units/todosSelectors.units";
 
 export function Todos() {
-  const filteredTodos = useReuse(filteredTodosUnit);
-  const { completeAll, setAllIncomplete } = useReuse(todosUnit);
-  const isAllSelected = useReuse(isAllSelectedUnit);
+  const filteredTodos = useFilteredTodos();
+  const { completeAll, setAllIncomplete } = useTodos();
+  const isAllSelected = useIsAllSelected();
 
   return (
     <section className="main" style={{ display: 'block' }}>

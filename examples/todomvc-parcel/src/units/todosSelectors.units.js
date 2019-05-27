@@ -1,19 +1,20 @@
-import { reuseMemo, Memo, reuse } from "reusable";
+import { reusable } from "reusable";
+import { useMemo } from "react";
 import { values, every } from 'lodash/fp';
-import { todosUnit } from "./todos.unit";
-import { filterUnit } from "./filter.units";
+import { useTodos } from "./todos.unit";
+import { useFilter } from "./filter.units";
 
-export const todosArrayUnit = () => {
-  const { todos } = reuse(todosUnit);
+export const useTodosArray = reusable(() => {
+  const { todos } = useTodos();
 
-  return reuseMemo(() => values(todos), [todos]);
-}
+  return useMemo(() => values(todos), [todos]);
+});
 
-export const filteredTodosUnit = Memo(() => {
-  const todosArray = reuse(todosArrayUnit);
-  const [filter] = reuse(filterUnit);
+export const useFilteredTodos = reusable(() => {
+  const todosArray = useTodosArray();
+  const [filter] = useFilter();
 
-  return reuseMemo(() => todosArray.filter(todo => {
+  return useMemo(() => todosArray.filter(todo => {
     if (filter === 'ACTIVE') {
       return !todo.completed;
     } else if (filter === 'COMPLETED') {
@@ -24,14 +25,14 @@ export const filteredTodosUnit = Memo(() => {
   }), [filter, todosArray]);
 });
 
-export const isAllSelectedUnit = () => {
-  const todosArray = reuse(todosArrayUnit);
+export const useIsAllSelected = reusable(() => {
+  const todosArray = useTodosArray();
 
   return every(todo => todo.completed, todosArray);
-}
+});
 
-export const todosLeftUnit = () => {
-  const todosArray = reuse(todosArrayUnit);
+export const useTodosLeft = reusable(() => {
+  const todosArray = useTodosArray();
 
   return todosArray.filter(todo => !todo.completed).length;
-}
+});

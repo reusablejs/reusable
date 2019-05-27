@@ -1,3 +1,4 @@
-import { reuseState } from "reusable";
+import {useState} from 'react';
+import { reusable } from "reusable";
 
-export const counterUnit = () => reuseState(0);
+export const useCounter = reusable(() => useState(0));

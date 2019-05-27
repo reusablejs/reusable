@@ -1,4 +1,5 @@
-import { reusePersistedState } from "./reusePersistedState";
+import {reusable} from 'reusable';
+import { usePersistedState } from "./usePersistedState";
 
 export const FILTERS = {
   ALL: 'All',
@@ -6,4 +7,4 @@ export const FILTERS = {
   COMPLETED: 'Completed'
 };
 
-export const filterUnit = () => reusePersistedState('FILTER', 'ALL');
+export const useFilter = reusable(() => usePersistedState('FILTER', 'ALL'));

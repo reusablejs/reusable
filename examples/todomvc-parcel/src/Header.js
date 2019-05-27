@@ -1,9 +1,8 @@
 import React, { useState, useCallback } from "react";
-import { useReuse } from "reusable";
-import { todosUnit } from './units/todos.unit';
+import { useTodos } from './units/todos.unit';
 
 export function Header() {
-  const { addTodo } = useReuse(todosUnit);
+  const { addTodo } = useTodos();
   const [value, setValue] = useState('');
   const onChange = useCallback(e => setValue(e.target.value), []);
   const onKeyDown = useCallback((key) => {
