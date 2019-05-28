@@ -35,7 +35,7 @@
     "build:dev": "microbundle watch --external all --jsx React.createElement",
     "sandbox": "cd sandbox && npm start",
     "dev": "concurrently 'npm run build:dev' 'npm run sandbox'",
-    "docs:publish": "cd website && npm run build && npm run publish-gh-pages",
+    "docs:publish": "cd website && npm run build && USE_SSH=true npm run publish-gh-pages",
     "docs:dev": "cd website && npm start",
     "test": "jest"
   },
