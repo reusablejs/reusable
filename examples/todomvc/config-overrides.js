@@ -1,8 +1,6 @@
 const {
-  override,
-  addBabelPlugin
+  override
 } = require("customize-cra");
 
 module.exports = override(
-  addBabelPlugin('babel-plugin-reusable')
 );
