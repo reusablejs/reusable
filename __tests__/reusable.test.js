@@ -128,6 +128,17 @@ describe('reusable', () => {
     act(() => result.current[1](3));
     expect(result.current[0]).toBe(3);
   });
+  it('should allow to set values twice (stale state bug)', () => {
+    const useSomething = reusable(() => useState(false));
+    const {result} = renderHook(useSomething, {
+      wrapper: ReusableProvider
+    });
+
+    act(() => result.current[1](prev => !prev));
+    expect(result.current[0]).toBe(true);
+    act(() => result.current[1](prev => !prev));
+    expect(result.current[0]).toBe(false);
+  });
   it('should share state between units', () => {
     const useSomething = reusable(() => useState(1));
     const {result} = renderHook(useSomething, {
