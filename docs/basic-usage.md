@@ -29,9 +29,8 @@ const App = () => (
 
 ```
 
-Create a unit (a reusable hook)  
+Create a reusable hook
 ```javascript
-// units/timer.js
 import { useState } from "react";
 import { reusable } from "reusable";
 
@@ -41,8 +40,6 @@ export const useTimer = reusable(() => useState(0));
 Using inside components  
 ```javascript
 // Header.js:
-import { useTimer } from "./units/timer";
-
 const Header = () => {
   const [timer, setTimer] = useTimer();
 
@@ -56,7 +53,7 @@ const Footer = () => {
 }
 ```
 
-## Using units inside other units
+## Using reusable hooks inside other reusable hooks
 No problem at all:
 
 ```javascript
@@ -79,7 +76,7 @@ const Comp = () => {
 ```
 
 ## Overriding selector and areEqual
-- Select a subset of the unit's value using the 1st argument  
+- Select a subset of the hook's return value using the 1st argument  
 - Override compare method (shallowCompare by default) using the 2nd argument
 
 ```javascript
