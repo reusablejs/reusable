@@ -10,6 +10,20 @@ describe('util: shallow compare', () => {
       expect(shallowEqual(a, b)).toEqual(true);
     });
 
+    test('false value', () => {
+      const a = false;
+      const b = false;
+
+      expect(shallowEqual(a, b)).toEqual(true);
+    });
+
+    test('null value', () => {
+      const a = null;
+      const b = null;
+
+      expect(shallowEqual(a, b)).toEqual(true);
+    });
+
     test('reference', () => {
       const a = { a: 1, b: 2 };
       const b = a;
@@ -46,6 +60,19 @@ describe('util: shallow compare', () => {
 
       expect(shallowEqual(a, b)).toEqual(false);
     });
+    test('null & false should not match', () => {
+      const a = null;
+      const b = false;
+
+      expect(shallowEqual(a, b)).toEqual(false);
+    });
+    test('true & false should not match', () => {
+      const a = false;
+      const b = true;
+
+      expect(shallowEqual(a, b)).toEqual(false);
+    });
+
   });
 
 
