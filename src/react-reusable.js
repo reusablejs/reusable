@@ -52,7 +52,7 @@ const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
         setLocalCopy(selectedNewValue);
       }
     });
-  }, [unit, selector, areEqual]);
+  }, [unit, localCopy, selector, areEqual]);
 
   return localCopy;
 }
