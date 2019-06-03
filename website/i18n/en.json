@@ -3,34 +3,16 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "A website for testing",
+    "tagline": "A library for reusing state and business logic between components",
     "docs": {
       "basic-usage": {
-        "title": "Getting Started with Reusable in React",
-        "sidebar_label": "Basic Usage with React"
-      },
-      "react-reusable-api": {
-        "title": "React Reusable API",
-        "sidebar_label": "React Reusable API"
-      },
-      "reusable-api": {
-        "title": "Reusable API",
-        "sidebar_label": "Reusable API"
-      },
-      "units": {
-        "title": "Creating and using data units",
-        "sidebar_label": "Creating and using data units"
+        "title": "Getting Started with Reusable",
+        "sidebar_label": "Getting Started"
       }
     },
-    "links": {
-      "Docs": "Docs",
-      "API": "API",
-      "Help": "Help",
-      "Blog": "Blog"
-    },
+    "links": {},
     "categories": {
-      "Getting Started": "Getting Started",
-      "API": "API"
+      "Docs": "Docs"
     }
   },
   "pages-strings": {

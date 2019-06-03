@@ -1,4 +1,5 @@
-import { Memo, reuseEffect, reuseReducer } from "reusable";
+import { reusable } from "reusable";
+import { useEffect, useReducer } from "react";
 import { set, update, omit, mapValues, keyBy, omitBy, take } from 'lodash/fp';
 import uuid from 'uuid';
 
@@ -37,11 +38,11 @@ const todosReducer = (state, action) => {
   }
 }
 
-export const todosUnit = Memo(() => {
-  const [todos, dispatch] = reuseReducer(todosReducer, {});
+export const useTodos = reusable(() => {
+  const [todos, dispatch] = useReducer(todosReducer, {});
 
   // fetch todos on start:
-  reuseEffect(() => {
+  useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/todos')
       .then(response => response.json())
       .then(todos => {
@@ -71,5 +72,5 @@ export const todosUnit = Memo(() => {
     clearCompleted: () => dispatch({ type: CLEAR_COMPLETED })
   };
   // We only need to notify changes if todos changed.
-  // Alternatively, we could wrap each action with reuseCallback and skip the second param to Memo
-}, (prev, next) => prev.todos === next.todos);
+  // Alternatively, we could wrap each action with useCallback and skip the second param to Memo
+});

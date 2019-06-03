@@ -1,13 +1,12 @@
 import React from "react";
-import { useReuse } from "reusable";
-import { filterUnit, FILTERS } from "./units/filter.units";
-import { todosUnit } from "./units/todos.unit";
-import { todosLeftUnit } from "./units/todosSelectors.units";
+import { useFilter, FILTERS } from "./units/filter.units";
+import { useTodos } from "./units/todos.unit";
+import { useTodosLeft } from "./units/todosSelectors.units";
 
 export function Footer() {
-  const [filter, setFilter] = useReuse(filterUnit);
-  const { clearCompleted } = useReuse(todosUnit)
-  const todosLeft = useReuse(todosLeftUnit);
+  const [filter, setFilter] = useFilter();
+  const { clearCompleted } = useTodos()
+  const todosLeft = useTodosLeft();
 
   return (
     <footer className="footer">

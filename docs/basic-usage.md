@@ -1,10 +1,13 @@
 ---
 id: basic-usage
-title: Getting Started with Reusable in React
-sidebar_label: Basic Usage with React
+title: Getting Started with Reusable
+sidebar_label: Getting Started
 ---
 
-## Installation
+Reusable is a library for sharing state and side-effects between components using hooks.
+Just wrap your custom hooks with `reusable` and you're good to go.
+
+## Usage
 ```
 npm install reusable
 ```
@@ -13,56 +16,115 @@ or
 yarn add reusable
 ```
 
-## Create a data unit
-```javascript
-// reusables/counter.js
-import { reuseState } from "reusable";
-
-export const timer = () => reuseState(0);
-```
-
-## React Provider
+Provide  
 ```javascript
 // App.js:
-import { ReuseProvider } from "reusable/react";
+import { ReusableProvider } from "reusable";
 
 const App = () => (
-  <ReuseProvider>
-    <Footer/>
-    <Header/>
-  </ReuseProvider>
+  <ReusableProvider> {/* no init code */}
+    ...
+  </ReusableProvider>
 );
 
 ```
-## Using inside a component
+
+Create a reusable hook
 ```javascript
-// Header.js:
-import { useReuse } from "reusable/react";
-import { timer } from "./reusables/counter";
+import { useState } from "react";
+import { reusable } from "reusable";
 
-const Header = () => {
-  const [counter, setCounter] = useReuse(timer);
-
-  return ... // Use it like regular hooks
-}
+export const useTimer = reusable(() => useState(0));
 ```
 
-## Using the same unit inside another component
+Using inside components  
 ```javascript
-// Footer.js:
-import { useReuse } from "reusable/react";
-import { timer } from "./reusables/timer";
+// Header.js:
+const Header = () => {
+  const [timer, setTimer] = useTimer();
+
+  return ...
+}
 
 const Footer = () => {
-  const [counter, setCounter] = useReuse(timer); // Yup, same counter
+  const [timer, setTimer] = useTimer(); // Yup, same timer
 
   return ...
 }
 ```
 
-## Live Demo
-<a target="blank" href="https://codesandbox.io/s/github/reusablejs/reusable/tree/examples/examples/basic?fontsize=14&module=%2Fsrc%2Findex.js">
+## Using reusable hooks inside other reusable hooks
+No problem at all:
+
+```javascript
+import {reusable} from 'reusable';
+
+const useTodos = reusable(() => useReducer(reducer, {items: [], filter: 'All'});
+const useFilteredTasks = reusable(() => {
+  const [{items, filter}] = useTodos();
+
+  return useMemo(
+    () => items.filter(...),
+    [items, filter]
+  );
+}
+
+const Comp = () => {
+  const filteredTasks = useFilteredTasks();
+  ...
+}
+```
+
+## Overriding selector and areEqual
+- Select a subset of the hook's return value using the 1st argument  
+- Override compare method (shallowCompare by default) using the 2nd argument
+
+```javascript
+import {reusable} from 'reusable';
+
+const useTodos = reusable(() => useState([]);
+
+const Comp = () => {
+  const nextTask = useTodos(
+    ([items]) => items.find(item => !item.isCompleted),
+    (item1, item2) => item1.id === item2.id
+  );
+  ...
+}
+```
+
+## Demos
+**basic**  
+<a target="blank" href="https://codesandbox.io/s/github/reusablejs/reusable/tree/master/examples/basic?fontsize=14&module=%2Fsrc%2Findex.js">
   <img alt="Edit basic" src="https://codesandbox.io/static/img/play-codesandbox.svg">
 </a>
 
-<iframe src="https://codesandbox.io/embed/github/reusablejs/reusable/tree/examples/examples/basic?fontsize=14&module=%2Fsrc%2Findex.js" title="basic" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+**TodoMVC**  
+
+<a target="blank" href="https://codesandbox.io/s/github/reusablejs/reusable/tree/master/examples/todomvc?fontsize=14&module=%2Fsrc%2Findex.js">
+  <img alt="Edit basic" src="https://codesandbox.io/static/img/play-codesandbox.svg">
+</a>
+
+## Should I use this in production?
+
+Follow your heart
+
+## Feedback & Discussions:
+
+[Slack Community](https://reusableslack.herokuapp.com)
+
+## Contributing
+
+Please do!  
+Please open an issue for discussion before submitting a PR
+
+What's missing:
+- Tests
+- TypeScript support
+- SSR support
+- Better error messages
+- More Examples
+  - lazy-loaded modules example
+  - API requests
+  - Keyed states
+  - 3rd party

@@ -1,9 +1,8 @@
 import React from "react";
-import {useReuse} from 'reusable';
-import {counterUnit} from './units/counter.unit';
+import {useCounter} from './units/counter.unit';
 
 export function Footer() {
-  const [counter, setCounter] = useReuse(counterUnit);
+  const [counter, setCounter] = useCounter();
 
   return (
     <div>
