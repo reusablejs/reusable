@@ -2,7 +2,7 @@
   "name": "sandbox",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "start": "parcel ./index.html"
   },
@@ -12,5 +12,9 @@
     "@babel/core": "^7.4.3",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "parcel": "^1.12.3"
+  },
+  "dependencies": {
+    "@types/react": "^16.8.19",
+    "@types/react-dom": "^16.8.4"
   }
 }

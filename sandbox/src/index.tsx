@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { ReusableProvider, reusable } from "../../dist/reusable";
+import { ReusableProvider, reusable } from "../../dist";
 
 const useCounter = reusable(() => {
   return useState(0);
@@ -22,16 +22,16 @@ function Header() {
   const [step, setStep] = useStep();
 
   return (
-    <div>
-      <div>Counter: {counter}
-        <button onClick={() => setCounter(prev => prev + 1)}>+</button>
-        <button onClick={() => setCounter(prev => prev - 1)}>-</button>
+    <header>
+      <div>Counter: { counter }
+        <button onClick={ () => setCounter(prev => prev + 1) }>+</button>
+        <button onClick = {() => setCounter(prev => prev - 1)}>-</button>
       </div>
-      <div>Step: {step}
-        <button onClick={() => setStep(prev => prev + 1)}>+</button>
-        <button onClick={() => setStep(prev => prev - 1)}>-</button>
+      <div> Step: { step }
+        <button onClick={ () => setStep(prev => prev + 1) }> +</button>
+        <button onClick = {() => setStep(prev => prev - 1)}> -</button>
       </div>
-    </div>
+    </header>
   );
 }
 
@@ -40,17 +40,15 @@ function Footer() {
   const step = useStep(([val]) => Math.floor(val / 4));
 
   return (
-    <div>
-      <div>Counter evens: {counter}
-      </div>
-      <div>Step / 4: {step}
-      </div>
-    </div>
+    <footer>
+      <div>Counter evens: { counter }</div>
+      <div> Step / 4: { step }</div>
+    </footer>
   );
 }
 
 const Multiply = () => {
-  return <span>{useMultiply()}</span>;
+  return <span>{ useMultiply() } </span>;
 }
 
 const App = () => {
@@ -59,12 +57,12 @@ const App = () => {
   return (
     <div>
       <Header/>
-      {showMultiply ? <Multiply/> : null }
-      <button onClick={() => setShowMultiply(prev => !prev)}>toggle</button>
+      { showMultiply ? <Multiply/> : null }
+      <button onClick = {() => setShowMultiply(prev => !prev)}>toggle</button>
       <Footer/>
     </div>
   );
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<ReusableProvider><App /></ReusableProvider>, rootElement);
+ReactDOM.render(<ReusableProvider><App /></ReusableProvider >, rootElement);
