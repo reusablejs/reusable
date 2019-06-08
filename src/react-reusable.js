@@ -55,7 +55,7 @@ const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
     return unit.subscribe((newValue) => {
       const selectedNewValue = selector(newValue);
       if (!areEqual(selectedNewValue, localCopy)) {
-        setLocalCopy(selectedNewValue);
+        setLocalCopy(() => selectedNewValue);
       }
     });
   }, [unit, localCopy, selector, areEqual]);

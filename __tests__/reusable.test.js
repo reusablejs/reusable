@@ -164,4 +164,40 @@ describe('reusable', () => {
 
     expect(result.error.toString()).toMatchSnapshot();
   });
+  it('should allow to return a function value', () => {
+    const callback = jest.fn();
+    const useSomething = reusable(() => callback);
+    const {result} = renderHook(useSomething, {
+      wrapper: ReusableProvider
+    });
+    
+    expect(result.current).toBe(callback);
+    expect(callback.mock.calls.length).toBe(0);
+  });
+});
+describe('selectors', () => {
+
+  it('should allow to use a selector', () => {
+    const useSomething = reusable(() => useState(1));
+    const useSelector = () => useSomething(state => state[0]);
+    const { result } = renderHook(useSelector, {
+      wrapper: ReusableProvider
+    });
+    const state = result.current;
+      
+    expect(state).toBe(1);
+  });
+  
+  it('should allow to use a selector that returns a function', () => {
+    const callback = jest.fn();
+    const useSomething = reusable(() => ({ callback }));
+    const useSelector = () => useSomething(state => state.callback);
+    const {result} = renderHook(useSelector, {
+      wrapper: ReusableProvider
+    });
+    
+    expect(result.current).toBe(callback);
+    expect(callback.mock.calls.length).toBe(0);
+  });
+
 });
