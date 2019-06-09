@@ -1,3 +1,6 @@
+[![Build Status](https://circleci.com/gh/reusablejs/reusable.svg?style=svg)](https://circleci.com/gh/reusablejs/reusable)
+[![npm version](https://badge.fury.io/js/reusable.svg)](https://badge.fury.io/js/reusable)
+
 Go here:  
 [https://reusablejs.github.io/reusable](https://reusablejs.github.io/reusable)
 
