@@ -3,7 +3,7 @@ import { FunctionComponent, useState, useContext, useEffect } from 'react';
 import { shallowEqual, AreEqual } from './shallow-equal';
 import { Store, getStore, Unit as UnitClass, HookFn } from './reusable';
 
-const ReusableContext = React.createContext<Store>(getStore());
+const ReusableContext = React.createContext<Store | null>(null);
 
 export const ReusableProvider: FunctionComponent<{}> = ({ children }) => {
   return (
@@ -25,11 +25,12 @@ const Unit = ({ unit }: { unit: UnitClass<any> }) => {
 }
 
 const useStore = () => {
-  const store = useContext(ReusableContext);
+  const store = useContext(ReusableContext) as Store;
 
-  if (store === undefined) {
+  if (store === null) {
     throw new Error('Are you trying to use Reusable without a ReusableProvider?');
   }
+
   return store;
 }
 
