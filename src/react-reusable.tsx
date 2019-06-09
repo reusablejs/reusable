@@ -1,4 +1,5 @@
-import React, { FunctionComponent, useState, useContext, useEffect } from 'react';
+import * as React from 'react';
+import { FunctionComponent, useState, useContext, useEffect } from 'react';
 import { shallowEqual, AreEqual } from './shallow-equal';
 import { Store, getStore, Unit as UnitClass, HookFn } from './reusable';
 
@@ -25,6 +26,7 @@ const Unit = ({ unit }: { unit: UnitClass<any> }) => {
 
 const useStore = () => {
   const store = useContext(ReusableContext);
+
   if (store === undefined) {
     throw new Error('Are you trying to use Reusable without a ReusableProvider?');
   }
