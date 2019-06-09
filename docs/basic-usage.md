@@ -139,12 +139,7 @@ const Comp = () => {
 Reusable is in early stage and is being used (happily) in several projects.  
 Follow your heart.
 
-## Feedback / Discussions:
-
-[Slack Community](https://reusableslack.herokuapp.com)
-
-## Contributing
-
-Please do!  
+## Feedback / Contributing:
+We would love your feedback / suggestions
 Please open an issue for discussion before submitting a PR
-
+Thanks

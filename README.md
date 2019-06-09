@@ -35,12 +35,7 @@ Using plain context is not a best solution for state management, that led us to 
 - When you order the providers vertically, you can’t dynamically choose to depend on each other without changing the order, which might break things.
 - Context doesn't support selectors, render bailout, or debouncing
 
-## Feedback / Discussions:
-
-[Slack Community](https://reusableslack.herokuapp.com)
-
-## Contributing
-
-Please do!  
+## Feedback / Contributing:
+We would love your feedback / suggestions
 Please open an issue for discussion before submitting a PR
-
+Thanks
