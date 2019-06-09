@@ -106,8 +106,8 @@ const Comp = () => {
 </a>
 
 ## Should I use this in production?
-
-Follow your heart
+Reusable is in beta stage.  
+Follow your heart.
 
 ## Feedback & Discussions:
 
@@ -118,13 +118,3 @@ Follow your heart
 Please do!  
 Please open an issue for discussion before submitting a PR
 
-What's missing:
-- Tests
-- TypeScript support
-- SSR support
-- Better error messages
-- More Examples
-  - lazy-loaded modules example
-  - API requests
-  - Keyed states
-  - 3rd party

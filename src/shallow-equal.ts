@@ -1,6 +1,6 @@
 const hasOwn = Object.prototype.hasOwnProperty
 
-function is(x, y) {
+function is(x: any, y: any) {
   if (x === y) {
     return x !== 0 || y !== 0 || 1 / x === 1 / y
   } else {
@@ -8,7 +8,9 @@ function is(x, y) {
   }
 }
 
-export function shallowEqual(objA, objB) {
+export type AreEqual<HookValue> = (a: HookValue, b: HookValue) => boolean;
+
+export function shallowEqual(objA: any, objB: any) {
   if (is(objA, objB)) return true
 
   if (

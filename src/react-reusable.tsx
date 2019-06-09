@@ -1,20 +1,22 @@
-import React, { useState, useContext, useEffect } from "react";
-import {shallowEqual} from './shallow-equal';
-import {getStore} from './reusable';
+import * as React from 'react';
+import { FunctionComponent, useState, useContext, useEffect } from 'react';
+import { shallowEqual, AreEqual } from './shallow-equal';
+import { Store, getStore, Unit as UnitClass, HookFn } from './reusable';
 
-const ReusableContext = React.createContext();
-export const ReusableProvider = ({ children }) => {
+const ReusableContext = React.createContext<Store>(getStore());
+
+export const ReusableProvider: FunctionComponent<{}> = ({ children }) => {
   return (
     <ReusableContext.Provider value={getStore()}>
       <React.Fragment>
-        <Units/>
+        <Units />
         {children}
       </React.Fragment>
     </ReusableContext.Provider>
   );
 };
 
-const Unit = ({ unit }) => {
+const Unit = ({ unit }: { unit: UnitClass<any> }) => {
   unit.run();
 
   useEffect(() => unit.notify(), [unit.cachedValue]);
@@ -24,6 +26,7 @@ const Unit = ({ unit }) => {
 
 const useStore = () => {
   const store = useContext(ReusableContext);
+
   if (store === undefined) {
     throw new Error('Are you trying to use Reusable without a ReusableProvider?');
   }
@@ -42,17 +45,23 @@ const Units = () => {
 
   return (
     <React.Fragment>
-      {units.map((unit, index) => <Unit key={index} unit={unit}/>)}
+      {units.map((unit: UnitClass<any>, index: number) => <Unit key={index} unit={unit} />)}
     </React.Fragment>
   )
 }
-const identity = val => val;
-const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
+
+type SelectorFn<HookValue> = (val: HookValue) => any;
+const identity = (val: any) => val;
+function useReuse<HookValue>(
+  fn: HookFn<HookValue>,
+  selector = identity,
+  areEqual = shallowEqual
+) {
   const unit = useStore().getUnit(fn);
   const [localCopy, setLocalCopy] = useState(() => selector(unit.getValue()));
-  
+
   useEffect(() => {
-    return unit.subscribe((newValue) => {
+    return unit.subscribe((newValue: any) => {
       const selectedNewValue = selector(newValue);
       if (!areEqual(selectedNewValue, localCopy)) {
         setLocalCopy(() => selectedNewValue);
@@ -63,10 +72,10 @@ const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
   return localCopy;
 }
 
-export const reusable = (fn) => {
+export function reusable<HookValue>(fn: HookFn<HookValue>) {
   getStore().createUnit(fn);
 
-  return (selector, areEqual) => useReuse(fn, selector, areEqual);
+  return (selector?: SelectorFn<HookValue>, areEqual?: AreEqual<HookValue>) => useReuse(fn, selector, areEqual);
 }
 
 // TBD:
