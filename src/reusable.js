@@ -1,4 +1,7 @@
+import React from 'react';
+
 class Unit {
+  name = 'Unit';
   subscribers = [];
   cachedValue = null;
   constructor(fn) {
@@ -11,6 +14,9 @@ class Unit {
 
   run() {
     this.cachedValue = this.fn();
+
+    React.useDebugValue(this.name);
+
     return this.cachedValue;
   }
 

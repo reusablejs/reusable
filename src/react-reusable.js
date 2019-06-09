@@ -14,13 +14,19 @@ export const ReusableProvider = ({ children }) => {
   );
 };
 
-const Unit = ({ unit }) => {
-  unit.run();
+const createUnitComponent = (name) => {
+  const Component = ({ unit }) => {
+    unit.run();
 
-  useEffect(() => unit.notify(), [unit.cachedValue]);
+    useEffect(() => unit.notify(), [unit.cachedValue]);
 
-  return null;
-}
+    return null;
+  };
+
+  Object.defineProperty(Component,'name', { value: name });
+
+  return Component;
+};
 
 const useStore = () => {
   const store = useContext(ReusableContext);
@@ -42,7 +48,11 @@ const Units = () => {
 
   return (
     <React.Fragment>
-      {units.map((unit, index) => <Unit key={index} unit={unit}/>)}
+      {units.map((unit, index) => {
+        const UnitComponent = createUnitComponent(unit.name);
+
+        return <UnitComponent key={index} unit={unit}/>;
+      })}
     </React.Fragment>
   )
 }
@@ -50,7 +60,7 @@ const identity = val => val;
 const useReuse = (fn, selector = identity, areEqual = shallowEqual) => {
   const unit = useStore().getUnit(fn);
   const [localCopy, setLocalCopy] = useState(() => selector(unit.getValue()));
-  
+
   useEffect(() => {
     return unit.subscribe((newValue) => {
       const selectedNewValue = selector(newValue);
