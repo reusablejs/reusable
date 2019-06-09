@@ -64,7 +64,7 @@ function useReuse<HookValue>(
     return unit.subscribe((newValue: any) => {
       const selectedNewValue = selector(newValue);
       if (!areEqual(selectedNewValue, localCopy)) {
-        setLocalCopy(selectedNewValue);
+        setLocalCopy(() => selectedNewValue);
       }
     });
   }, [unit, localCopy, selector, areEqual]);

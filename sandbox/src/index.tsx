@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { ReusableProvider, reusable } from "../../dist";
 
@@ -8,6 +8,14 @@ const useCounter = reusable(() => {
 
 const useStep = reusable(() => {
   return useState(0);
+});
+
+const useFnObject = reusable(() => {
+  const [state, setState] = useState(0);
+  const callback = () => console.log('callback') || setState(10);
+  return {
+    callback
+  };
 });
 
 const useMultiply = reusable(() => {
@@ -53,6 +61,8 @@ const Multiply = () => {
 
 const App = () => {
   const [showMultiply, setShowMultiply] = useState(true);
+  const callback = useFnObject(state => state.callback);
+  setTimeout(() => callback(), 1000);
 
   return (
     <div>
