@@ -8,6 +8,7 @@ It allows you to transform your custom hooks to singleton stores, and subscribe 
 
 The benefits:  
 - Stores are decoupled from component tree
+- You can use selectors and bail out of render
 - Stores can co-depend without worrying about provider order
 - It's easy to create packages that rely on global state, and plug them into apps seamlessly
 
@@ -15,7 +16,7 @@ The benefits:
 Wrap your app with a provider:
 ```javascript
 const App = () => (
-  <ReusableProvider> {/* no initialization code */}
+  <ReusableProvider> {/* no initialization code, stores automatically plug into the top provider */}
     ...
   </ReusableProvider>
 )
