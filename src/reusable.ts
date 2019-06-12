@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 export type HookFn<HookValue> = () => HookValue;
 export type StoreValueChangeCallback<HookValue> = (value: HookValue | null) => void;
 export type StoresChangeCallback = () => void;
