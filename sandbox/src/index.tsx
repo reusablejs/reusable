@@ -1,24 +1,28 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { ReusableProvider, reusable } from "../../dist";
+import { ReusableProvider, createStore } from "../../dist";
 
-const useCounter = reusable(() => {
+const useCounter = createStore(() => {
   return useState(0);
 });
 
-const useStep = reusable(() => {
+const useStep = createStore(() => {
   return useState(0);
 });
 
-const useFnObject = reusable(() => {
-  const [state, setState] = useState(0);
-  const callback = () => console.log('callback') || setState(10);
+const useFnObject = createStore(() => {
+  const [_, setState] = useState(0);
+
+  const callback = () => {
+    console.log('callback')
+    setState(10);
+  }
   return {
     callback
   };
 });
 
-const useMultiply = reusable(() => {
+const useMultiply = createStore(() => {
   const [counter] = useCounter();
   const [step] = useStep();
 
@@ -32,19 +36,19 @@ function Header() {
   return (
     <header>
       <div>Counter: { counter }
-        <button onClick={ () => setCounter(prev => prev + 1) }>+</button>
-        <button onClick = {() => setCounter(prev => prev - 1)}>-</button>
+        <button onClick={ () => setCounter((prev:number) => prev + 1) }>+</button>
+        <button onClick = {() => setCounter((prev:number) => prev - 1)}>-</button>
       </div>
       <div> Step: { step }
-        <button onClick={ () => setStep(prev => prev + 1) }> +</button>
-        <button onClick = {() => setStep(prev => prev - 1)}> -</button>
+        <button onClick={ () => setStep((prev:number) => prev + 1) }> +</button>
+        <button onClick = {() => setStep((prev:number) => prev - 1)}> -</button>
       </div>
     </header>
   );
 }
 
 function Footer() {
-  const counter = useCounter(([val]) => val, (a, b) => Math.abs(a - b) < 2);
+    const counter = useCounter(([val]) => val, (a, b) => Math.abs(a - b) < 2);
   const step = useStep(([val]) => Math.floor(val / 4));
 
   return (

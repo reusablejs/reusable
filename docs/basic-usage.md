@@ -4,8 +4,9 @@ title: Getting Started with Reusable
 sidebar_label: Getting Started
 ---
 
-Reusable is a library for sharing state and side-effects between components using hooks.
-Just wrap your custom hooks with `reusable` and you're good to go.
+Reusable is a state management library that uses hooks.
+It allows to transform your custom hooks to stores, that have a shared state and behavior.  
+Just wrap your custom hooks with `createStore` and you're good to go.
 
 ## Usage
 ```
@@ -29,12 +30,12 @@ const App = () => (
 
 ```
 
-Create a reusable hook
+Create a store
 ```javascript
-import { useState } from "react";
-import { reusable } from "reusable";
+import {useState} from "react";
+import {createStore} from "reusable";
 
-export const useTimer = reusable(() => useState(0));
+export const useTimer = createStore(() => useState(0));
 ```
 
 Using inside components  
@@ -53,14 +54,14 @@ const Footer = () => {
 }
 ```
 
-## Using reusable hooks inside other reusable hooks
+## Using stores inside other stores
 No problem at all:
 
 ```javascript
-import {reusable} from 'reusable';
+import {createStore} from 'reusable';
 
-const useTodos = reusable(() => useReducer(reducer, {items: [], filter: 'All'});
-const useFilteredTasks = reusable(() => {
+const useTodos = createStore(() => useReducer(reducer, {items: [], filter: 'All'});
+const useFilteredTasks = createStore(() => {
   const [{items, filter}] = useTodos();
 
   return useMemo(
@@ -75,18 +76,47 @@ const Comp = () => {
 }
 ```
 
-## Overriding selector and areEqual
-- Select a subset of the hook's return value using the 1st argument  
-- Override compare method (shallowCompare by default) using the 2nd argument
+## Using selectors
+Select a subset of the hook's return value using the 1st argument  
 
 ```javascript
-import {reusable} from 'reusable';
+import {createStore} from 'reusable';
 
-const useTodos = reusable(() => useState([]);
+const useTodos = createStore(() => {
+  const [items, setItems] = useState([]);
+
+  return {
+    items,
+    setItems
+  }
+});
+
+const Comp = () => {
+  const tasksCount = useTodos(
+    (state) => state.items.length
+  );
+  ...
+}
+```
+
+## Override areEqual
+Override compare method (shallowCompare by default) using the 2nd argument
+
+```javascript
+import {createStore} from 'reusable';
+
+const useTodos = createStore(() => {
+  const [items, setItems] = useState([]);
+
+  return {
+    items,
+    setItems
+  }
+});
 
 const Comp = () => {
   const nextTask = useTodos(
-    ([items]) => items.find(item => !item.isCompleted),
+    (state) => state.items.find(item => !item.isCompleted),
     (item1, item2) => item1.id === item2.id
   );
   ...
@@ -106,15 +136,10 @@ const Comp = () => {
 </a>
 
 ## Should I use this in production?
-Reusable is in beta stage.  
+Reusable is in early stage and is being used (happily) in several projects.  
 Follow your heart.
 
-## Feedback & Discussions:
-
-[Slack Community](https://reusableslack.herokuapp.com)
-
-## Contributing
-
-Please do!  
+## Feedback / Contributing:
+We would love your feedback / suggestions
 Please open an issue for discussion before submitting a PR
-
+Thanks

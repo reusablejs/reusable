@@ -1,9 +1,9 @@
 export type HookFn<HookValue> = () => HookValue;
-export type UnitValueChangeCallback<HookValue> = (value: HookValue | null) => void;
-export type UnitsChangeCallback = () => void;
+export type StoreValueChangeCallback<HookValue> = (value: HookValue | null) => void;
+export type StoresChangeCallback = () => void;
 
-export class Unit<HookValue> {
-  subscribers: UnitValueChangeCallback<HookValue>[] = [];
+export class Store<HookValue> {
+  subscribers: StoreValueChangeCallback<HookValue>[] = [];
   cachedValue: HookValue | null = null;
   constructor(private fn: HookFn<HookValue>) {
   }
@@ -17,7 +17,7 @@ export class Unit<HookValue> {
     return this.cachedValue;
   }
 
-  subscribe(callback: UnitValueChangeCallback<HookValue>) {
+  subscribe(callback: StoreValueChangeCallback<HookValue>) {
     this.subscribers = [...this.subscribers, callback];
     return () => {
       this.subscribers = this.subscribers.filter(sub => sub !== callback)
@@ -29,42 +29,42 @@ export class Unit<HookValue> {
   }
 }
 
-export class Store {
-  units = new Map<HookFn<any>, Unit<any>>();
-  subscribers: UnitsChangeCallback[] = [];
-  onUnitsChanged(callback: UnitsChangeCallback) {
+export class Container {
+  stores = new Map<HookFn<any>, Store<any>>();
+  subscribers: StoresChangeCallback[] = [];
+  onStoresChanged(callback: StoresChangeCallback) {
     this.subscribers = [...this.subscribers, callback];
     return () => {
       this.subscribers = this.subscribers.filter(item => item !== callback);
     }
   }
-  createUnit(fn: HookFn<any>) {
-    if (this.units.has(fn)) {
-      throw new Error('Unit already exist');
+  createStore(fn: HookFn<any>) {
+    if (this.stores.has(fn)) {
+      throw new Error('Store already exist');
     }
-    const unit = new Unit(fn);
-    this.units.set(fn, unit);
-    this.notifyUnitsChanged();
+    const store = new Store(fn);
+    this.stores.set(fn, store);
+    this.notifyStoresChanged();
   }
-  getUnit(fn: HookFn<any>):Unit<any> {
-    if (!this.units.has(fn)) {
-      throw new Error('Unit doesn\'t exist');
+  getStore(fn: HookFn<any>):Store<any> {
+    if (!this.stores.has(fn)) {
+      throw new Error('Store doesn\'t exist');
     }
-    return <Unit<any>>this.units.get(fn);
+    return <Store<any>>this.stores.get(fn);
   }
-  notifyUnitsChanged() {
+  notifyStoresChanged() {
     this.subscribers.forEach(sub => sub());
   }
-  getUnitsArray() {
-    const unitsArray: Unit<any>[] = [];
+  getStoresArray() {
+    const storesArray: Store<any>[] = [];
 
-    this.units.forEach((unit) => {
-      unitsArray.push(unit);
+    this.stores.forEach((store) => {
+      storesArray.push(store);
     })
-    return unitsArray;
+    return storesArray;
   }
 }
-export const createStore = () => new Store();
-let defaultStore = new Store();
-export const getStore = () => defaultStore;
-export const replaceStore = (mockedStore: Store) => defaultStore = mockedStore;
+export const createContainer = () => new Container();
+let defaultContainer = new Container();
+export const getContainer = () => defaultContainer;
+export const replaceContainer = (mockedContainer: Container) => defaultContainer = mockedContainer;
