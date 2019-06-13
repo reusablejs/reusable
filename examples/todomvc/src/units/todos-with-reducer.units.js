@@ -1,4 +1,4 @@
-import { reusable } from "reusable";
+import { createStore } from "reusable";
 import { useEffect, useReducer } from "react";
 import { set, update, omit, mapValues, keyBy, omitBy, take } from 'lodash/fp';
 import uuid from 'uuid';
@@ -38,7 +38,7 @@ const todosReducer = (state, action) => {
   }
 }
 
-export const useTodos = reusable(() => {
+export const useTodos = createStore(() => {
   const [todos, dispatch] = useReducer(todosReducer, {});
 
   // fetch todos on start:

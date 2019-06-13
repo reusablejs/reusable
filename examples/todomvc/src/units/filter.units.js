@@ -1,4 +1,4 @@
-import {reusable} from 'reusable';
+import {createStore} from 'reusable';
 import { usePersistedState } from "./usePersistedState";
 
 export const FILTERS = {
@@ -7,4 +7,4 @@ export const FILTERS = {
   COMPLETED: 'Completed'
 };
 
-export const useFilter = reusable(() => usePersistedState('FILTER', 'ALL'));
+export const useFilter = createStore(() => usePersistedState('FILTER', 'ALL'));
