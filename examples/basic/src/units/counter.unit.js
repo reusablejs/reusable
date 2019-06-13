@@ -1,4 +1,4 @@
 import {useState} from 'react';
-import { reusable } from "reusable";
+import { createStore } from "reusable";
 
-export const useCounter = reusable(() => useState(0));
+export const useCounter = createStore(() => useState(0));

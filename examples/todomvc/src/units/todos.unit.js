@@ -1,9 +1,9 @@
-import { reusable } from "reusable";
+import { createStore } from "reusable";
 import { useEffect, useState } from "react";
 import { set, update, omit, mapValues, keyBy, omitBy, take } from 'lodash/fp';
 import uuid from 'uuid';
 
-export const useTodos = reusable(() => {
+export const useTodos = createStore(() => {
   const [todos, setTodos] = useState({});
 
   // fetch todos on start:

@@ -1,16 +1,16 @@
-import { reusable } from "reusable";
+import { createStore } from "reusable";
 import { useMemo } from "react";
 import { values, every } from 'lodash/fp';
 import { useTodos } from "./todos.unit";
 import { useFilter } from "./filter.units";
 
-export const useTodosArray = reusable(() => {
+export const useTodosArray = createStore(() => {
   const { todos } = useTodos();
 
   return useMemo(() => values(todos), [todos]);
 });
 
-export const useFilteredTodos = reusable(() => {
+export const useFilteredTodos = createStore(() => {
   const todosArray = useTodosArray();
   const [filter] = useFilter();
 
@@ -25,13 +25,13 @@ export const useFilteredTodos = reusable(() => {
   }), [filter, todosArray]);
 });
 
-export const useIsAllSelected = reusable(() => {
+export const useIsAllSelected = createStore(() => {
   const todosArray = useTodosArray();
 
   return every(todo => todo.completed, todosArray);
 });
 
-export const useTodosLeft = reusable(() => {
+export const useTodosLeft = createStore(() => {
   const todosArray = useTodosArray();
 
   return todosArray.filter(todo => !todo.completed).length;
