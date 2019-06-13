@@ -8,7 +8,7 @@ const babelHelperModuleImports = require('@babel/helper-module-imports');
 const addDefault = babelHelperModuleImports.addDefault;
 const addNamed = babelHelperModuleImports.addNamed;
 
-const allowedImports = ['reuse', 'reuseEffect', 'reuseState', 'reuseMemo', 'reuseCallback', 'reuseReducer', 'reuseRef'];
+const allowedImports = ['createStore'];
 
 function reuseableMacro({ references, state, babel: { types: t }, config = {} }) {
   const program = state.file.path;

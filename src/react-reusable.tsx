@@ -16,13 +16,21 @@ export const ReusableProvider: FunctionComponent<{}> = ({ children }) => {
   );
 };
 
-const Store = ({ store }: { store: StoreClass<any> }) => {
-  store.run();
+const createStoreComponent = (name: string) => {
+  const Component = ({ store }: { store: StoreClass<any>}) => {
+    store.run();
 
-  useEffect(() => store.notify(), [store.cachedValue]);
+    React.useDebugValue(store.name);
 
-  return null;
-}
+    useEffect(() => store.notify(), [store.cachedValue]);
+
+    return null;
+  };
+
+  Object.defineProperty(Component,'name', { value: name });
+
+  return Component;
+};
 
 const useContainer = () => {
   const container = useContext(ReusableContext) as Container;
@@ -46,7 +54,11 @@ const Stores = () => {
 
   return (
     <React.Fragment>
-      {stores.map((store: StoreClass<any>, index: number) => <Store key={index} store={store} />)}
+      {stores.map((store: StoreClass<any>, index: number) => {
+        const StoreComponent = createStoreComponent(store.name);
+
+        return <StoreComponent key={index} store={store}/>;
+      })}
     </React.Fragment>
   )
 }

@@ -9,8 +9,7 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@babel/helper-module-imports": "^7.0.0",
-    "@types/react": "^16.8.19",
-    "babel-plugin-reusable": "^1.0.0-alpha.5"
+    "babel-plugin-reusable": "1.0.0-alpha.7"
   },
   "peerDependencies": {
     "react": ">= 16.8",
@@ -23,6 +22,7 @@
     "@babel/preset-react": "^7.0.0",
     "@types/jest": "^24.0.13",
     "@types/node": "^12.0.3",
+    "@types/react": "^16.8.19",
     "babel-plugin-macros": "^2.5.1",
     "babel-plugin-tester": "^6.0.1",
     "concurrently": "^4.1.0",
