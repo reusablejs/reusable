@@ -1,5 +1,5 @@
 import React from "react";
-import {useCounter} from './units/counter.unit';
+import {useCounter} from './stores/counter.store';
 
 export function Footer() {
   const [counter, setCounter] = useCounter();

@@ -1,5 +1,5 @@
-import { usePersistedState } from "./usePersistedState";
 import { createStore } from 'reusable';
+import { usePersistedState } from "./usePersistedState";
 
 export const FILTERS = {
   ALL: 'All',
