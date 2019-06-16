@@ -72,18 +72,18 @@ describe('public store API', () => {
     expect(store.cachedValue).toBeDefined();
   });
 
-  it('should allow to run the store', () => {
-    expect(store.run()).toBe(value);
+  it('should allow to calculate the stores value', () => {
+    expect(store.value()).toBe(value);
   });
 
   it('should cache the store value', () => {
-    store.run();
+    store.value();
     expect(store.cachedValue).toBe(value);
   });
   it('should allow to subscribe to value change', () => {
     const callback = jest.fn();
     store.subscribe(callback);
-    store.run();
+    store.value();
     store.notify();
     expect(callback.mock.calls.length).toBe(1);
     expect(callback.mock.calls[0][0]).toBe(value);
@@ -92,7 +92,7 @@ describe('public store API', () => {
     const callback = jest.fn();
     const unsubscribe = store.subscribe(callback);
     expect(callback.mock.calls.length).toBe(0);
-    store.run();
+    store.value();
     unsubscribe();
     store.notify();
   });
