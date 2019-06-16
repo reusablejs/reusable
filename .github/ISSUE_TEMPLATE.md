@@ -2,9 +2,7 @@ PLEASE READ CAREFULLY!
 
 # Reproduce
 If reporting a bug, or requesting help, please reproduce here using the correct version:
-<a target="blank" href="https://codesandbox.io/s/github/reusablejs/reusable/tree/master/examples/basic?fontsize=14&module=%2Fsrc%2Findex.js">
-  <img alt="Edit basic" src="https://codesandbox.io/static/img/play-codesandbox.svg">
-</a>
+https://codesandbox.io/s/github/reusablejs/reusable/tree/master/examples/basic?fontsize=14&module=%2Fsrc%2Findex.js
 
 # Additional Info
 - paste your package.json
