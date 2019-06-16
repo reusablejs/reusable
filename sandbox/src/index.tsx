@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { ReusableProvider, createStore } from "../../dist";
+import { ReusableProvider, createStore, useReusableLogger } from "../../dist";
 
 const useCounter = createStore(function counter() {
   return useState(0);
@@ -64,6 +64,7 @@ const Multiply = () => {
 }
 
 const App = () => {
+  useReusableLogger();
   const [showMultiply, setShowMultiply] = useState(true);
   const callback = useFnObject(state => state.callback);
   setTimeout(() => callback(), 1000);

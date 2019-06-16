@@ -29,7 +29,7 @@ const createStoreComponent = (name: string) => {
   return Component;
 };
 
-const useContainer = () => {
+export const useContainer = () => {
   const container = useContext(ReusableContext) as Container;
 
   if (container === null) {
