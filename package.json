@@ -1,6 +1,6 @@
 {
   "name": "reusable",
-  "version": "1.0.0-alpha.12",
+  "version": "1.0.0-alpha.13",
   "description": "",
   "keywords": [],
   "main": "dist/index.js",
@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@babel/helper-module-imports": "^7.0.0",
-    "babel-plugin-reusable": "1.0.0-alpha.7"
+    "babel-plugin-reusable": "1.0.0-alpha.8"
   },
   "peerDependencies": {
     "react": ">= 16.8",
