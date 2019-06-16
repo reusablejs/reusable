@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { ReusableProvider, createStore } from "../../dist";
 
-const useCounter = createStore(() => {
+const useCounter = createStore(function counter() {
   return useState(0);
 });
 
-const useStep = createStore(() => {
+const useStep = createStore(function step() {
   return useState(0);
 });
 
-const useFnObject = createStore(() => {
+const useFnObject = createStore(function fnObject() {
   const [_, setState] = useState(0);
 
   const callback = () => {
@@ -22,7 +22,7 @@ const useFnObject = createStore(() => {
   };
 });
 
-const useMultiply = createStore(() => {
+const useMultiply = createStore(function multiply() {
   const [counter] = useCounter();
   const [step] = useStep();
 
