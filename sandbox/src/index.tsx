@@ -48,7 +48,7 @@ function Header() {
 }
 
 function Footer() {
-    const counter = useCounter(([val]) => val, (a, b) => Math.abs(a - b) < 2);
+  const counter = useCounter(([val]) => val, (a, b) => Math.abs(a - b) < 2);
   const step = useStep(([val]) => Math.floor(val / 4));
 
   return (
