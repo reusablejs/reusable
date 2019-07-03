@@ -27,6 +27,7 @@
     "babel-plugin-tester": "^6.0.1",
     "concurrently": "^4.1.0",
     "jest": "^24.8.0",
+    "js-yaml": "^3.13.1",
     "lodash": "^4.17.11",
     "microbundle": "^0.11.0",
     "parcel": "^1.12.3",
