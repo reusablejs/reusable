@@ -27,7 +27,7 @@ Using plain context is not a best solution for state management, that led us to 
 - Context doesn't support selectors, render bailout, or debouncing
 
 # Check out the video!
-Check out the video where we announced the library for the first time and explained all about the problems it aims to solve and how it works:  
+Check out the video where Maayan Glikser and Adam Klein announce the library for the first time and explain all about the problems it aims to solve and how it works:  
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/oy-6urveWzo/0.jpg)](https://www.youtube.com/watch?v=oy-6urveWzo)
 
 # Show me the code!
