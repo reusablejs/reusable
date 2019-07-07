@@ -17,7 +17,7 @@ Object.defineProperty(ReusableProvider,'displayName', { value: 'ReusableProvider
 
 const createStoreComponent = (name: string) => {
   const Component = ({ store }: { store: StoreClass<any>}) => {
-    store.value();
+    store.useValue();
 
     useEffect(() => store.notify(), [store.cachedValue]);
 
@@ -70,7 +70,7 @@ function useStore<HookValue>(
 ) {
   const store = useContainer().getStore(fn);
   React.useDebugValue('reusable');
-  const [localCopy, setLocalCopy] = useState(() => selector(store.getValue()));
+  const [localCopy, setLocalCopy] = useState(() => selector(store.getCachedValue()));
 
   useEffect(() => {
     return store.subscribe((newValue: any) => {

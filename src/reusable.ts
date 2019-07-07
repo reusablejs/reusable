@@ -10,11 +10,11 @@ export class Store<HookValue> {
     this.name = fn.name || 'Store';
   }
 
-  getValue() {
+  getCachedValue() {
     return this.cachedValue;
   }
 
-  value() {
+  useValue() {
     this.cachedValue = this.fn();
 
     return this.cachedValue;
