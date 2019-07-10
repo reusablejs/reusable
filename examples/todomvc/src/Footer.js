@@ -1,7 +1,7 @@
 import React from "react";
-import { useFilter, FILTERS } from "./units/filter.units";
-import { useTodos } from "./units/todos.unit";
-import { useTodosLeft } from "./units/todosSelectors.units";
+import { useFilter, FILTERS } from "./stores/filter.store";
+import { useTodos } from "./stores/todos.store";
+import { useTodosLeft } from "./stores/todosSelectors.stores";
 
 export function Footer() {
   const [filter, setFilter] = useFilter();

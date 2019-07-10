@@ -63,19 +63,21 @@ const Stores = () => {
   )
 }
 
-type SelectorFn<HookValue> = (val: HookValue) => any;
+type SelectorFn<HookValue, SelectorValue> = (val: HookValue) => SelectorValue;
 const identity = (val: any) => val;
-function useStore<HookValue>(
+
+function useStore<HookValue, SelectorValue>(
   fn: HookFn<HookValue>,
-  selector = identity,
-  areEqual = shallowEqual
+  selector: SelectorFn<HookValue, SelectorValue>,
+  areEqual:AreEqual<SelectorValue>
 ) {
-  const store = useContainer().getStore(fn);
-  const [localCopy, setLocalCopy] = useState(() => selector(store.getValue()));
+  const store = useContainer().getStore<HookValue>(fn);
+  const [localCopy, setLocalCopy] = useState<SelectorValue>(() => selector(store.getValue()));
 
   useEffect(() => {
-    return store.subscribe((newValue: any) => {
+    return store.subscribe((newValue) => {
       const selectedNewValue = selector(newValue);
+
       if (!areEqual(selectedNewValue, localCopy)) {
         setLocalCopy(() => selectedNewValue);
       }
@@ -88,7 +90,21 @@ function useStore<HookValue>(
 export function createStore<HookValue>(fn: HookFn<HookValue>) {
   getContainer().createStore(fn);
 
-  return (selector?: SelectorFn<HookValue>, areEqual?: AreEqual<HookValue>) => useStore(fn, selector, areEqual);
+  // overload return function:
+  function useStoreHook(): HookValue;
+
+  function useStoreHook<SelectorValue = HookValue>(
+    selector?: SelectorFn<HookValue, SelectorValue>,
+    areEqual?: AreEqual<SelectorValue>
+  ): SelectorValue;
+
+  function useStoreHook<SelectorValue = HookValue>(
+    selector?: SelectorFn<HookValue, SelectorValue>,
+    areEqual?: AreEqual<SelectorValue>
+  ) {
+    return useStore(fn, selector || identity, areEqual || shallowEqual);
+  }
+  return useStoreHook;
 }
 
 // TBD:

@@ -1,7 +1,7 @@
 import React from "react";
-import { useTodos } from './units/todos.unit';
+import { useTodos } from './stores/todos.store';
 import { Todo } from './Todo';
-import { useIsAllSelected, useFilteredTodos } from "./units/todosSelectors.units";
+import { useIsAllSelected, useFilteredTodos } from "./stores/todosSelectors.stores";
 
 export function Todos() {
   const filteredTodos = useFilteredTodos();
