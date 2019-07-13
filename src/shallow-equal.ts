@@ -8,7 +8,7 @@ function is(x: any, y: any) {
   }
 }
 
-export type AreEqual<HookValue> = (a: HookValue, b: HookValue) => boolean;
+export type AreEqual<Value> = (a: Value, b: Value) => boolean;
 
 export function shallowEqual(objA: any, objB: any) {
   if (is(objA, objB)) return true

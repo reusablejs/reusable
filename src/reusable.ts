@@ -1,8 +1,8 @@
-export type HookFn<HookValue> = () => HookValue;
-export type StoreValueChangeCallback<HookValue> = (value: HookValue | null) => void;
+export type HookFn<HookValue = any> = () => HookValue;
+export type StoreValueChangeCallback<HookValue> = (value: HookValue) => void;
 export type StoresChangeCallback = () => void;
 
-export class Store<HookValue> {
+export class Store<HookValue = any> {
   name: string;
   subscribers: StoreValueChangeCallback<HookValue>[] = [];
   cachedValue: HookValue | null = null;
@@ -11,13 +11,13 @@ export class Store<HookValue> {
   }
 
   getCachedValue() {
-    return this.cachedValue;
+    return this.cachedValue as HookValue;
   }
 
   useValue() {
     this.cachedValue = this.fn();
 
-    return this.cachedValue;
+    return this.cachedValue as HookValue;
   }
 
   subscribe(callback: StoreValueChangeCallback<HookValue>) {
@@ -28,12 +28,12 @@ export class Store<HookValue> {
   }
 
   notify() {
-    this.subscribers.forEach(sub => sub(this.cachedValue));
+    this.subscribers.forEach(sub => sub(this.cachedValue as HookValue));
   }
 }
 
 export class Container {
-  stores = new Map<HookFn<any>, Store<any>>();
+  stores = new Map<HookFn, Store>();
   subscribers: StoresChangeCallback[] = [];
   onStoresChanged(callback: StoresChangeCallback) {
     this.subscribers = [...this.subscribers, callback];
@@ -41,7 +41,7 @@ export class Container {
       this.subscribers = this.subscribers.filter(item => item !== callback);
     }
   }
-  createStore(fn: HookFn<any>) {
+  createStore(fn: HookFn) {
     if (this.stores.has(fn)) {
       throw new Error('Store already exist');
     }
@@ -51,11 +51,11 @@ export class Container {
 
     return store;
   }
-  getStore(fn: HookFn<any>):Store<any> {
+  getStore<HookValue>(fn: HookFn<HookValue>):Store<HookValue> {
     if (!this.stores.has(fn)) {
       throw new Error('Store doesn\'t exist');
     }
-    return <Store<any>>this.stores.get(fn);
+    return <Store<HookValue>>this.stores.get(fn);
   }
   notifyStoresChanged() {
     this.subscribers.forEach(sub => sub());

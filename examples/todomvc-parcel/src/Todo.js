@@ -1,5 +1,5 @@
 import React from "react";
-import { useTodos } from "./units/todos.unit";
+import { useTodos } from "./stores/todos.store";
 
 export function Todo({ todo }) {
   const { toggleTodo, removeTodo } = useTodos();
