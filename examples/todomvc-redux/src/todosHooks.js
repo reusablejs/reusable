@@ -13,12 +13,9 @@ import { getActiveTodosCount, getAllTodos } from "./todosSelectors";
 
 export const useFilterStore = createStore(() => {
   const [filter, setFilter] = useState(visibilityFilters.ALL);
-  const onFilterChange = useCallback(filter => {
-    setFilter(filter);
-  }, []);
   return {
     filter,
-    onFilterChange
+    onFilterChange: setFilter
   };
 });
 
@@ -27,7 +24,7 @@ export const useFilterTodosStore = createStore(() => {
   //Using reusable store inside reusable store with redux hooks
   const { filter } = useFilterStore();
   return {
-    filterTodos: useMemo(
+    filteredTodos: useMemo(
       () =>
         todos.filter(todo => {
           if (filter === "ACTIVE") {
