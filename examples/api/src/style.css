@@ -1,0 +1,58 @@
+.table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.table-hover  > tbody tr:hover {
+     background-color: #ffe30047;
+ }
+
+tbody >tr>td, thead>tr>th{
+    text-align: center;
+    padding: 8px;
+    line-height: 1.5;
+    vertical-align: top;
+    border-top: 1px solid lightgrey;
+}
+
+.table-delete-action {
+    text-align: center;
+    cursor: pointer;
+}
+
+html, body, #root, .container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+}
+
+.loader {
+    background: transparent;
+    border-radius: 50%;
+    border: 4px solid #ffe30047;
+    border-right-color: black;
+    animation: rotate 550ms infinite linear;
+}
+
+.loader.md {
+    width: 100px;
+    height: 100px;
+}
+
+.loader.sm {
+    width: 15px;
+    height: 15px;
+}
+
+@keyframes rotate {
+    to { transform: rotate(1turn) }
+}
