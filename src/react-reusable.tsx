@@ -5,22 +5,19 @@ import { Container, getContainer, Store as StoreClass, HookFn } from './reusable
 
 const ReusableContext = React.createContext<Container | null>(null);
 
-export const ReusableProvider: FunctionComponent<{}> = ({ children }) => {
-  return (
-    <ReusableContext.Provider value={getContainer()}>
-      <React.Fragment>
-        <Stores />
-        {children}
-      </React.Fragment>
-    </ReusableContext.Provider>
-  );
-};
+export const ReusableProvider: FunctionComponent<{}> = ({ children }) => (
+  <ReusableContext.Provider value={getContainer()}>
+    <React.Fragment>
+      <Stores />
+      {children}
+    </React.Fragment>
+  </ReusableContext.Provider>
+);
+Object.defineProperty(ReusableProvider,'displayName', { value: 'ReusableProvider' });
 
 const createStoreComponent = (name: string) => {
   const Component = ({ store }: { store: StoreClass<any>}) => {
-    store.run();
-
-    React.useDebugValue(store.name);
+    store.useValue();
 
     useEffect(() => store.notify(), [store.cachedValue]);
 
@@ -62,6 +59,7 @@ const Stores = () => {
     </React.Fragment>
   )
 }
+Object.defineProperty(Stores,'displayName', { value: 'Stores' });
 
 type SelectorFn<HookValue, SelectorValue> = (val: HookValue) => SelectorValue;
 const identity = (val: any) => val;
@@ -72,7 +70,8 @@ function useStore<HookValue, SelectorValue>(
   areEqual:AreEqual<SelectorValue>
 ) {
   const store = useContainer().getStore<HookValue>(fn);
-  const [localCopy, setLocalCopy] = useState<SelectorValue>(() => selector(store.getValue()));
+  React.useDebugValue('reusable');
+  const [localCopy, setLocalCopy] = useState<SelectorValue>(() => selector(store.getCachedValue()));
 
   useEffect(() => {
     return store.subscribe((newValue) => {
@@ -88,7 +87,7 @@ function useStore<HookValue, SelectorValue>(
 }
 
 export function createStore<HookValue>(fn: HookFn<HookValue>) {
-  getContainer().createStore(fn);
+  const store = getContainer().createStore(fn);
 
   // overload return function:
   function useStoreHook(): HookValue;
@@ -102,6 +101,8 @@ export function createStore<HookValue>(fn: HookFn<HookValue>) {
     selector?: SelectorFn<HookValue, SelectorValue>,
     areEqual?: AreEqual<SelectorValue>
   ) {
+    React.useDebugValue(store.name);  
+
     return useStore(fn, selector || identity, areEqual || shallowEqual);
   }
   return useStoreHook;

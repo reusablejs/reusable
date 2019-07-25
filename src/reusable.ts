@@ -3,17 +3,18 @@ export type StoreValueChangeCallback<HookValue> = (value: HookValue) => void;
 export type StoresChangeCallback = () => void;
 
 export class Store<HookValue = any> {
-  name: string = 'Store';
+  name: string;
   subscribers: StoreValueChangeCallback<HookValue>[] = [];
   cachedValue: HookValue | null = null;
   constructor(private fn: HookFn<HookValue>) {
+    this.name = fn.name || 'Store';
   }
 
-  getValue() {
+  getCachedValue() {
     return this.cachedValue as HookValue;
   }
 
-  run() {
+  useValue() {
     this.cachedValue = this.fn();
 
     return this.cachedValue as HookValue;
@@ -47,6 +48,8 @@ export class Container {
     const store = new Store(fn);
     this.stores.set(fn, store);
     this.notifyStoresChanged();
+
+    return store;
   }
   getStore<HookValue>(fn: HookFn<HookValue>):Store<HookValue> {
     if (!this.stores.has(fn)) {
