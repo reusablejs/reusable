@@ -1,18 +1,20 @@
 import * as React from 'react';
-import { FunctionComponent, useState, useContext, useEffect } from 'react';
+import { FunctionComponent, useState, useContext, useEffect, ReactNode } from "react";
 import { shallowEqual, AreEqual } from './shallow-equal';
 import { Container, getContainer, Store as StoreClass, HookFn } from './reusable';
 
 const ReusableContext = React.createContext<Container | null>(null);
-
-export const ReusableProvider: FunctionComponent<{}> = ({ children }) => (
+export const ReusableProvider: FunctionComponent<{children: ReactNode, logger?: boolean}>
+  = ({children, logger = false}) => {
+  console.log(logger);
+  return (
   <ReusableContext.Provider value={getContainer()}>
     <React.Fragment>
       <Stores />
       {children}
     </React.Fragment>
   </ReusableContext.Provider>
-);
+)};
 Object.defineProperty(ReusableProvider,'displayName', { value: 'ReusableProvider' });
 
 const createStoreComponent = (name: string) => {
@@ -37,7 +39,7 @@ const useContainer = () => {
   }
 
   return container;
-}
+};
 
 const Stores = () => {
   const container = useContainer();
@@ -58,7 +60,7 @@ const Stores = () => {
       })}
     </React.Fragment>
   )
-}
+};
 Object.defineProperty(Stores,'displayName', { value: 'Stores' });
 
 type SelectorFn<HookValue, SelectorValue> = (val: HookValue) => SelectorValue;
@@ -72,11 +74,15 @@ function useStore<HookValue, SelectorValue>(
   const store = useContainer().getStore<HookValue>(fn);
   React.useDebugValue('reusable');
   const [localCopy, setLocalCopy] = useState<SelectorValue>(() => selector(store.getCachedValue()));
-
+  const logStoreState = () => {
+    console.groupCollapsed(`STORE %c${store.name} %c has been changed`, `color: blue`, 'color: black');
+    console.log(`Cached value --> %c${store.getCachedValue() as HookValue} `, `color: green`);
+    console.dir(store.getCachedValue());
+    console.groupEnd();
+  };
   useEffect(() => {
     return store.subscribe((newValue) => {
       const selectedNewValue = selector(newValue);
-
       if (!areEqual(selectedNewValue, localCopy)) {
         setLocalCopy(() => selectedNewValue);
       }

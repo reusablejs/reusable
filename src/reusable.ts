@@ -65,7 +65,7 @@ export class Container {
 
     this.stores.forEach((store) => {
       storesArray.push(store);
-    })
+    });
     return storesArray;
   }
 }

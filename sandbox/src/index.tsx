@@ -14,9 +14,9 @@ const useFnObject = createStore(function fnObject() {
   const [_, setState] = useState(0);
 
   const callback = () => {
-    console.log('callback')
+    console.log('callback');
     setState(10);
-  }
+  };
   return {
     callback
   };
@@ -27,7 +27,7 @@ const useMultiply = createStore(function multiply() {
   const [step] = useStep();
 
   return counter * step;
-})
+});
 
 function Header() {
   const [counter, setCounter] = useCounter();
@@ -61,7 +61,7 @@ function Footer() {
 
 const Multiply = () => {
   return <span>{ useMultiply() } </span>;
-}
+};
 
 const App = () => {
   const [showMultiply, setShowMultiply] = useState(true);
@@ -76,7 +76,7 @@ const App = () => {
       <Footer/>
     </div>
   );
-}
+};
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<ReusableProvider><App /></ReusableProvider >, rootElement);
