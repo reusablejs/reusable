@@ -2,7 +2,7 @@
 [![npm version](https://badge.fury.io/js/reusable.svg)](https://badge.fury.io/js/reusable)
 
 # Reusable
-<img src="https://github.com/reusablejs/reusable/blob/master/public/reusable.png?raw=true" width="120"/>
+<img src="https://github.com/reusablejs/reusable/blob/master/website/static/img/reusable.png?raw=true" width="120"/>
 
 Reusable is a solution for state management, based on React Hooks.
 It allows you to transform your custom hooks to singleton stores, and subscribe to them directly from any component.
