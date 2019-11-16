@@ -44,9 +44,9 @@ const siteConfig = {
   users,
 
   /* path to images for header/footer */
-  // headerIcon: 'img/docusaurus.svg',
-  // footerIcon: 'img/docusaurus.svg',
-  favicon: 'img/favicon.png',
+  headerIcon: 'img/reusable.png',
+  footerIcon: 'img/reusable.png',
+  favicon: 'img/reusable.png',
 
   /* Colors for website */
   colors: {
@@ -85,8 +85,9 @@ const siteConfig = {
   cleanUrl: true,
 
   // Open Graph and Twitter card images.
-  ogImage: 'img/docusaurus.png',
-  twitterImage: 'img/docusaurus.png',
+  logoImage: 'img/reusable.png',
+  ogImage: 'img/reusable.png',
+  twitterImage: 'img/reusable.png',
 
   // Show documentation's last contributor's name.
   // enableUpdateBy: true,

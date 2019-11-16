@@ -29,13 +29,12 @@ class HomeSplash extends React.Component {
     );
 
     const Logo = props => (
-      <div className="projectLogo">
-        <img src={props.img_src} alt="Project Logo" />
-      </div>
+      <div><img style={{ width: 100 }} src={siteConfig.logoImage} alt="Project Logo" /></div>
     );
 
     const ProjectTitle = () => (
       <h2 className="projectTitle">
+        <Logo />
         {siteConfig.title}
         <small>{siteConfig.tagline}</small>
       </h2>
