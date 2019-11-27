@@ -15,18 +15,25 @@ export const ReusableProvider: FunctionComponent<{}> = ({ children }) => (
 );
 Object.defineProperty(ReusableProvider,'displayName', { value: 'ReusableProvider' });
 
-const createStoreComponent = (name: string) => {
-  const Component = ({ store }: { store: StoreClass<any>}) => {
-    store.useValue();
+const componentCache = new Map();
 
-    useEffect(() => store.notify(), [store.cachedValue]);
+const createStoreComponent = (store: StoreClass<any>) => {
+  if (!componentCache.has(store)) {
 
-    return null;
-  };
+    const Component = React.memo(() => {
+      store.useValue();
+      
+      useEffect(() => store.notify(), [store.cachedValue]);
+      
+      return null;
+    });
+    
+    Object.defineProperty(Component,'name', { value: store.name });
 
-  Object.defineProperty(Component,'name', { value: name });
-
-  return Component;
+    componentCache.set(store, Component);
+  }
+    
+  return componentCache.get(store);
 };
 
 const useContainer = () => {
@@ -52,7 +59,7 @@ const Stores = () => {
   return (
     <React.Fragment>
       {stores.map((store: StoreClass<any>, index: number) => {
-        const StoreComponent = createStoreComponent(store.name);
+        const StoreComponent = createStoreComponent(store);
 
         return <StoreComponent key={index} store={store}/>;
       })}
