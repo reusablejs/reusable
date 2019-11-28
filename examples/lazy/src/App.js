@@ -10,7 +10,6 @@ import {
 } from "react-router-dom";
 
 import Home from './Home';
-// import Users from './Users';
 
 const Users = lazy(() => {
   const result = import('./Users');
