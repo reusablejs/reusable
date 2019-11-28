@@ -36,6 +36,7 @@
     "react-dom": "^16.8.5",
     "react-hooks-testing-library": "^0.5.0",
     "react-test-renderer": "^16.8.6",
+    "relative-deps": "^0.2.0",
     "ts-jest": "^24.0.2"
   },
   "scripts": {

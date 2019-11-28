@@ -9,11 +9,15 @@
     "react-scripts": "3.2.0",
     "reusable": "^1.0.0-alpha.12"
   },
+  "relativeDependencies": {
+    "reusable": "../../"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "../../node_modules/.bin/relative-deps"
   },
   "eslintConfig": {
     "extends": "react-app"
