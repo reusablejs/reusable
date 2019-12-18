@@ -61,7 +61,7 @@ const usePosts = createStore(() => ...);
 
 const useCurrentUserPosts = createStore(() => {
   const currentUser = useCurrentUser();
-  const posts = useCurrentUser();
+  const posts = usePosts();
   
   return ...
 });
