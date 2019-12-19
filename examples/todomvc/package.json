@@ -9,11 +9,15 @@
     "reusable": "^1.0.0-alpha.12",
     "uuid": "^3.3.2"
   },
+  "relativeDependencies": {
+    "reusable": "../../"
+  },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "prepare": "../../node_modules/.bin/relative-deps"
   },
   "eslintConfig": {
     "extends": "react-app"

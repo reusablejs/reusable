@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel ./index.html"
+    "start": "parcel ./index.html",
+    "prepare": "../../node_modules/.bin/relative-deps"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +17,9 @@
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
     "parcel": "^1.12.3"
+  },
+  "relativeDependencies": {
+    "reusable": "../../"
   },
   "dependencies": {
     "react": "^16.8.6",
