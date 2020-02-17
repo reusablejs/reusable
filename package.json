@@ -1,6 +1,6 @@
 {
   "name": "reusable",
-  "version": "1.0.0-alpha.13",
+  "version": "1.0.0",
   "description": "",
   "keywords": [],
   "main": "dist/index.js",
@@ -47,7 +47,8 @@
     "dev": "concurrently 'npm run build:dev' 'npm run sandbox'",
     "docs:publish": "cd website && npm run build && USE_SSH=true npm run publish-gh-pages",
     "docs:dev": "cd website && npm start",
-    "test": "jest"
+    "test": "jest",
+    "prepublishOnly": "npm run build && npm test"
   },
   "files": [
     "dist/*",
