@@ -1,3 +1,7 @@
+<a name="1.0.1"></a>
+# 1.0.1 (March 3rd, 2020)
+* Added description, homepage, license, keywords to package json
+
 <a name="1.0.0"></a>
 # 1.0.0 (Feb 17th, 2020)
 * Caching previously created components to avoid re-rendering them and losing store state

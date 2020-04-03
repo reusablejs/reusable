@@ -1,7 +1,7 @@
 {
   "name": "reusable",
   "homepage": "https://github.com/reusablejs/reusable",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Reusable is a library for state management using React hooks",
   "license": "MIT",
   "keywords": ["react", "hooks", "state management", "react hooks", "store"],
