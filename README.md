@@ -68,6 +68,9 @@ const useCurrentUserPosts = createStore(() => {
 ```
 
 # The benefits
+- Use hooks to manage global state, just like you manage local state
+- Use any custom hooks you already have inside the global state management
+- Stores won't rely on keys, giving better reusability
 - Stores are decoupled from component tree
 - You can use selectors and bail out of render
 - Stores can co-depend without worrying about provider order
