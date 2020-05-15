@@ -67,11 +67,6 @@ const useCurrentUserPosts = createStore(() => {
 });
 ```
 
-# Check out the video
-Check out the video where Maayan Glikser and Adam Klein announce the library for the first time and explain all about the problems it aims to solve and how it works:  
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/oy-6urveWzo/0.jpg)](https://www.youtube.com/watch?v=oy-6urveWzo)
-
-
 # The benefits
 - Stores are decoupled from component tree
 - You can use selectors and bail out of render
