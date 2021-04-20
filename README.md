@@ -89,7 +89,7 @@ const useCurrentUserPosts = createStore(() => {
 Imagine a `reusable-i18n` library, that use Reusable, and manages a global state (current locale).
 This is easily done with Reusable:
 
-```
+```javascript
 import {LocaleSwitcher, useTranslate} from 'reusable-i18n';
 
 const App = () => {
