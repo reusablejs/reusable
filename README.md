@@ -91,14 +91,13 @@ Imagine a `reusable-i18n` library, that use Reusable, and manages a global state
 This is easily done with Reusable:
 
 ```javascript
-import {LocaleSwitcher, useTranslate} from 'reusable-i18n';
+import {LocaleSwitcher, useLocale} from 'reusable-i18n';
 
 const App = () => {
-  const translate = useTranslate();
+  const {currentLocale} = useLocale();
   
   return <div>
-    <h1>{translate('title')}</h1>
-    <h2>{translate('subTitle')}</h2>
+    <FlagIcon locale={currentLocale}/>
     <LocaleSwitcher/>
   </div>
 }
@@ -113,10 +112,11 @@ ReactDOM.render(
 
 ```
 
-In this example, App is unaware how reusable-i18n manages the state. The reactivity model is based on immutable data, like hooks, and there is no need to do any specific initialization, except for putting ReusableProvider around our app.
+In this example, App subscribes to the global state managed by reusable-i18n using useLocale, and LocaleSwitcher connects to the same global state. The reactivity model is based on immutable data, like hooks, and there is no need to do any specific initialization, except for putting ReusableProvider around our app.
+Furthermore, useLocale supports selectors, allowing the App to subscribe to more granular changes in the global state.
 
 # Why do we need (yet) another state management library?
-Most current state management solutions don't let you manage state using hooks, which causes you to manage local and global state differently, and have a costly transition between the two.
+Current state management solutions don't let you manage state using hooks, which causes you to manage local and global state differently, and have a costly transition between the two.
 
 Reusable solves this by seemingly transforming your custom hooks into global stores.
 
