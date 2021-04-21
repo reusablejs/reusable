@@ -33,6 +33,7 @@ const useCounter = createStore(() => {
   return {
     counter,
     increment: () => setCounter(prev => prev + 1)
+    decrement: () => setCounter(prev => prev - 1)
   }
 });
 ```
@@ -40,11 +41,11 @@ const useCounter = createStore(() => {
 and get a singleton store, with a hook that subscribes directly to that store:
 ```javascript
 const Comp1 = () => {
-  const something = useCounter();
+  const {counter, increment, decrement} = useCounter();
 }
 
 const Comp2 = () => {
-  const something = useCounter(); // same counter
+  const {counter, increment, decrement} = useCounter(); // same counter
 }
 ```
 
