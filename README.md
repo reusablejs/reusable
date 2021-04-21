@@ -40,11 +40,11 @@ const useCounter = createStore(() => {
 
 and get a singleton store, with a hook that subscribes directly to that store:
 ```javascript
-const Comp1 = () => {
+const MyComponent = () => {
   const {counter, increment, decrement} = useCounter();
 }
 
-const Comp2 = () => {
+const AnotherComponent = () => {
   const {counter, increment, decrement} = useCounter(); // same counter
 }
 ```
