@@ -83,12 +83,24 @@ const useCurrentUserPosts = createStore(() => {
 });
 ```
 
-# Why do we need (yet) another state management library?
+# Demos
+**basic**  
+<a target="blank" href="https://codesandbox.io/s/github/reusablejs/reusable/tree/master/examples/basic?fontsize=14&module=%2Fsrc%2Findex.js">
+  <img alt="Edit basic" src="https://codesandbox.io/static/img/play-codesandbox.svg">
+</a>
+
+**TodoMVC**  
+
+<a target="blank" href="https://codesandbox.io/s/github/reusablejs/reusable/tree/master/examples/todomvc?fontsize=14&module=%2Fsrc%2Findex.js">
+  <img alt="Edit basic" src="https://codesandbox.io/static/img/play-codesandbox.svg">
+</a>
+
+# How does this compare to other state management solutions?
 Current state management solutions don't let you manage state using hooks, which causes you to manage local and global state differently, and have a costly transition between the two.
 
 Reusable solves this by seemingly transforming your custom hooks into global stores.
 
-# What about hooks+Context?
+## What about hooks+Context?
 Using plain context has some drawbacks and limitations, that led us to write this library:
 - Context doesn't support selectors, render bailout, or debouncing
 - When managing global state using Context in a large app, you will probably have many small, single-purpose providers. Soon enough you'll find a Provider wrapper hell.
