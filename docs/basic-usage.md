@@ -4,126 +4,92 @@ title: Getting Started with Reusable
 sidebar_label: Getting Started
 ---
 
-Reusable is a state management library that uses hooks.
-It allows to transform your custom hooks to stores, that have a shared state and behavior.  
-Just wrap your custom hooks with `createStore` and you're good to go.
+[![Build Status](https://circleci.com/gh/reusablejs/reusable.svg?style=svg)](https://circleci.com/gh/reusablejs/reusable)
+[![npm version](https://badge.fury.io/js/reusable.svg)](https://badge.fury.io/js/reusable)
 
-## Usage
-```
-npm install reusable
-```
-or
-```
-yarn add reusable
-```
+# Reusable - state management with hooks
+<img src="https://github.com/reusablejs/reusable/blob/master/website/static/img/reusable.png?raw=true" width="120"/>
 
-Provide  
+- Use hooks to manage the store
+  - One paradigm for both local and shared state
+  - Easier transition between the two
+- Use a single context provider and avoid nesting dozens of providers
+- Allow direct subscriptions with selectors for better re-render control
+
+
+# How to use
+Pass a custom hook to `createStore`:
+
 ```javascript
-// App.js:
-import { ReusableProvider } from "reusable";
+const useCounter = createStore(() => {
+  const [counter, setCounter] = useState(0);
+  useEffect(...)
+  const isOdd = useMemo(...);
 
+  return {
+    counter,
+    isOdd,
+    increment: () => setCounter(prev => prev + 1)
+    decrement: () => setCounter(prev => prev - 1)
+  }
+});
+```
+
+and get a singleton store, with a hook that subscribes directly to that store:
+```javascript
+const MyComponent = () => {
+  const {counter, increment, decrement} = useCounter();
+}
+
+const AnotherComponent = () => {
+  const {counter, increment, decrement} = useCounter(); // same counter
+}
+```
+
+then wrap your app with a provider:
+```javascript
 const App = () => (
-  <ReusableProvider> {/* no init code */}
+  <ReusableProvider>
     ...
   </ReusableProvider>
-);
-
+)
 ```
 
-Create a store
-```javascript
-import {useState} from "react";
-import {createStore} from "reusable";
+Note there is no need to provide the store. Stores automatically plug into the top provider
 
-export const useTimer = createStore(() => useState(0));
+## Selectors
+For better control over re-renders, use selectors:
+
+```javascript
+const Comp1 = () => {
+  const isOdd = useCounter(state => state.isOdd);
+}
+```
+Comp1 will only re-render if counter switches between odd and even
+
+useCounter can take a second parameter that will override the comparison function (defaults to shallow compare): 
+```javascript
+const Comp1 = () => {
+  const counter = useCounter(state => state, (prevValue, newValue) => prevValue === newValue);
+}
 ```
 
-Using inside components  
-```javascript
-// Header.js:
-const Header = () => {
-  const [timer, setTimer] = useTimer();
 
+## Using stores from other stores
+Each store can use any other store similar to how components use them:
+```javascript
+const useCurrentUser = createStore(() => ...);
+const usePosts = createStore(() => ...);
+
+const useCurrentUserPosts = createStore(() => {
+  const currentUser = useCurrentUser();
+  const posts = usePosts();
+  
   return ...
-}
-
-const Footer = () => {
-  const [timer, setTimer] = useTimer(); // Yup, same timer
-
-  return ...
-}
-```
-
-## Using stores inside other stores
-No problem at all:
-
-```javascript
-import {createStore} from 'reusable';
-
-const useTodos = createStore(() => useReducer(reducer, {items: [], filter: 'All'});
-const useFilteredTasks = createStore(() => {
-  const [{items, filter}] = useTodos();
-
-  return useMemo(
-    () => items.filter(...),
-    [items, filter]
-  );
-}
-
-const Comp = () => {
-  const filteredTasks = useFilteredTasks();
-  ...
-}
-```
-
-## Using selectors
-Select a subset of the hook's return value using the 1st argument  
-
-```javascript
-import {createStore} from 'reusable';
-
-const useTodos = createStore(() => {
-  const [items, setItems] = useState([]);
-
-  return {
-    items,
-    setItems
-  }
 });
-
-const Comp = () => {
-  const tasksCount = useTodos(
-    (state) => state.items.length
-  );
-  ...
-}
 ```
 
-## Override areEqual
-Override compare method (shallowCompare by default) using the 2nd argument
-
-```javascript
-import {createStore} from 'reusable';
-
-const useTodos = createStore(() => {
-  const [items, setItems] = useState([]);
-
-  return {
-    items,
-    setItems
-  }
-});
-
-const Comp = () => {
-  const nextTask = useTodos(
-    (state) => state.items.find(item => !item.isCompleted),
-    (item1, item2) => item1.id === item2.id
-  );
-  ...
-}
-```
-
-## Demos
+# Demos
 **basic**  
 <a target="blank" href="https://codesandbox.io/s/github/reusablejs/reusable/tree/master/examples/basic?fontsize=14&module=%2Fsrc%2Findex.js">
   <img alt="Edit basic" src="https://codesandbox.io/static/img/play-codesandbox.svg">
@@ -135,9 +101,24 @@ const Comp = () => {
   <img alt="Edit basic" src="https://codesandbox.io/static/img/play-codesandbox.svg">
 </a>
 
-## Should I use this in production?
-Reusable is in early stage and is being used (happily) in several projects.  
-Follow your heart.
+# How does this compare to other state management solutions?
+Current state management solutions don't let you manage state using hooks, which causes you to manage local and global state differently, and have a costly transition between the two.
+
+Reusable solves this by seemingly transforming your custom hooks into global stores.
+
+## What about hooks+Context?
+Using plain context has some drawbacks and limitations, that led us to write this library:
+- Context doesn't support selectors, render bailout, or debouncing
+- When managing global state using Context in a large app, you will probably have many small, single-purpose providers. Soon enough you'll find a Provider wrapper hell.
+- When you order the providers vertically, you can’t dynamically choose to depend on each other without changing the order, which might break things.
+
+# How does it work
+React hooks must run inside a component, and our store is based on a custom hook.  
+So in order to have a store that uses a custom hook, we need to create a "host component" for each of our stores.  
+The `ReusableProvider` component renders a `Stores` component, under which it will render one "host component" per store, which only runs the store's hook, and renders nothing to the DOM. Then, it uses an effect to update all subscribers with the new value. 
+We use plain pubsub stores under the hood, and do shallowCompare on selector values to decide if we re-render the subscribing component or not.
+
+Notice that the `ReusableProvider` uses a Context provider at the top-level, but it provides a stable ref that never changes. This means that changing store values, and even dynamically adding stores won't re-render your app.
 
 ## Feedback / Contributing:
 We would love your feedback / suggestions
