@@ -4,10 +4,11 @@
 # Reusable - state management with hooks
 <img src="https://github.com/reusablejs/reusable/blob/master/website/static/img/reusable.png?raw=true" width="120"/>
 
-1. Use hooks to manage the store
-2. Migrating a local component state to a shared state is trivial
-3. Use a single context provider and avoid nesting dozens of providers
-4. Allow direct subscriptions with selectors for better re-render control
+- Use hooks to manage the store
+  - One paradigm for both local and shared state
+  - Easier transition between the two
+- Use a single context provider and avoid nesting dozens of providers
+- Allow direct subscriptions with selectors for better re-render control
 
 
 # How to use
@@ -51,7 +52,7 @@ const App = () => (
 Note there is no need to provide the store. Stores automatically plug into the top provider
 
 ## Selectors
-To make sure your components only re-render when stuff they need change, you can use selectors:  
+For better control over re-renders, use selectors:
 
 ```javascript
 const Comp1 = () => {
@@ -59,6 +60,13 @@ const Comp1 = () => {
 }
 ```
 Comp1 will only re-render if counter switches between odd and even
+
+useCounter can take a second parameter that will override the comparison function (defaults to shallow compare): 
+```javascript
+const Comp1 = () => {
+  const counter = useCounter(state => state, (prevValue, newValue) => prevValue === newValue);
+}
+```
 
 
 ## Using stores from other stores
@@ -93,11 +101,6 @@ The `ReusableProvider` component renders a `Stores` component, under which it wi
 We use plain pubsub stores under the hood, and do shallowCompare on selector values to decide if we re-render the subscribing component or not.
 
 Notice that the `ReusableProvider` uses a Context provider at the top-level, but it provides a stable ref that never changes. This means that changing store values, and even dynamically adding stores won't re-render your app.
-
-# Docs
-Check out the full docs here:
-[https://reusablejs.github.io/reusable/docs/basic-usage.html](https://reusablejs.github.io/reusable/docs/basic-usage.html)
-
 
 ## Feedback / Contributing:
 We would love your feedback / suggestions
