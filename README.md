@@ -1,27 +1,14 @@
 [![Build Status](https://circleci.com/gh/reusablejs/reusable.svg?style=svg)](https://circleci.com/gh/reusablejs/reusable)
 [![npm version](https://badge.fury.io/js/reusable.svg)](https://badge.fury.io/js/reusable)
 
-# Reusable
+# Reusable - state management with hooks
 <img src="https://github.com/reusablejs/reusable/blob/master/website/static/img/reusable.png?raw=true" width="120"/>
 
-Reusable is a simple solution for state management in modern React applications.  
+1. Use hooks to manage the store
+2. Migrating a local component state to a shared state is trivial
+3. Use a single context provider and avoid nesting dozens of providers
+4. Allow direct subscriptions with selectors for better re-render control
 
-It is built on 2 main principles:
-1. Use hooks to manage the global state (as opposed to just using hooks to subscribe to the state)
-2. Allow to build libraries that use global state, and easily use that state from apps
-
-# Motivation
-## Hooks
-State management needs to manage an immutable state, handle side-effects and memoization. Hooks already provide all these:
-- immutable state: useState/useReducer
-- side-effects: useEffect/useLayoutEffect
-- memoization: useMemo/useCallback
-
-So why invent a new paradigm for global state if we already have it for local state?
-Reusable allows you to build stores using regular React hooks, and adds a layer of direct subscriptions and selectors. This way you can use any custom hooks you already have inside your stores. It's also easier to migrate from local state to global state, which is something that happens frequently when developing frontend applications.
-
-## Libraries
-One caveat of state management solutions is that it's hard to reuse libraries that have their own state management solutions built-in. Reusable allows to easily collaborate between libraries and your app, since all global state uses plain hooks. See more examples in this document.
 
 # How to use
 Pass a custom hook to `createStore`:
@@ -29,9 +16,12 @@ Pass a custom hook to `createStore`:
 ```javascript
 const useCounter = createStore(() => {
   const [counter, setCounter] = useState(0);
-  
+  useEffect(...)
+  const isOdd = useMemo(...);
+
   return {
     counter,
+    isOdd,
     increment: () => setCounter(prev => prev + 1)
     decrement: () => setCounter(prev => prev - 1)
   }
@@ -65,15 +55,14 @@ To make sure your components only re-render when stuff they need change, you can
 
 ```javascript
 const Comp1 = () => {
-  const isPositive = useCounter(state => state.counter > 0);
+  const isOdd = useCounter(state => state.isOdd);
 }
 ```
-Comp1 will only re-render if counter switches between positive and negative
+Comp1 will only re-render if counter switches between odd and even
 
 
 ## Using stores from other stores
-Every store can use any other store, without worrying about provider order (as opposed to using React Context).  
-Just use the store's hook inside the other store:
+Each store can use any other store similar to how components use them:
 ```javascript
 const useCurrentUser = createStore(() => ...);
 const usePosts = createStore(() => ...);
@@ -85,35 +74,6 @@ const useCurrentUserPosts = createStore(() => {
   return ...
 });
 ```
-
-## Libraries
-Imagine a `reusable-i18n` library, that use Reusable, and manages a global state (current locale).
-This is easily done with Reusable:
-
-```javascript
-import {LocaleSwitcher, useLocale} from 'reusable-i18n';
-
-const App = () => {
-  const {currentLocale} = useLocale();
-  
-  return <div>
-    <FlagIcon locale={currentLocale}/>
-    <LocaleSwitcher/>
-  </div>
-}
-
-...
-ReactDOM.render(
-  <ReusableProvider>
-    <App />
-  </ReusableProvider>,
-  rootElement
-);
-
-```
-
-In this example, App subscribes to the global state managed by reusable-i18n using useLocale, and LocaleSwitcher connects to the same global state. The reactivity model is based on immutable data, like hooks, and there is no need to do any specific initialization, except for putting ReusableProvider around our app.
-Furthermore, useLocale supports selectors, allowing the App to subscribe to more granular changes in the global state.
 
 # Why do we need (yet) another state management library?
 Current state management solutions don't let you manage state using hooks, which causes you to manage local and global state differently, and have a costly transition between the two.
@@ -128,13 +88,14 @@ Using plain context has some drawbacks and limitations, that led us to write thi
 
 # How does it work
 React hooks must run inside a component, and our store is based on a custom hook.  
-So in order to have a store that uses a custom hook, we need to create a component for each of our stores.  
-The `ReusableProvider` component renders a `Stores` component, under which it will render one component per store, which only runs the store's hook, and renders nothing to the DOM. Then, it uses an effect to update all subscribers with the new value. 
+So in order to have a store that uses a custom hook, we need to create a "host component" for each of our stores.  
+The `ReusableProvider` component renders a `Stores` component, under which it will render one "host component" per store, which only runs the store's hook, and renders nothing to the DOM. Then, it uses an effect to update all subscribers with the new value. 
+We use plain pubsub stores under the hood, and do shallowCompare on selector values to decide if we re-render the subscribing component or not.
 
 Notice that the `ReusableProvider` uses a Context provider at the top-level, but it provides a stable ref that never changes. This means that changing store values, and even dynamically adding stores won't re-render your app.
 
 # Docs
-Check out the docs here:
+Check out the full docs here:
 [https://reusablejs.github.io/reusable/docs/basic-usage.html](https://reusablejs.github.io/reusable/docs/basic-usage.html)
 
 
