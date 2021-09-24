@@ -5,8 +5,7 @@
 <img src="https://github.com/reusablejs/reusable/blob/master/website/static/img/reusable.png?raw=true" width="120"/>
 
 - Use hooks to manage the store
-  - One paradigm for both local and shared state
-  - Easier transition between the two
+  - One paradigm for both local and shared state, and an easier transition between the two
 - Use a single context provider and avoid nesting dozens of providers
 - Allow direct subscriptions with selectors for better re-render control
 
