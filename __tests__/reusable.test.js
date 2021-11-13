@@ -176,6 +176,10 @@ describe('reusable', () => {
   });
 });
 describe('selectors', () => {
+  beforeEach(() => {
+    container = createContainer();
+    replaceContainer(container);
+  });
 
   it('should allow to use a selector', () => {
     const useSomething = createStore(() => useState(1));
