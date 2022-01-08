@@ -7,7 +7,7 @@ export class Store<HookValue = any> {
   subscribers: StoreValueChangeCallback<HookValue>[] = [];
   cachedValue: HookValue | null = null;
   constructor(private fn: HookFn<HookValue>) {
-    this.name = fn.name || 'Store';
+    this.name = fn.name || "Store";
   }
 
   getCachedValue() {
@@ -16,34 +16,35 @@ export class Store<HookValue = any> {
 
   useValue() {
     this.cachedValue = this.fn();
-
     return this.cachedValue as HookValue;
   }
 
   subscribe(callback: StoreValueChangeCallback<HookValue>) {
     this.subscribers = [...this.subscribers, callback];
     return () => {
-      this.subscribers = this.subscribers.filter(sub => sub !== callback)
-    }
+      this.subscribers = this.subscribers.filter((sub) => sub !== callback);
+    };
   }
 
   notify() {
-    this.subscribers.forEach(sub => sub(this.cachedValue as HookValue));
+    this.subscribers.forEach((sub) => sub(this.cachedValue as HookValue));
   }
 }
 
 export class Container {
   stores = new Map<HookFn, Store>();
   subscribers: StoresChangeCallback[] = [];
+
   onStoresChanged(callback: StoresChangeCallback) {
     this.subscribers = [...this.subscribers, callback];
     return () => {
-      this.subscribers = this.subscribers.filter(item => item !== callback);
-    }
+      this.subscribers = this.subscribers.filter((item) => item !== callback);
+    };
   }
+
   createStore(fn: HookFn) {
     if (this.stores.has(fn)) {
-      throw new Error('Store already exist');
+      throw new Error("Store already exist");
     }
     const store = new Store(fn);
     this.stores.set(fn, store);
@@ -51,25 +52,30 @@ export class Container {
 
     return store;
   }
-  getStore<HookValue>(fn: HookFn<HookValue>):Store<HookValue> {
+
+  getStore<HookValue>(fn: HookFn<HookValue>): Store<HookValue> {
     if (!this.stores.has(fn)) {
-      throw new Error('Store doesn\'t exist');
+      throw new Error("Store doesn't exist");
     }
     return <Store<HookValue>>this.stores.get(fn);
   }
+
   notifyStoresChanged() {
-    this.subscribers.forEach(sub => sub());
+    this.subscribers.forEach((sub) => sub());
   }
+
   getStoresArray() {
     const storesArray: Store<any>[] = [];
 
     this.stores.forEach((store) => {
       storesArray.push(store);
-    })
+    });
     return storesArray;
   }
 }
+
 export const createContainer = () => new Container();
 let defaultContainer = new Container();
 export const getContainer = () => defaultContainer;
-export const replaceContainer = (mockedContainer: Container) => defaultContainer = mockedContainer;
+export const replaceContainer = (mockedContainer: Container) =>
+  (defaultContainer = mockedContainer);
