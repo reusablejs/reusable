@@ -1,7 +1,12 @@
-import * as React from 'react';
-import { FunctionComponent, useState, useContext, useEffect } from 'react';
-import { shallowEqual, AreEqual } from './shallow-equal';
-import { Container, getContainer, Store as StoreClass, HookFn } from './reusable';
+import * as React from "react";
+import { FunctionComponent, useState, useContext, useEffect } from "react";
+import { shallowEqual, AreEqual } from "./shallow-equal";
+import {
+  Container,
+  getContainer,
+  Store as StoreClass,
+  HookFn,
+} from "./reusable";
 
 const ReusableContext = React.createContext<Container | null>(null);
 
@@ -13,39 +18,38 @@ export const ReusableProvider: FunctionComponent<{}> = ({ children }) => (
     </React.Fragment>
   </ReusableContext.Provider>
 );
-Object.defineProperty(ReusableProvider,'displayName', { value: 'ReusableProvider' });
+Object.defineProperty(ReusableProvider, "displayName", {
+  value: "ReusableProvider",
+});
 
 const componentCache = new Map();
 
 const createStoreComponent = (store: StoreClass<any>) => {
   if (!componentCache.has(store)) {
-
     const Component = React.memo(() => {
       store.useValue();
-      
       useEffect(() => store.notify(), [store.cachedValue]);
-      
       return null;
     });
-    
-    Object.defineProperty(Component,'name', { value: store.name });
-
+    Object.defineProperty(Component, "name", { value: store.name });
     componentCache.set(store, Component);
   }
-    
+
   return componentCache.get(store);
 };
-
+/* ########################## */
 const useContainer = () => {
   const container = useContext(ReusableContext) as Container;
 
   if (container === null) {
-    throw new Error('Are you trying to use Reusable without a ReusableProvider?');
+    throw new Error(
+      "Are you trying to use Reusable without a ReusableProvider?"
+    );
   }
 
   return container;
-}
-
+};
+/* ########################## */
 const Stores = () => {
   const container = useContainer();
   const [stores, setStores] = useState(() => container.getStoresArray());
@@ -61,24 +65,28 @@ const Stores = () => {
       {stores.map((store: StoreClass<any>, index: number) => {
         const StoreComponent = createStoreComponent(store);
 
-        return <StoreComponent key={index} store={store}/>;
+        return <StoreComponent key={index} store={store} />;
       })}
     </React.Fragment>
-  )
-}
-Object.defineProperty(Stores,'displayName', { value: 'Stores' });
+  );
+};
+Object.defineProperty(Stores, "displayName", { value: "Stores" });
+/* ########################## */
 
 type SelectorFn<HookValue, SelectorValue> = (val: HookValue) => SelectorValue;
 const identity = (val: any) => val;
 
+/* ########################## */
 function useStore<HookValue, SelectorValue>(
   fn: HookFn<HookValue>,
   selector: SelectorFn<HookValue, SelectorValue>,
-  areEqual:AreEqual<SelectorValue>
+  areEqual: AreEqual<SelectorValue>
 ) {
   const store = useContainer().getStore<HookValue>(fn);
-  React.useDebugValue('reusable');
-  const [localCopy, setLocalCopy] = useState<SelectorValue>(() => selector(store.getCachedValue()));
+  React.useDebugValue("reusable");
+  const [localCopy, setLocalCopy] = useState<SelectorValue>(() =>
+    selector(store.getCachedValue())
+  );
 
   useEffect(() => {
     return store.subscribe((newValue) => {
@@ -92,7 +100,7 @@ function useStore<HookValue, SelectorValue>(
 
   return localCopy;
 }
-
+/* ########################## */
 export function createStore<HookValue>(fn: HookFn<HookValue>) {
   const store = getContainer().createStore(fn);
 
@@ -108,7 +116,7 @@ export function createStore<HookValue>(fn: HookFn<HookValue>) {
     selector?: SelectorFn<HookValue, SelectorValue>,
     areEqual?: AreEqual<SelectorValue>
   ) {
-    React.useDebugValue(store.name);  
+    React.useDebugValue(store.name);
 
     return useStore(fn, selector || identity, areEqual || shallowEqual);
   }
