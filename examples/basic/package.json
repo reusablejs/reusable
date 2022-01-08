@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "reusable": "^1.0.0-alpha.12"
+    "react-dom": "^16.8.6"
   }
 }

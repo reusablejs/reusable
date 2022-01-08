@@ -1,15 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {ReusableProvider} from 'reusable';
-import {Header} from './Header';
-import {Footer} from './Footer';
+import { ReusableProvider } from "../../../src/react-reusable";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
 
 function App() {
   return (
     <ReusableProvider>
-      <Header/>
+      <Header />
       Counter in header and footer are reused
-      <Footer/>
+      <Footer />
     </ReusableProvider>
   );
 }

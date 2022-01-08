@@ -8,9 +8,17 @@ import {
   HookFn,
 } from "./reusable";
 
+const storeValuesArray: any[] = [];
+
+function storeValueChanged(storeValueProp: object)  {
+  storeValuesArray.push(storeValueProp)
+  return storeValuesArray
+}
+
 const ReusableContext = React.createContext<Container | null>(null);
 
-export const ReusableProvider: FunctionComponent<{}> = ({ children }) => (
+export const ReusableProvider: FunctionComponent<{}> = ({ children }) => {
+  return (
   <ReusableContext.Provider value={getContainer()}>
     <React.Fragment>
       <Stores />
@@ -18,17 +26,21 @@ export const ReusableProvider: FunctionComponent<{}> = ({ children }) => (
       {children}
     </React.Fragment>
   </ReusableContext.Provider>
-);
+  )
+};
 Object.defineProperty(ReusableProvider, "displayName", {
   value: "ReusableProvider",
 });
 
 const componentCache = new Map();
 
+
 const createStoreComponent = (store: StoreClass<any>) => {
   if (!componentCache.has(store)) {
     const Component = React.memo(() => {
       store.useValue();
+      storeValueChanged(store.useValue())
+      console.log(storeValuesArray);
       useEffect(() => store.notify(), [store.cachedValue]);
       return null;
     });
@@ -38,6 +50,8 @@ const createStoreComponent = (store: StoreClass<any>) => {
 
   return componentCache.get(store);
 };
+
+
 /* ########################## */
 const useContainer = () => {
   const container = useContext(ReusableContext) as Container;
@@ -65,7 +79,6 @@ const Stores = () => {
     <React.Fragment>
       {stores.map((store: StoreClass<any>, index: number) => {
         const StoreComponent = createStoreComponent(store);
-
         return <StoreComponent key={index} store={store} />;
       })}
     </React.Fragment>
@@ -126,12 +139,14 @@ export function createStore<HookValue>(fn: HookFn<HookValue>) {
 
 const DevTools = () => {
   const container = useContext(ReusableContext);
-  console.log(container);
+  const [storeValue, setStoresValues] = useState([]);
+
   return (
-    // <ReusableContext.Consumer>
-    //   {/* {value => <div>{value?.stores.toString()}</div>} */}
-    // </ReusableContext.Consumer>
-    null
+    <ReusableContext.Consumer>
+      {(value) => {
+        console.log(value);
+        return <div>{value?.stores.keys.toString()}</div>}}
+    </ReusableContext.Consumer>
   );
 };
 
