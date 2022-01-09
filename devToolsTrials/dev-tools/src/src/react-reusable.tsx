@@ -18,11 +18,12 @@ function storeValueChanged(storeValueProp: object)  {
 const ReusableContext = React.createContext<Container | null>(null);
 
 export const ReusableProvider: FunctionComponent<{}> = ({ children }) => {
+  const [globalState, setGlobalState] = useState()
   return (
   <ReusableContext.Provider value={getContainer()}>
     <React.Fragment>
-      <Stores />
-      <DevTools />
+      <Stores setGlobalState={setGlobalState}/>
+      <DevTools globalState={globalState}/>
       {children}
     </React.Fragment>
   </ReusableContext.Provider>
@@ -35,12 +36,13 @@ Object.defineProperty(ReusableProvider, "displayName", {
 const componentCache = new Map();
 
 
-const createStoreComponent = (store: StoreClass<any>) => {
+const createStoreComponent = (store: StoreClass<any>, setGlobalState: any) => {
   if (!componentCache.has(store)) {
     const Component = React.memo(() => {
-      store.useValue();
-      storeValueChanged(store.useValue())
-      console.log(storeValuesArray);
+      const storeValue = store.useValue();
+      // storeValueChanged(store.useValue())
+     // console.log(storeValuesArray);
+      setGlobalState((state: any) => ({...state,[store.name]: storeValue}))
       useEffect(() => store.notify(), [store.cachedValue]);
       return null;
     });
@@ -65,7 +67,7 @@ const useContainer = () => {
   return container;
 };
 /* ########################## */
-const Stores = () => {
+const Stores = ({setGlobalState}: {setGlobalState: any}) => {
   const container = useContainer();
   const [stores, setStores] = useState(() => container.getStoresArray());
 
@@ -78,7 +80,7 @@ const Stores = () => {
   return (
     <React.Fragment>
       {stores.map((store: StoreClass<any>, index: number) => {
-        const StoreComponent = createStoreComponent(store);
+        const StoreComponent = createStoreComponent(store, setGlobalState);
         return <StoreComponent key={index} store={store} />;
       })}
     </React.Fragment>
@@ -137,9 +139,10 @@ export function createStore<HookValue>(fn: HookFn<HookValue>) {
   return useStoreHook;
 }
 
-const DevTools = () => {
-  const container = useContext(ReusableContext);
-  const [storeValue, setStoresValues] = useState([]);
+const DevTools = ({globalState}: {globalState: any}) => {
+  useEffect(() => {
+    console.log(globalState);
+  })
 
   return (
     <ReusableContext.Consumer>

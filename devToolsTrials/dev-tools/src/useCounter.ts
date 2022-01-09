@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 const useCounter = createStore(() => {
   const [counter, setCounter] = useState(0);
   useEffect(() => {
-    console.log(`counter state: ${counter}`);
+    //console.log(`counter state: ${counter}`);
   });
   // const isOdd = useMemo(...);
 
