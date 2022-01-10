@@ -7,9 +7,6 @@ import {
   Store as StoreClass,
   HookFn,
 } from "./reusable";
-import { json } from "stream/consumers";
-
-const storeValuesArray: any[] = [];
 
 // function storeValueChanged(storeValueProp: object)  {
 //   storeValuesArray.push(storeValueProp)
@@ -76,7 +73,7 @@ const useContainer = () => {
 const Stores = ({ setGlobalState }: { setGlobalState: any }) => {
   const container = useContainer();
   const [stores, setStores] = useState(() => container.getStoresArray());
-
+  console.log(stores);
   useEffect(() => {
     return container.onStoresChanged(() => {
       setStores(container.getStoresArray());
@@ -147,6 +144,7 @@ export function createStore<HookValue>(fn: HookFn<HookValue>) {
 
 const DevTools = ({ globalState }: { globalState: any }) => {
   const [open, setOpen] = useState(false);
+
   const storeNames = [];
   useEffect(() => {
     console.log(globalState);
