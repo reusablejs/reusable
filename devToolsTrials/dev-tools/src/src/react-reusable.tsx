@@ -41,8 +41,13 @@ const createStoreComponent = (store: StoreClass<any>, setGlobalState: any) => {
     const Component = React.memo(() => {
       const storeValue = store.useValue();
       // storeValueChanged(store.useValue())
-     // console.log(storeValuesArray);
-      setGlobalState((state: any) => ({...state,[store.name]: storeValue}))
+      setGlobalState((state: any) => {
+        if(state){
+            state[store.name].push(storeValue);
+          return ({...state, [store.name]: state[store.name]})
+        }
+        return({...state, [store.name]: [storeValue]})
+      })
       useEffect(() => store.notify(), [store.cachedValue]);
       return null;
     });

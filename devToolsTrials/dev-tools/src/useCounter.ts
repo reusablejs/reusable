@@ -1,12 +1,8 @@
 import { createStore } from "./src/react-reusable";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-const useCounter = createStore(() => {
+const useCounter = createStore(function useCounter() {
   const [counter, setCounter] = useState(0);
-  useEffect(() => {
-    //console.log(`counter state: ${counter}`);
-  });
-  // const isOdd = useMemo(...);
 
   return {
     counter,
