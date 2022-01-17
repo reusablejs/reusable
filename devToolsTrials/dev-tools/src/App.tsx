@@ -1,5 +1,5 @@
 import Counter from "./Counter";
-import * as reusable from "./src/react-reusable";
+import * as reusable from "./src-true/react-reusable";
 
 const App = () => {
   return (

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createStore } from "./src";
+import { createStore } from "./src-true";
 
 const useSomething = createStore(() => {
   const [something, changeSomething] = useState("");

@@ -1,4 +1,4 @@
-import { createStore } from "./src/react-reusable";
+import { createStore } from "./src-true/react-reusable";
 import { useState } from "react";
 
 const useCounter = createStore(function useCounter() {

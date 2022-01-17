@@ -4,7 +4,6 @@ import useSomething from "./useSomethingElse";
 const Counter = () => {
   const { counter, increment, decrement } = useCounter();
   const { something } = useSomething();
-  console.log(something);
   return (
     <div>
       <div>{counter}</div>

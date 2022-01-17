@@ -35,7 +35,7 @@ const componentCache = new Map();
 const createStoreComponent = (store: StoreClass<any>) => {
   if (!componentCache.has(store)) {
     const Component = React.memo(() => {
-      const storeValue = store.useValue();
+      store.useValue();
       useEffect(() => store.notify(), [store.cachedValue]);
       return null;
     });
@@ -132,11 +132,11 @@ export function createStore<HookValue>(fn: HookFn<HookValue>) {
 
 const DevTools = ({}) => {
   const [open, setOpen] = useState(false);
-  const storeNames = [];
+  const [stateHistory, setStateHistory] = useState<any[]>([]);
   const container = useContainer();
   const [state, setState] = useState({});
 
-  container.getStoresArray().forEach((store) => {
+  container.getStoresArray().forEach((store, i, arr) => {
     store.subscribe((value) => {
       setState((old) => {
         return {
@@ -145,7 +145,26 @@ const DevTools = ({}) => {
         };
       });
     });
+    if (
+      i === arr.length - 1 &&
+      JSON.stringify(stateHistory[stateHistory.length - 1]) !==
+        JSON.stringify(state)
+    ) {
+      setStateHistory((history) => history.concat(state));
+      console.log(stateHistory);
+    }
   });
+
+  const goBack = (newValue: any) => {
+    container.getStoresArray().forEach((store) => {
+      for (let storeKey in newValue) {
+        if (storeKey === store.name) {
+          store.cachedValue = newValue[store.name];
+          store.notify();
+        }
+      }
+    });
+  };
 
   return (
     <div>
@@ -157,13 +176,14 @@ const DevTools = ({}) => {
         {open ? "close" : "open"} dev Tools
       </button>
       <dialog open={open}>
+        <TravelBack stateHistory={stateHistory} goBack={goBack} />
         {JSON.stringify(state)}
         <ul>
           {container.getStoresArray().map((store) => (
             <li>
               {store.name} -{/* @ts-ignore  */}
               {JSON.stringify(state[store.name as keyof state])}
-              {JSON.stringify(store.subscribers)}
+              {/* {JSON.stringify(store.subscribers)} */}
             </li>
           ))}
         </ul>
@@ -172,6 +192,34 @@ const DevTools = ({}) => {
         </div>
       </dialog>
     </div>
+  );
+};
+
+const TravelBack = ({
+  stateHistory,
+  goBack,
+}: {
+  stateHistory: any[];
+  goBack: any;
+}) => {
+  const [counter, setCounter] = useState(2);
+
+  return (
+    <React.Fragment>
+      <button
+        onClick={() => {
+          // console.log(
+          //   stateHistory[stateHistory.length - counter],
+          //   stateHistory
+          // );
+
+          goBack(stateHistory[stateHistory.length - counter]);
+          setCounter((counter) => counter + 2);
+        }}
+      >
+        go back
+      </button>
+    </React.Fragment>
   );
 };
 
