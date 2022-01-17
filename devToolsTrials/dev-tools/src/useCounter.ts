@@ -3,6 +3,7 @@ import { useState } from "react";
 
 const useCounter = createStore(function useCounter() {
   const [counter, setCounter] = useState(0);
+  // console.log(counter);
 
   return {
     counter,
