@@ -16,11 +16,12 @@ import {
 const ReusableContext = React.createContext<Container | null>(null);
 
 export const ReusableProvider: FunctionComponent<{}> = ({ children }) => {
+  const [globalState, setGlobalState] = useState({});
   return (
     <ReusableContext.Provider value={getContainer()}>
       <React.Fragment>
-        <Stores />
-        <DevTools />
+        <Stores setGlobalState={setGlobalState} />
+        <DevTools globalState={globalState} />
         {children}
       </React.Fragment>
     </ReusableContext.Provider>
@@ -32,10 +33,20 @@ Object.defineProperty(ReusableProvider, "displayName", {
 
 const componentCache = new Map();
 
-const createStoreComponent = (store: StoreClass<any>) => {
+const createStoreComponent = (store: StoreClass<any>, setGlobalState: any) => {
   if (!componentCache.has(store)) {
     const Component = React.memo(() => {
       const storeValue = store.useValue();
+      setGlobalState((state: any) => {
+        if (state) {
+          if (!state[store.name]) {
+            state[store.name] = [];
+          }
+          state[store.name].push(storeValue);
+          return { ...state, [store.name]: state[store.name] };
+        }
+        return { ...state, [store.name]: [storeValue] };
+      });
       useEffect(() => store.notify(), [store.cachedValue]);
       return null;
     });
@@ -59,9 +70,10 @@ const useContainer = () => {
   return container;
 };
 /* ########################## */
-const Stores = () => {
+const Stores = ({ setGlobalState }: { setGlobalState: any }) => {
   const container = useContainer();
   const [stores, setStores] = useState(() => container.getStoresArray());
+  console.log(stores);
   useEffect(() => {
     return container.onStoresChanged(() => {
       setStores(container.getStoresArray());
@@ -71,7 +83,7 @@ const Stores = () => {
   return (
     <React.Fragment>
       {stores.map((store: StoreClass<any>, index: number) => {
-        const StoreComponent = createStoreComponent(store);
+        const StoreComponent = createStoreComponent(store, setGlobalState);
         return <StoreComponent key={index} store={store} />;
       })}
     </React.Fragment>
@@ -130,21 +142,15 @@ export function createStore<HookValue>(fn: HookFn<HookValue>) {
   return useStoreHook;
 }
 
-const DevTools = ({}) => {
+const DevTools = ({ globalState }: { globalState: any }) => {
   const [open, setOpen] = useState(false);
-  const storeNames = [];
-  const container = useContainer();
-  const [state, setState] = useState({});
 
-  container.getStoresArray().forEach((store) => {
-    store.subscribe((value) => {
-      setState((old) => {
-        return {
-          ...old,
-          [store.name]: value,
-        };
-      });
-    });
+  const storeNames = [];
+  useEffect(() => {
+    console.log(globalState);
+    for (const store in globalState) {
+      storeNames.push(store);
+    }
   });
 
   return (
@@ -157,17 +163,12 @@ const DevTools = ({}) => {
         {open ? "close" : "open"} dev Tools
       </button>
       <dialog open={open}>
-        {JSON.stringify(state)}
-        <ul>
-          {container.getStoresArray().map((store) => (
-            <li>
-              {store.name} -{/* @ts-ignore  */}
-              {JSON.stringify(state[store.name as keyof state])}
-              {JSON.stringify(store.subscribers)}
-            </li>
-          ))}
-        </ul>
         <div>
+          {Object.keys(globalState).map((key) => (
+            <CurrentStateDisplay
+              store={{ name: key, values: globalState[key] }}
+            />
+          ))}
           <button onClick={() => setOpen(false)}>close</button>
         </div>
       </dialog>
@@ -175,23 +176,26 @@ const DevTools = ({}) => {
   );
 };
 
-// const CurrentStateDisplay = ({ store }: { store: any }) => {
-// 	const [open, setOpen] = useState<boolean>(false);
-// 	return (
-// 		<div>
-// 			<div>{store.name}</div>
-// 			<div style={{ cursor: "pointer" }} onClick={() => setOpen(!open)}>
-// 				state progression
-// 			</div>
-// 			<div hidden={!open}>
-// 				{store.values.map((stateValue: any) => {
-// 					return JSON.stringify(stateValue);
-// 				})}
-// 			</div>
-// 			<div />
-// 		</div>
-// 	);
-// };
+const CurrentStateDisplay = ({ store }: { store: any }) => {
+  const [open, setOpen] = useState<boolean>(false);
+  console.log(store);
+  return (
+    <div>
+      <div>{store.name}</div>
+      <div style={{ cursor: "pointer" }} onClick={() => setOpen(!open)}>
+        state progression
+      </div>
+      <div hidden={!open}>
+        {store.values.map((stateValue: any) => {
+          if (Array.isArray(stateValue)) {
+          }
+          return JSON.stringify(stateValue);
+        })}
+      </div>
+      <div />
+    </div>
+  );
+};
 
 // export default function Togglable(props) {
 //     const [visible, setVisible] = useState(false);

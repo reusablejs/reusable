@@ -2,12 +2,15 @@ export type HookFn<HookValue = any> = () => HookValue;
 export type StoreValueChangeCallback<HookValue> = (value: HookValue) => void;
 export type StoresChangeCallback = () => void;
 
+let storeNumber = 0;
+
 export class Store<HookValue = any> {
   name: string;
   subscribers: StoreValueChangeCallback<HookValue>[] = [];
   cachedValue: HookValue | null = null;
   constructor(private fn: HookFn<HookValue>) {
-    this.name = fn.name || "Store";
+    this.name = fn.name || "Store" + storeNumber;
+    storeNumber++;
   }
 
   getCachedValue() {

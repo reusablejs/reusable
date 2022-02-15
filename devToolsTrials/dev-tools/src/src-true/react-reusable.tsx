@@ -8,11 +8,6 @@ import {
   HookFn,
 } from "./reusable";
 
-// function storeValueChanged(storeValueProp: object)  {
-//   storeValuesArray.push(storeValueProp)
-//   return storeValuesArray
-// }
-
 const ReusableContext = React.createContext<Container | null>(null);
 
 export const ReusableProvider: FunctionComponent<{}> = ({ children }) => {
@@ -35,7 +30,7 @@ const componentCache = new Map();
 const createStoreComponent = (store: StoreClass<any>) => {
   if (!componentCache.has(store)) {
     const Component = React.memo(() => {
-      const storeValue = store.useValue();
+      store.useValue();
       useEffect(() => store.notify(), [store.cachedValue]);
       return null;
     });
@@ -132,11 +127,11 @@ export function createStore<HookValue>(fn: HookFn<HookValue>) {
 
 const DevTools = ({}) => {
   const [open, setOpen] = useState(false);
-  const storeNames = [];
+  const [stateHistory, setStateHistory] = useState<any[]>([]);
   const container = useContainer();
   const [state, setState] = useState({});
 
-  container.getStoresArray().forEach((store) => {
+  container.getStoresArray().forEach((store, i, arr) => {
     store.subscribe((value) => {
       setState((old) => {
         return {
@@ -145,7 +140,33 @@ const DevTools = ({}) => {
         };
       });
     });
+    if (
+      i === arr.length - 1 &&
+      JSON.stringify(stateHistory[stateHistory.length - 1]) !==
+        JSON.stringify(state)
+    ) {
+      setStateHistory((history) => {
+        console.log(history);
+        return history.concat(state);
+      });
+    }
   });
+
+  const goBack = React.useCallback((newValue: any) => {
+    let j: number = 0;
+    container.getStoresArray().forEach((store) => {
+      for (let storeKey in newValue) {
+        if (storeKey === store.name) {
+          store.cachedValue = newValue[store.name];
+          store.notify();
+          j++;
+        }
+      }
+    });
+    if (j > 0) {
+      return true;
+    }
+  }, []);
 
   return (
     <div>
@@ -157,13 +178,18 @@ const DevTools = ({}) => {
         {open ? "close" : "open"} dev Tools
       </button>
       <dialog open={open}>
+        <TravelBack
+          stateHistory={stateHistory}
+          setStateHistory={setStateHistory}
+          goBack={goBack}
+        />
         {JSON.stringify(state)}
         <ul>
           {container.getStoresArray().map((store) => (
             <li>
               {store.name} -{/* @ts-ignore  */}
               {JSON.stringify(state[store.name as keyof state])}
-              {JSON.stringify(store.subscribers)}
+              {/* {JSON.stringify(store.subscribers)} */}
             </li>
           ))}
         </ul>
@@ -175,36 +201,42 @@ const DevTools = ({}) => {
   );
 };
 
-// const CurrentStateDisplay = ({ store }: { store: any }) => {
-// 	const [open, setOpen] = useState<boolean>(false);
-// 	return (
-// 		<div>
-// 			<div>{store.name}</div>
-// 			<div style={{ cursor: "pointer" }} onClick={() => setOpen(!open)}>
-// 				state progression
-// 			</div>
-// 			<div hidden={!open}>
-// 				{store.values.map((stateValue: any) => {
-// 					return JSON.stringify(stateValue);
-// 				})}
-// 			</div>
-// 			<div />
-// 		</div>
-// 	);
-// };
+const TravelBack = ({
+  stateHistory,
+  setStateHistory,
+  goBack,
+}: {
+  stateHistory: any[];
+  setStateHistory: any;
+  goBack: any;
+}) => {
+  const [counter, setCounter] = useState(2);
 
-// export default function Togglable(props) {
-//     const [visible, setVisible] = useState(false);
-//     function toggleVisible() {
-//         setVisible(!visible);
-//     }
-//     return (
-//         <div>
-//             <button onClick={toggleVisible}>{props.buttonLabel}</button>
-//             {visible ? props.children : ""}
-//         </div>
-//     );
-// }
+  return (
+    <React.Fragment>
+      <button
+        onClick={() => {
+          if (goBack(stateHistory[stateHistory.length - counter])) {
+            setCounter((counter) => counter + 2);
+          }
+        }}
+      >
+        go back
+      </button>
+      <button
+        onClick={() => {
+          if (goBack(stateHistory[stateHistory.length + counter])) {
+            setCounter((counter) => counter + 2);
+          }
+        }}
+      >
+        go forward
+      </button>
+    </React.Fragment>
+  );
+};
+
+// };
 
 // TBD:
 // export const reusableReducer = (reducer, initialValue, init, options) => {
