@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { FunctionComponent, useState, useContext, useEffect } from 'react';
+import { FC, useState, useContext, useEffect } from 'react';
 import { shallowEqual, AreEqual } from './shallow-equal';
 import { Container, getContainer, Store as StoreClass, HookFn } from './reusable';
 
 const ReusableContext = React.createContext<Container | null>(null);
 
-export const ReusableProvider: FunctionComponent<{}> = ({ children }) => (
+export const ReusableProvider: FC<{children?: React.ReactNode }> = ({ children }) => (
   <ReusableContext.Provider value={getContainer()}>
     <React.Fragment>
       <Stores />
