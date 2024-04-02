@@ -10,7 +10,7 @@
     "redux": "^4.0.2",
     "redux-devtools-extension": "^2.13.8",
     "reselect": "^4.0.0",
-    "reusable": "^1.0.0-alpha.12",
+    "reusable": "^1.1.0",
     "uuid": "^3.3.2"
   },
   "relativeDependencies": {

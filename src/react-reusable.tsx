@@ -1,11 +1,18 @@
 import * as React from 'react';
-import { FunctionComponent, useState, useContext, useEffect } from 'react';
+import { FC, useState, useContext, useEffect, useRef } from 'react';
 import { shallowEqual, AreEqual } from './shallow-equal';
-import { Container, getContainer, Store as StoreClass, HookFn } from './reusable';
+import {
+  Container,
+  getContainer,
+  Store as StoreClass,
+  HookFn,
+} from './reusable';
 
 const ReusableContext = React.createContext<Container | null>(null);
 
-export const ReusableProvider: FunctionComponent<{}> = ({ children }) => (
+export const ReusableProvider: FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => (
   <ReusableContext.Provider value={getContainer()}>
     <React.Fragment>
       <Stores />
@@ -13,26 +20,28 @@ export const ReusableProvider: FunctionComponent<{}> = ({ children }) => (
     </React.Fragment>
   </ReusableContext.Provider>
 );
-Object.defineProperty(ReusableProvider,'displayName', { value: 'ReusableProvider' });
+Object.defineProperty(ReusableProvider, 'displayName', {
+  value: 'ReusableProvider',
+});
 
 const componentCache = new Map();
 
 const createStoreComponent = (store: StoreClass<any>) => {
   if (!componentCache.has(store)) {
-
-    const Component = React.memo(() => {
+    const Component = React.memo(function StoreComponent() {
       store.useValue();
-      
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       useEffect(() => store.notify(), [store.cachedValue]);
-      
+
       return null;
     });
-    
-    Object.defineProperty(Component,'name', { value: store.name });
+
+    Object.defineProperty(Component, 'name', { value: store.name });
 
     componentCache.set(store, Component);
   }
-    
+
   return componentCache.get(store);
 };
 
@@ -40,12 +49,13 @@ const useContainer = () => {
   const container = useContext(ReusableContext) as Container;
 
   if (container === null) {
-    throw new Error('Are you trying to use Reusable without a ReusableProvider?');
+    throw new Error(
+      'Are you trying to use Reusable without a ReusableProvider?'
+    );
   }
 
   return container;
-}
-
+};
 const Stores = () => {
   const container = useContainer();
   const [stores, setStores] = useState(() => container.getStoresArray());
@@ -54,41 +64,45 @@ const Stores = () => {
     return container.onStoresChanged(() => {
       setStores(container.getStoresArray());
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <React.Fragment>
       {stores.map((store: StoreClass<any>, index: number) => {
         const StoreComponent = createStoreComponent(store);
 
-        return <StoreComponent key={index} store={store}/>;
+        return <StoreComponent key={index} store={store} />;
       })}
     </React.Fragment>
-  )
-}
-Object.defineProperty(Stores,'displayName', { value: 'Stores' });
+  );
+};
+Object.defineProperty(Stores, 'displayName', { value: 'Stores' });
 
 type SelectorFn<HookValue, SelectorValue> = (val: HookValue) => SelectorValue;
 const identity = (val: any) => val;
 
+// eslint-disable-next-line max-params
 function useStore<HookValue, SelectorValue>(
   fn: HookFn<HookValue>,
   selector: SelectorFn<HookValue, SelectorValue>,
-  areEqual:AreEqual<SelectorValue>
+  areEqual: AreEqual<SelectorValue>
 ) {
   const store = useContainer().getStore<HookValue>(fn);
   React.useDebugValue('reusable');
-  const [localCopy, setLocalCopy] = useState<SelectorValue>(() => selector(store.getCachedValue()));
-
+  const [localCopy, setLocalCopy] = useState<SelectorValue>(() =>
+    selector(store.getCachedValue())
+  );
+  const localCopyRef = useRef(localCopy);
+  localCopyRef.current = localCopy;
   useEffect(() => {
     return store.subscribe((newValue) => {
       const selectedNewValue = selector(newValue);
 
-      if (!areEqual(selectedNewValue, localCopy)) {
+      if (!areEqual(selectedNewValue, localCopyRef.current)) {
         setLocalCopy(() => selectedNewValue);
       }
     });
-  }, [store, localCopy, selector, areEqual]);
+  }, [store, selector, areEqual]);
 
   return localCopy;
 }
@@ -108,7 +122,7 @@ export function createStore<HookValue>(fn: HookFn<HookValue>) {
     selector?: SelectorFn<HookValue, SelectorValue>,
     areEqual?: AreEqual<SelectorValue>
   ) {
-    React.useDebugValue(store.name);  
+    React.useDebugValue(store.name);
 
     return useStore(fn, selector || identity, areEqual || shallowEqual);
   }
